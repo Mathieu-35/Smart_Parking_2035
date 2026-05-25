@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Smart Parking 2035{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Bouton collapse -->
+    <button class="sidebar-toggle" id="sidebarToggle" title="Reduire">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+
+    <!-- Brand -->
+    <div class="sidebar-brand">
+      <div class="brand-icon">SP</div>
+      <div class="brand-text">
+        <div class="brand-name">Smart Parking</div>
+        <span class="brand-year">2035</span>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+
+      <div class="nav-section">
+        <span class="nav-section-label">Planning</span>
+        <a href="/" class="nav-item" title="Tableau de bord">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span class="nav-item-label">Tableau de bord</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-label">Gestion</span>
+        <a href="/utilisateurs/"
+           class="nav-item {% if '/utilisateurs' in request.url.path %}active{% endif %}"
+           title="Utilisateurs">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span class="nav-item-label">Utilisateurs</span>
+        </a>
+        <a href="#" class="nav-item" title="Parkings">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>
+          </svg>
+          <span class="nav-item-label">Parkings</span>
+        </a>
+        <a href="#" class="nav-item" title="Vehicules">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+          <span class="nav-item-label">Vehicules</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-label">Rapports</span>
+        <a href="#" class="nav-item" title="Statistiques">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          <span class="nav-item-label">Statistiques</span>
+        </a>
+      </div>
+
+    </nav>
+
+    <!-- Footer nav -->
+    <div class="sidebar-footer-nav">
+      <a href="#" class="sidebar-footer-item" title="Parametres du projet">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33
+                   1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33
+                   l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4
+                   h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06
+                   A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51
+                   a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9
+                   a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span class="sidebar-footer-label nav-item-label">Parametres</span>
+      </a>
+    </div>
+
+  </aside>
+
+  <div class="main-content" id="mainContent">
+    <header class="topbar">
+      <div class="topbar-breadcrumb">
+        <a href="/">Smart Parking</a>
+        <span class="topbar-sep">/</span>
+        {% block breadcrumb %}<span class="topbar-breadcrumb-current">Accueil</span>{% endblock %}
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-user">
+          <div class="avatar">{{ request.session.get("user_nom", "?")[0] | upper }}</div>
+          <span class="topbar-user-name">{{ request.session.get("user_nom", "") }}</span>
+          <span class="lozenge lozenge-info" style="text-transform: none; font-size: 11px;">
+            {{ request.session.get("user_role", "") | capitalize }}
+          </span>
+        </div>
+        <a href="/auth/logout" class="btn btn-ghost btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Deconnexion
+        </a>
+      </div>
+    </header>
+
+    <div class="page-content">
+      {% if msg %}
+      <div class="alert alert-success">{{ msg }}</div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

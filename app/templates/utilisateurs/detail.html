@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{{ utilisateur.prenom }} {{ utilisateur.nom }} — Smart Parking 2035{% endblock %}
+
+{% block breadcrumb %}
+  <span class="topbar-sep">/</span>
+  <a href="/utilisateurs/">Utilisateurs</a>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-breadcrumb-current">{{ utilisateur.prenom }} {{ utilisateur.nom }}</span>
+{% endblock %}
+
+{% block content %}
+
+<div class="breadcrumb">
+  <a href="/utilisateurs/">Utilisateurs</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>{{ utilisateur.prenom }} {{ utilisateur.nom }}</span>
+</div>
+
+<div class="page-header" style="margin-bottom: 16px;">
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <div class="avatar" style="width: 40px; height: 40px; font-size: 14px;">
+      {{ utilisateur.prenom[0] | upper }}{{ utilisateur.nom[0] | upper }}
+    </div>
+    <div>
+      <h1 class="page-title">{{ utilisateur.prenom }} {{ utilisateur.nom }}</h1>
+      <p class="page-meta">{{ utilisateur.email }}</p>
+    </div>
+  </div>
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <a href="/utilisateurs/{{ utilisateur.id }}/modifier" class="btn btn-secondary">Modifier</a>
+    <form method="POST" action="/utilisateurs/{{ utilisateur.id }}/supprimer" onsubmit="return confirmDelete(this)">
+      <button type="submit" class="btn btn-danger">Supprimer</button>
+    </form>
+  </div>
+</div>
+
+<div class="card" style="max-width: 740px;">
+  <div class="card-header">
+    <div class="card-title">Informations du compte</div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      {% if utilisateur.actif %}
+        <span class="lozenge lozenge-success">Actif</span>
+      {% else %}
+        <span class="lozenge lozenge-neutral">Inactif</span>
+      {% endif %}
+      <span class="lozenge lozenge-info">{{ utilisateur.role.nom | capitalize }}</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="detail-grid">
+
+      <div class="detail-item">
+        <div class="detail-label">Prenom</div>
+        <div class="detail-value">{{ utilisateur.prenom }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Nom</div>
+        <div class="detail-value">{{ utilisateur.nom }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Adresse e-mail</div>
+        <div class="detail-value">{{ utilisateur.email }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Telephone</div>
+        <div class="detail-value {% if not utilisateur.telephone %}muted{% endif %}">
+          {{ utilisateur.telephone if utilisateur.telephone else 'Non renseigne' }}
+        </div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Role</div>
+        <div class="detail-value">{{ utilisateur.role.nom | capitalize }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Identifiant</div>
+        <div class="detail-value muted">#{{ utilisateur.id }}</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

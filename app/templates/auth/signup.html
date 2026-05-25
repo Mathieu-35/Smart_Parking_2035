@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscription — Smart Parking 2035</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="auth-body">
+
+  <div class="auth-wrapper" style="max-width: 480px;">
+    <div class="auth-card">
+
+      <div class="auth-brand">
+        <div class="auth-brand-icon">SP</div>
+        <div>
+          <div class="auth-brand-name">Smart Parking</div>
+          <div class="auth-brand-year">2035</div>
+        </div>
+      </div>
+
+      <div class="auth-title">Creer un compte</div>
+      <div class="auth-subtitle">Remplissez les informations pour vous inscrire.</div>
+
+      {% if error %}
+      <div class="form-error" style="margin-bottom: 16px;">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="/auth/signup">
+        <div class="form-grid" style="margin-bottom: 14px;">
+
+          <div class="form-group">
+            <label class="form-label" for="prenom">Prenom <span class="required">*</span></label>
+            <input class="form-control" type="text" id="prenom" name="prenom"
+              placeholder="Jean" required autofocus />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="nom">Nom <span class="required">*</span></label>
+            <input class="form-control" type="text" id="nom" name="nom"
+              placeholder="Dupont" required />
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label" for="email">Adresse e-mail <span class="required">*</span></label>
+            <input class="form-control" type="email" id="email" name="email"
+              placeholder="nom@example.com" required />
+          </div>
+
+          <div class="form-group form-grid-full">
+            <label class="form-label" for="mot_passe">Mot de passe <span class="required">*</span></label>
+            <input class="form-control" type="password" id="mot_passe" name="mot_passe"
+              placeholder="••••••••" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="telephone">Telephone</label>
+            <input class="form-control" type="tel" id="telephone" name="telephone"
+              placeholder="+261 34 00 000 00" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="role_id">Role <span class="required">*</span></label>
+            <select class="form-control" id="role_id" name="role_id" required>
+              <option value="" disabled selected>Selectionner</option>
+              {% for role in roles %}
+              <option value="{{ role.id }}">{{ role.nom | capitalize }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 8px 12px;">
+          Creer mon compte
+        </button>
+
+      </form>
+
+      <div class="auth-footer">
+        Deja un compte ? <a href="/auth/login">Se connecter</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

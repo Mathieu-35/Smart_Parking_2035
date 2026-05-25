@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion — Smart Parking 2035</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="auth-body">
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+
+      <div class="auth-brand">
+        <div class="auth-brand-icon">SP</div>
+        <div>
+          <div class="auth-brand-name">Smart Parking</div>
+          <div class="auth-brand-year">2035</div>
+        </div>
+      </div>
+
+      <div class="auth-title">Connexion</div>
+      <div class="auth-subtitle">Acces a l'espace de gestion.</div>
+
+      {% if error %}
+      <div class="form-error" style="margin-bottom: 16px;">{{ error }}</div>
+      {% endif %}
+
+      <form class="auth-form" method="POST" action="/auth/login">
+
+        <div class="form-group">
+          <label class="form-label" for="email">Adresse e-mail</label>
+          <input class="form-control" type="email" id="email" name="email"
+            placeholder="nom@example.com" required autofocus />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="mot_passe">Mot de passe</label>
+          <input class="form-control" type="password" id="mot_passe" name="mot_passe"
+            placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 8px 12px;">
+          Se connecter
+        </button>
+
+      </form>
+
+      <div class="auth-footer">
+        Pas encore de compte ? <a href="/auth/signup">Creer un compte</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

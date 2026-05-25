@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Utilisateurs — Smart Parking 2035{% endblock %}
+{% block breadcrumb %}
+  <span class="topbar-sep">/</span>
+  <span class="topbar-breadcrumb-current">Utilisateurs</span>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Utilisateurs</h1>
+    <p class="page-meta">{{ utilisateurs | length }} utilisateur{{ 's' if utilisateurs | length != 1 }}</p>
+  </div>
+  <a href="/utilisateurs/creer" class="btn btn-primary">Ajouter un utilisateur</a>
+</div>
+
+<div class="card">
+  <div class="table-wrapper">
+    {% if utilisateurs %}
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Adresse e-mail</th>
+          <th>Telephone</th>
+          <th>Role</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in utilisateurs %}
+        <tr>
+          <td>
+            <div class="user-cell">
+              <div class="avatar">{{ u.prenom[0] | upper }}{{ u.nom[0] | upper }}</div>
+              <div>
+                <div class="user-cell-name">
+                  <a href="/utilisateurs/{{ u.id }}" class="action-link">{{ u.prenom }} {{ u.nom }}</a>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td style="color: var(--text-subtle);">{{ u.email }}</td>
+          <td style="color: var(--text-subtle);">{{ u.telephone if u.telephone else '—' }}</td>
+          <td><span class="lozenge lozenge-info">{{ u.role.nom }}</span></td>
+          <td>
+            {% if u.actif %}
+              <span class="lozenge lozenge-success">Actif</span>
+            {% else %}
+              <span class="lozenge lozenge-neutral">Inactif</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="td-actions">
+              <a href="/utilisateurs/{{ u.id }}/modifier" class="action-link">Modifier</a>
+              <span class="td-actions-sep">|</span>
+              <form method="POST" action="/utilisateurs/{{ u.id }}/supprimer" onsubmit="return confirmDelete(this)" style="display:inline;">
+                <button type="submit" class="action-link danger">Supprimer</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state-title">Aucun utilisateur enregistre</div>
+      <div class="empty-state-desc">Commencez par creer le premier compte utilisateur.</div>
+      <a href="/utilisateurs/creer" class="btn btn-primary">Ajouter un utilisateur</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

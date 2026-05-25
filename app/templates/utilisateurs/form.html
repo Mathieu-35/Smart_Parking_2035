@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if action == 'creer' %}Nouvel utilisateur{% else %}Modifier — {{ utilisateur.prenom }} {{ utilisateur.nom }}{% endif %}
+  — Smart Parking 2035
+{% endblock %}
+
+{% block breadcrumb %}
+  <span class="topbar-sep">/</span>
+  <a href="/utilisateurs/">Utilisateurs</a>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-breadcrumb-current">
+    {% if action == 'creer' %}Nouvel utilisateur{% else %}Modifier{% endif %}
+  </span>
+{% endblock %}
+
+{% block content %}
+
+<div class="breadcrumb">
+  <a href="/utilisateurs/">Utilisateurs</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>{% if action == 'creer' %}Nouvel utilisateur{% else %}Modifier {{ utilisateur.prenom }} {{ utilisateur.nom }}{% endif %}</span>
+</div>
+
+<div class="page-header" style="margin-bottom: 16px;">
+  <h1 class="page-title">
+    {% if action == 'creer' %}Nouvel utilisateur{% else %}Modifier l'utilisateur{% endif %}
+  </h1>
+</div>
+
+<div class="card" style="max-width: 740px;">
+  <div class="card-body">
+
+    {% if error %}
+    <div class="form-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{% if action == 'creer' %}/utilisateurs/creer{% else %}/utilisateurs/{{ utilisateur.id }}/modifier{% endif %}">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="form-label" for="prenom">Prenom <span class="required">*</span></label>
+          <input class="form-control" type="text" id="prenom" name="prenom"
+            placeholder="Jean"
+            value="{{ utilisateur.prenom if utilisateur else '' }}"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="nom">Nom <span class="required">*</span></label>
+          <input class="form-control" type="text" id="nom" name="nom"
+            placeholder="Dupont"
+            value="{{ utilisateur.nom if utilisateur else '' }}"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Adresse e-mail <span class="required">*</span></label>
+          <input class="form-control" type="email" id="email" name="email"
+            placeholder="jean.dupont@example.com"
+            value="{{ utilisateur.email if utilisateur else '' }}"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="telephone">Telephone</label>
+          <input class="form-control" type="tel" id="telephone" name="telephone"
+            placeholder="+261 34 00 000 00"
+            value="{{ utilisateur.telephone if utilisateur and utilisateur.telephone else '' }}" />
+        </div>
+
+        <div class="form-group form-grid-full">
+          <label class="form-label" for="mot_passe">
+            Mot de passe{% if action == 'creer' %} <span class="required">*</span>{% endif %}
+          </label>
+          <input class="form-control" type="password" id="mot_passe" name="mot_passe"
+            placeholder="••••••••"
+            {% if action == 'creer' %}required{% endif %} />
+          {% if action == 'modifier' %}
+          <div class="form-hint">Laisser vide pour conserver le mot de passe actuel.</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="role_id">Role <span class="required">*</span></label>
+          <select class="form-control" id="role_id" name="role_id" required>
+            <option value="" disabled {% if not utilisateur %}selected{% endif %}>Selectionner un role</option>
+            {% for role in roles %}
+            <option value="{{ role.id }}"
+              {% if utilisateur and utilisateur.role_id == role.id %}selected{% endif %}>
+              {{ role.nom | capitalize }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group" style="justify-content: flex-end;">
+          <label class="form-label">Statut</label>
+          <label class="form-check">
+            <input type="checkbox" name="actif"
+              {% if not utilisateur or utilisateur.actif %}checked{% endif %} />
+            <span class="form-check-label">Compte actif</span>
+          </label>
+        </div>
+
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          {% if action == 'creer' %}Creer l'utilisateur{% else %}Enregistrer{% endif %}
+        </button>
+        <a href="/utilisateurs/" class="btn btn-secondary">Annuler</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
