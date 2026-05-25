@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Parkings — Smart Parking 2035{% endblock %}
+{% block breadcrumb %}
+  <span class="topbar-sep">/</span>
+  <span class="topbar-breadcrumb-current">Parkings</span>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Parkings</h1>
+    <p class="page-meta">{{ parkings | length }} parking{{ 's' if parkings | length != 1 }}</p>
+  </div>
+  <a href="/parkings/creer" class="btn btn-primary">Ajouter un parking</a>
+</div>
+
+{% if msg %}
+<div class="alert alert-success">
+  {{ msg }}
+  <button class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="table-wrapper">
+    {% if parkings %}
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Adresse</th>
+          <th>Places</th>
+          <th>Taux d'occupation</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in parkings %}
+        <tr>
+          <td>
+            <a href="/parkings/{{ p.id }}" class="action-link">{{ p.nom }}</a>
+          </td>
+          <td style="color: var(--text-subtle);">{{ p.adresse }}</td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 100%; max-width: 150px; background: #e0e0e0; border-radius: 4px; height: 6px; overflow: hidden;">
+                <div style="width: {{ ((p.nombre_places_total - p.places_disponibles) / p.nombre_places_total * 100) if p.nombre_places_total > 0 else 0 }}%; height: 100%; background: {% if ((p.nombre_places_total - p.places_disponibles) / p.nombre_places_total * 100) > 80 %}#dc3545{% elif ((p.nombre_places_total - p.places_disponibles) / p.nombre_places_total * 100) > 50 %}#ffc107{% else %}#28a745{% endif %};"></div>
+              </div>
+              <span style="font-size: 12px; white-space: nowrap;">{{ p.places_disponibles }}/{{ p.nombre_places_total }}</span>
+            </div>
+          </td>
+          <td>
+            {% set occupation = ((p.nombre_places_total - p.places_disponibles) / p.nombre_places_total * 100) if p.nombre_places_total > 0 else 0 %}
+            {% if occupation > 80 %}
+              <span class="lozenge lozenge-danger">{{ "%.0f"|format(occupation) }}% Saturé</span>
+            {% elif occupation > 50 %}
+              <span class="lozenge lozenge-warning">{{ "%.0f"|format(occupation) }}% Moyen</span>
+            {% else %}
+              <span class="lozenge lozenge-success">{{ "%.0f"|format(occupation) }}% Libre</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if p.actif %}
+              <span class="status-badge status-active">Actif</span>
+            {% else %}
+              <span class="status-badge status-inactive">Inactif</span>
+            {% endif %}
+          </td>
+          <td class="text-right">
+            <a href="/parkings/{{ p.id }}" class="btn btn-sm btn-secondary">Détails</a>
+            <a href="/parkings/{{ p.id }}/modifier" class="btn btn-sm btn-secondary">Modifier</a>
+            <form method="post" action="/parkings/{{ p.id }}/supprimer" style="display: inline;">
+              <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr ?');">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <p>Aucun parking trouvé.</p>
+      <a href="/parkings/creer" class="btn btn-primary">Créer le premier parking</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

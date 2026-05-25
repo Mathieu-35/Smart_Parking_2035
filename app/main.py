@@ -6,8 +6,8 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.config import settings
 from app.database import engine, Base
 from app.exceptions import NotAuthenticatedException
-from app.models import Role, Utilisateur  # noqa: F401
-from app.routes import auth, utilisateur
+from app.models import Role, Utilisateur, Parking, HistoriquePlaces, Reservation  # noqa: F401
+from app.routes import auth, utilisateur, parking
 
 app = FastAPI(title="Smart Parking 2035", docs_url="/api/docs")
 
@@ -19,6 +19,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(auth.router)
 app.include_router(utilisateur.router)
+app.include_router(parking.router)
 
 
 @app.exception_handler(NotAuthenticatedException)
