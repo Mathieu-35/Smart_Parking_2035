@@ -1,0 +1,141 @@
+{
+  "noeuds": [
+    {
+      "nom": "Analakely",
+      "latitude": -18.91,
+      "longitude": 47.521
+    },
+    {
+      "nom": "Soarano",
+      "latitude": -18.905,
+      "longitude": 47.5215
+    },
+    {
+      "nom": "Antaninarenina",
+      "latitude": -18.912,
+      "longitude": 47.526
+    },
+    {
+      "nom": "Ambohijatovo",
+      "latitude": -18.916,
+      "longitude": 47.524
+    },
+    {
+      "nom": "Anosy",
+      "latitude": -18.92,
+      "longitude": 47.521
+    },
+    {
+      "nom": "Mahamasina",
+      "latitude": -18.917,
+      "longitude": 47.527
+    },
+    {
+      "nom": "Isoraka",
+      "latitude": -18.911,
+      "longitude": 47.518
+    },
+    {
+      "nom": "Tsaralalana",
+      "latitude": -18.907,
+      "longitude": 47.518
+    },
+    {
+      "nom": "Behoririka",
+      "latitude": -18.903,
+      "longitude": 47.527
+    },
+    {
+      "nom": "Andravoahangy",
+      "latitude": -18.9,
+      "longitude": 47.532
+    },
+    {
+      "nom": "Ankorondrano",
+      "latitude": -18.88,
+      "longitude": 47.523
+    },
+    {
+      "nom": "Andohalo",
+      "latitude": -18.918,
+      "longitude": 47.53
+    }
+  ],
+  "aretes": [
+    {
+      "depart": "Analakely",
+      "arrivee": "Soarano",
+      "distance": 558
+    },
+    {
+      "depart": "Analakely",
+      "arrivee": "Antaninarenina",
+      "distance": 571
+    },
+    {
+      "depart": "Analakely",
+      "arrivee": "Ambohijatovo",
+      "distance": 738
+    },
+    {
+      "depart": "Analakely",
+      "arrivee": "Isoraka",
+      "distance": 335
+    },
+    {
+      "depart": "Soarano",
+      "arrivee": "Tsaralalana",
+      "distance": 430
+    },
+    {
+      "depart": "Soarano",
+      "arrivee": "Behoririka",
+      "distance": 620
+    },
+    {
+      "depart": "Antaninarenina",
+      "arrivee": "Andohalo",
+      "distance": 789
+    },
+    {
+      "depart": "Ambohijatovo",
+      "arrivee": "Mahamasina",
+      "distance": 335
+    },
+    {
+      "depart": "Mahamasina",
+      "arrivee": "Anosy",
+      "distance": 714
+    },
+    {
+      "depart": "Mahamasina",
+      "arrivee": "Andohalo",
+      "distance": 335
+    },
+    {
+      "depart": "Anosy",
+      "arrivee": "Isoraka",
+      "distance": 1049
+    },
+    {
+      "depart": "Isoraka",
+      "arrivee": "Tsaralalana",
+      "distance": 445
+    },
+    {
+      "depart": "Behoririka",
+      "arrivee": "Andravoahangy",
+      "distance": 623
+    },
+    {
+      "depart": "Behoririka",
+      "arrivee": "Ankorondrano",
+      "distance": 2592
+    },
+    {
+      "depart": "Andravoahangy",
+      "arrivee": "Andohalo",
+      "distance": 2013
+    }
+  ]
+}
