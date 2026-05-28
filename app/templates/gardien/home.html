@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Espace gardien — Smart Parking 2035</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="auth-body">
+
+  <div class="auth-wrapper" style="max-width: 520px;">
+    <div class="auth-card">
+
+      <div class="auth-brand">
+        <div class="auth-brand-icon">SP</div>
+        <div>
+          <div class="auth-brand-name">Smart Parking</div>
+          <div class="auth-brand-year">2035</div>
+        </div>
+      </div>
+
+      <div class="auth-title">Bonjour {{ request.session.get("user_nom", "") }}</div>
+      <div class="auth-subtitle">
+        Espace gardien — interface mobile en cours de developpement.
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--bg-subtle, #f5f5f5); border-radius: 8px;">
+        <p style="margin: 0 0 8px 0;"><strong>A venir prochainement :</strong></p>
+        <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+          <li>Scan QR Code a l'entree des vehicules</li>
+          <li>Scan QR Code a la sortie + calcul du montant</li>
+          <li>Confirmation du paiement en especes</li>
+          <li>Mise a jour manuelle des places disponibles</li>
+        </ul>
+      </div>
+
+      <a href="/auth/logout" class="btn btn-secondary" style="width: 100%; justify-content: center;">
+        Se deconnecter
+      </a>
+
+    </div>
+  </div>
+
+</body>
+</html>

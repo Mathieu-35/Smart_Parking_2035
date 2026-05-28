@@ -7,12 +7,12 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.controllers.parking_controller import ParkingController
 from app.schemas.parking import ParkingCreate, ParkingUpdate, ParkingRead, ParkingListItem
-from app.dependencies import require_login
+from app.dependencies import require_admin
 
 router = APIRouter(
     prefix="/parkings",
     tags=["parkings"],
-    dependencies=[Depends(require_login)],
+    dependencies=[Depends(require_admin)],
 )
 templates = Jinja2Templates(directory="app/templates")
 

@@ -37,17 +37,20 @@ def login(
     request.session["user_id"] = user.id
     request.session["user_nom"] = f"{user.prenom} {user.nom}"
     request.session["user_role"] = user.role.nom
-    return RedirectResponse(url="/utilisateurs/", status_code=303)
+
+    # Redirection selon le rôle
+    if user.role.nom == "administrateur":
+        return RedirectResponse(url="/utilisateurs/", status_code=303)
+    # Gardien et conducteur ont leurs interfaces mobiles (à venir)
+    return RedirectResponse(url="/", status_code=303)
 
 
 @router.get("/signup", response_class=HTMLResponse)
-def signup_form(request: Request, db: Session = Depends(get_db)):
+def signup_form(request: Request):
     if request.session.get("user_id"):
-        return RedirectResponse(url="/utilisateurs/")
-    roles = role_controller.get_all(db)
+        return RedirectResponse(url="/")
     return templates.TemplateResponse("auth/signup.html", {
         "request": request,
-        "roles": roles,
         "error": None,
     })
 
@@ -59,10 +62,19 @@ def signup(
     prenom: str = Form(...),
     email: str = Form(...),
     mot_passe: str = Form(...),
-    role_id: int = Form(...),
     telephone: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
+    # Inscription publique : on force le rôle "conducteur".
+    # Les comptes gardien et administrateur sont créés par l'admin
+    # dans l'interface /utilisateurs/.
+    role_conducteur = role_controller.get_by_nom(db, "conducteur")
+    if not role_conducteur:
+        return templates.TemplateResponse("auth/signup.html", {
+            "request": request,
+            "error": "Configuration incorrecte : rôle 'conducteur' introuvable. Contactez l'administrateur.",
+        })
+
     try:
         user = utilisateur_controller.create(
             db=db,
@@ -71,18 +83,16 @@ def signup(
             email=email,
             mot_passe=mot_passe,
             telephone=telephone or None,
-            role_id=role_id,
+            role_id=role_conducteur.id,
             actif=True,
         )
         request.session["user_id"] = user.id
         request.session["user_nom"] = f"{user.prenom} {user.nom}"
         request.session["user_role"] = user.role.nom
-        return RedirectResponse(url="/utilisateurs/", status_code=303)
+        return RedirectResponse(url="/", status_code=303)
     except Exception:
-        roles = role_controller.get_all(db)
         return templates.TemplateResponse("auth/signup.html", {
             "request": request,
-            "roles": roles,
             "error": "Cet email est déjà utilisé ou les données sont invalides.",
         })
 

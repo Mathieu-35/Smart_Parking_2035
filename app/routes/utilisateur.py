@@ -6,22 +6,32 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.controllers import role_controller, utilisateur_controller
-from app.dependencies import require_login
+from app.dependencies import require_admin
 
 router = APIRouter(
     prefix="/utilisateurs",
     tags=["utilisateurs"],
-    dependencies=[Depends(require_login)],
+    dependencies=[Depends(require_admin)],
 )
 templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("/", response_class=HTMLResponse)
-def list_utilisateurs(request: Request, db: Session = Depends(get_db), msg: Optional[str] = None):
-    utilisateurs = utilisateur_controller.get_all(db)
+def list_utilisateurs(
+    request: Request,
+    db: Session = Depends(get_db),
+    msg: Optional[str] = None,
+    role: Optional[str] = None,
+):
+    # Filtre par role : "administrateur", "gardien", "conducteur" ou None (= tous)
+    role_filtre = role if role in ("administrateur", "gardien", "conducteur") else None
+    utilisateurs = utilisateur_controller.get_all(db, role_nom=role_filtre)
+    roles = role_controller.get_all(db)
     return templates.TemplateResponse("utilisateurs/list.html", {
         "request": request,
         "utilisateurs": utilisateurs,
+        "roles": roles,
+        "role_actif": role_filtre,
         "msg": msg,
     })
 

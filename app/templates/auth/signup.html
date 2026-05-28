@@ -19,8 +19,8 @@
         </div>
       </div>
 
-      <div class="auth-title">Creer un compte</div>
-      <div class="auth-subtitle">Remplissez les informations pour vous inscrire.</div>
+      <div class="auth-title">Creer un compte conducteur</div>
+      <div class="auth-subtitle">L'inscription publique est reservee aux conducteurs.<br/>Les comptes gardien et administrateur sont crees par l'administrateur.</div>
 
       {% if error %}
       <div class="form-error" style="margin-bottom: 16px;">{{ error }}</div>
@@ -53,20 +53,10 @@
               placeholder="••••••••" required />
           </div>
 
-          <div class="form-group">
+          <div class="form-group form-grid-full">
             <label class="form-label" for="telephone">Telephone</label>
             <input class="form-control" type="tel" id="telephone" name="telephone"
               placeholder="+261 34 00 000 00" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="role_id">Role <span class="required">*</span></label>
-            <select class="form-control" id="role_id" name="role_id" required>
-              <option value="" disabled selected>Selectionner</option>
-              {% for role in roles %}
-              <option value="{{ role.id }}">{{ role.nom | capitalize }}</option>
-              {% endfor %}
-            </select>
           </div>
 
         </div>

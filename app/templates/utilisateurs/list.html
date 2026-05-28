@@ -11,9 +11,31 @@
 <div class="page-header">
   <div>
     <h1 class="page-title">Utilisateurs</h1>
-    <p class="page-meta">{{ utilisateurs | length }} utilisateur{{ 's' if utilisateurs | length != 1 }}</p>
+    <p class="page-meta">
+      {{ utilisateurs | length }} utilisateur{{ 's' if utilisateurs | length != 1 }}
+      {% if role_actif %} — filtre : {{ role_actif | capitalize }}{% endif %}
+    </p>
   </div>
   <a href="/utilisateurs/creer" class="btn btn-primary">Ajouter un utilisateur</a>
+</div>
+
+<div class="card" style="margin-bottom: 16px;">
+  <div class="card-body" style="padding: 12px 16px;">
+    <form method="GET" action="/utilisateurs/" style="display: flex; gap: 8px; align-items: center;">
+      <label class="form-label" for="role" style="margin: 0;">Filtrer par role :</label>
+      <select class="form-control" id="role" name="role" style="width: auto;" onchange="this.form.submit()">
+        <option value="">Tous</option>
+        {% for r in roles %}
+        <option value="{{ r.nom }}" {% if role_actif == r.nom %}selected{% endif %}>
+          {{ r.nom | capitalize }}
+        </option>
+        {% endfor %}
+      </select>
+      {% if role_actif %}
+      <a href="/utilisateurs/" class="btn btn-ghost btn-sm">Reinitialiser</a>
+      {% endif %}
+    </form>
+  </div>
 </div>
 
 <div class="card">

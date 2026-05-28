@@ -2,14 +2,18 @@ from typing import Optional
 import bcrypt
 from sqlalchemy.orm import Session
 from app.models.utilisateur import Utilisateur
+from app.models.role import Role
 
 
 def _hash(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
-def get_all(db: Session):
-    return db.query(Utilisateur).join(Utilisateur.role).all()
+def get_all(db: Session, role_nom: Optional[str] = None):
+    query = db.query(Utilisateur).join(Utilisateur.role)
+    if role_nom:
+        query = query.filter(Role.nom == role_nom)
+    return query.all()
 
 
 def get_by_id(db: Session, utilisateur_id: int):
