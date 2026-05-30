@@ -58,6 +58,12 @@ def plus_court_chemin(graphe, depart, arrivee):
         if courant in traites:
             continue
 
+        # Si on vient de sortir l'arrivee, sa plus courte distance est
+        # deja connue : inutile de continuer a explorer le reste du plan.
+        # (meme arret anticipe que dans A*, pour une comparaison juste)
+        if courant == arrivee:
+            break
+
         # On le marque comme traite.
         traites.inserer(courant, True)
         nombre_explores = nombre_explores + 1
