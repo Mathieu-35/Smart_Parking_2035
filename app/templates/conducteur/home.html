@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Espace conducteur — Smart Parking 2035</title>
   <link rel="stylesheet" href="/static/css/style.css" />
+  <!-- Feuille de style de la carte Leaflet (chargee depuis internet). -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body class="auth-body">
 
@@ -60,6 +62,9 @@
       <!-- La liste des parkings recommandes s'affichera ici. -->
       <div id="resultats"></div>
 
+      <!-- La carte du trajet. Cachee tant qu'on n'a pas choisi de trajet. -->
+      <div id="carte" style="height: 300px; margin-top: 12px; border-radius: 8px; display: none;"></div>
+
       <a href="/auth/logout" class="btn btn-secondary"
          style="width: 100%; justify-content: center; margin-top: 16px;">
         Se deconnecter
@@ -67,6 +72,9 @@
 
     </div>
   </div>
+
+  <!-- Librairie de carte Leaflet (chargee depuis internet). -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <!-- ============================================================= -->
   <!--  Le JavaScript : ce qui se passe quand on clique le bouton.   -->
@@ -78,6 +86,19 @@
     var listeCarrefours = document.getElementById("liste-carrefours");
     var message = document.getElementById("message");
     var resultats = document.getElementById("resultats");
+    var divCarte = document.getElementById("carte");
+
+    // On garde en memoire la derniere recherche (la liste des parkings)
+    // et la position du conducteur, pour pouvoir dessiner un trajet quand
+    // on clique sur "Voir le trajet".
+    var derniersParkings = [];
+    var positionConducteur = null;
+
+    // L'objet "carte" Leaflet. On le cree une seule fois, a la demande.
+    var carte = null;
+    // On garde la ligne et les marqueurs deja dessines pour pouvoir les
+    // effacer avant de dessiner un nouveau trajet.
+    var dessinsCarte = [];
 
     // --- Bouton "position de test" : instantane, sans GPS ---
     boutonTest.addEventListener("click", function () {
@@ -134,6 +155,9 @@
     function chercherParkings(lat, lon) {
       message.textContent = "Recherche des parkings...";
 
+      // On retient la position de depart (utile pour dessiner le trajet).
+      positionConducteur = [parseFloat(lat), parseFloat(lon)];
+
       // On appelle notre endpoint avec la position donnee.
       var url = "/api/recommandation?lat=" + lat + "&lon=" + lon;
 
@@ -167,6 +191,9 @@
         return;
       }
 
+      // On garde la liste en memoire pour le bouton "Voir le trajet".
+      derniersParkings = liste;
+
       message.textContent = liste.length + " parking(s) trouve(s) :";
 
       // On construit une petite carte pour chaque parking.
@@ -178,12 +205,69 @@
             '<strong>' + (i + 1) + '. ' + p.nom + '</strong><br>' +
             'Distance : ' + p.distance + ' m<br>' +
             'Places libres : ' + p.places_disponibles + '<br>' +
+            // Bouton "Voir le trajet" : dessine l'itineraire sur la carte.
+            '<button class="btn btn-secondary" style="margin-top: 8px; width: 100%; justify-content: center;" ' +
+              'onclick="afficherTrajet(' + i + ')">Voir le trajet</button>' +
             // Bouton "Reserver" : il appelle reserver(...) avec l'id du parking.
             '<button class="btn btn-primary" style="margin-top: 8px; width: 100%; justify-content: center;" ' +
               'onclick="reserver(' + p.id + ')">Reserver une place</button>' +
           '</div>';
       }
       resultats.innerHTML = html;
+    }
+
+    // --- Dessiner le trajet d'un parking sur la carte Leaflet ---
+    //  indice = la position du parking dans la liste derniersParkings.
+    function afficherTrajet(indice) {
+      var parking = derniersParkings[indice];
+      var points = parking.chemin_coords;   // liste de [lat, lon]
+
+      // Si on n'a pas de points a tracer, on previent et on s'arrete.
+      if (!points || points.length === 0) {
+        message.textContent = "Trajet indisponible pour ce parking.";
+        return;
+      }
+
+      // On affiche la zone de carte (elle etait cachee au depart).
+      divCarte.style.display = "block";
+
+      // 1) On cree la carte la 1ere fois seulement.
+      if (carte === null) {
+        carte = L.map("carte");
+        // Le fond de carte (les rues) vient d'OpenStreetMap.
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap"
+        }).addTo(carte);
+      }
+
+      // 2) On efface les dessins precedents (ancienne ligne et marqueurs).
+      for (var i = 0; i < dessinsCarte.length; i++) {
+        carte.removeLayer(dessinsCarte[i]);
+      }
+      dessinsCarte = [];
+
+      // 3) On trace la ligne du trajet (la "polyline") en bleu.
+      var ligne = L.polyline(points, { color: "blue", weight: 5 }).addTo(carte);
+      dessinsCarte.push(ligne);
+
+      // 4) Un marqueur VERT au depart (position du conducteur).
+      if (positionConducteur !== null) {
+        var depart = L.marker(positionConducteur).addTo(carte);
+        depart.bindPopup("Vous etes ici");
+        dessinsCarte.push(depart);
+      }
+
+      // 5) Un marqueur sur le PARKING d'arrivee.
+      var arrivee = L.marker([parking.latitude, parking.longitude]).addTo(carte);
+      arrivee.bindPopup(parking.nom);
+      dessinsCarte.push(arrivee);
+
+      // 6) On cadre la carte pour que tout le trajet soit visible.
+      carte.fitBounds(ligne.getBounds(), { padding: [30, 30] });
+
+      // Leaflet a parfois besoin qu'on lui dise que sa taille a change
+      // (car la carte etait cachee juste avant). On le force ici.
+      setTimeout(function () { carte.invalidateSize(); }, 200);
     }
 
     // --- Reserver une place dans un parking ---

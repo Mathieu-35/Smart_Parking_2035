@@ -81,16 +81,28 @@ def recommander_parkings(graphe, latitude, longitude, parkings):
         if distance is None:
             continue
 
-        # 3d) On range ce parking dans les resultats.
+        # 3d) On transforme le chemin (liste de NOMS de carrefours) en
+        #     liste de POINTS GPS [latitude, longitude]. C'est ce dont la
+        #     carte Leaflet a besoin pour dessiner le trajet (une ligne).
+        chemin_coords = []
+        for nom_carrefour in chemin:
+            infos = graphe.noeuds.get(nom_carrefour)
+            if infos is not None:
+                chemin_coords.append([infos["latitude"], infos["longitude"]])
+
+        # 3e) On range ce parking dans les resultats.
         #     On recopie aussi l'identifiant du parking (s'il existe)
         #     pour pouvoir ensuite le reserver. .get(...) renvoie None
         #     si la cle "id" n'est pas presente (cas des tests).
         resultats.append({
             "id": parking.get("id"),
             "nom": parking["nom"],
+            "latitude": parking["latitude"],
+            "longitude": parking["longitude"],
             "places_disponibles": parking["places_disponibles"],
             "distance": distance,
             "chemin": chemin,
+            "chemin_coords": chemin_coords,
         })
 
     # --- 4) On trie du plus proche au plus loin ---
