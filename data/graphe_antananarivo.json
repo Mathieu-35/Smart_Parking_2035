@@ -59,6 +59,206 @@
       "nom": "Andohalo",
       "latitude": -18.918,
       "longitude": 47.53
+    },
+    {
+      "nom": "Antanimena",
+      "latitude": -18.895,
+      "longitude": 47.524
+    },
+    {
+      "nom": "Ankadifotsy",
+      "latitude": -18.898,
+      "longitude": 47.5285
+    },
+    {
+      "nom": "Ampandrana",
+      "latitude": -18.898,
+      "longitude": 47.534
+    },
+    {
+      "nom": "Faravohitra",
+      "latitude": -18.912,
+      "longitude": 47.532
+    },
+    {
+      "nom": "Ambondrona",
+      "latitude": -18.908,
+      "longitude": 47.529
+    },
+    {
+      "nom": "Ambatonakanga",
+      "latitude": -18.91,
+      "longitude": 47.5235
+    },
+    {
+      "nom": "Ankadivato",
+      "latitude": -18.905,
+      "longitude": 47.534
+    },
+    {
+      "nom": "Ampefiloha",
+      "latitude": -18.908,
+      "longitude": 47.515
+    },
+    {
+      "nom": "Anosibe",
+      "latitude": -18.928,
+      "longitude": 47.517
+    },
+    {
+      "nom": "Andavamamba",
+      "latitude": -18.923,
+      "longitude": 47.515
+    },
+    {
+      "nom": "Ampasanimalo",
+      "latitude": -18.905,
+      "longitude": 47.53
+    },
+    {
+      "nom": "Tsimbazaza",
+      "latitude": -18.926,
+      "longitude": 47.523
+    },
+    {
+      "nom": "SoixanteSeptHa",
+      "latitude": -18.915,
+      "longitude": 47.512
+    },
+    {
+      "nom": "Antaninandro",
+      "latitude": -18.909,
+      "longitude": 47.52
+    },
+    {
+      "nom": "Isotry",
+      "latitude": -18.912,
+      "longitude": 47.516
+    },
+    {
+      "nom": "Antohomadinika",
+      "latitude": -18.905,
+      "longitude": 47.513
+    },
+    {
+      "nom": "Andraharo",
+      "latitude": -18.883,
+      "longitude": 47.517
+    },
+    {
+      "nom": "Ankazomanga",
+      "latitude": -18.885,
+      "longitude": 47.529
+    },
+    {
+      "nom": "Ivandry",
+      "latitude": -18.87,
+      "longitude": 47.531
+    },
+    {
+      "nom": "Mandroseza",
+      "latitude": -18.918,
+      "longitude": 47.54
+    },
+    {
+      "nom": "Ambanidia",
+      "latitude": -18.922,
+      "longitude": 47.536
+    },
+    {
+      "nom": "Ambohipo",
+      "latitude": -18.923,
+      "longitude": 47.543
+    },
+    {
+      "nom": "Ankatso",
+      "latitude": -18.918,
+      "longitude": 47.544
+    },
+    {
+      "nom": "Ampasampito",
+      "latitude": -18.89,
+      "longitude": 47.54
+    },
+    {
+      "nom": "Analamahitsy",
+      "latitude": -18.87,
+      "longitude": 47.54
+    },
+    {
+      "nom": "Besarety",
+      "latitude": -18.895,
+      "longitude": 47.532
+    },
+    {
+      "nom": "Manjakaray",
+      "latitude": -18.887,
+      "longitude": 47.535
+    },
+    {
+      "nom": "Ankadimbahoaka",
+      "latitude": -18.935,
+      "longitude": 47.52
+    },
+    {
+      "nom": "Ambohimanarina",
+      "latitude": -18.865,
+      "longitude": 47.518
+    },
+    {
+      "nom": "Ambohimanga",
+      "latitude": -18.878,
+      "longitude": 47.536
+    },
+    {
+      "nom": "Parking Analakely",
+      "latitude": -18.9105,
+      "longitude": 47.5205
+    },
+    {
+      "nom": "Parking Anosy",
+      "latitude": -18.9205,
+      "longitude": 47.5215
+    },
+    {
+      "nom": "Parking Behoririka",
+      "latitude": -18.9035,
+      "longitude": 47.5265
+    },
+    {
+      "nom": "Parking Mahamasina",
+      "latitude": -18.9175,
+      "longitude": 47.5275
+    },
+    {
+      "nom": "Parking Ankorondrano",
+      "latitude": -18.881,
+      "longitude": 47.5235
+    },
+    {
+      "nom": "Parking Andravoahangy",
+      "latitude": -18.9005,
+      "longitude": 47.5315
+    },
+    {
+      "nom": "Parking Tsaralalana",
+      "latitude": -18.9075,
+      "longitude": 47.5185
+    },
+    {
+      "nom": "Parking Ampefiloha",
+      "latitude": -18.9085,
+      "longitude": 47.5155
+    },
+    {
+      "nom": "Parking Antanimena",
+      "latitude": -18.8955,
+      "longitude": 47.5245
+    },
+    {
+      "nom": "Parking Andohalo",
+      "latitude": -18.9185,
+      "longitude": 47.5295
     }
   ],
   "aretes": [
@@ -74,8 +274,8 @@
     },
     {
       "depart": "Analakely",
-      "arrivee": "Ambohijatovo",
-      "distance": 738
+      "arrivee": "Ambatonakanga",
+      "distance": 263
     },
     {
       "depart": "Analakely",
@@ -93,14 +293,39 @@
       "distance": 620
     },
     {
+      "depart": "Soarano",
+      "arrivee": "Ampasanimalo",
+      "distance": 894
+    },
+    {
       "depart": "Antaninarenina",
       "arrivee": "Andohalo",
       "distance": 789
     },
     {
+      "depart": "Antaninarenina",
+      "arrivee": "Ambondrona",
+      "distance": 545
+    },
+    {
+      "depart": "Antaninarenina",
+      "arrivee": "Faravohitra",
+      "distance": 631
+    },
+    {
       "depart": "Ambohijatovo",
       "arrivee": "Mahamasina",
       "distance": 335
+    },
+    {
+      "depart": "Ambohijatovo",
+      "arrivee": "Ambatonakanga",
+      "distance": 669
+    },
+    {
+      "depart": "Ambatonakanga",
+      "arrivee": "Antaninandro",
+      "distance": 385
     },
     {
       "depart": "Mahamasina",
@@ -118,9 +343,34 @@
       "distance": 1049
     },
     {
+      "depart": "Anosy",
+      "arrivee": "Tsimbazaza",
+      "distance": 700
+    },
+    {
       "depart": "Isoraka",
       "arrivee": "Tsaralalana",
       "distance": 445
+    },
+    {
+      "depart": "Isoraka",
+      "arrivee": "SoixanteSeptHa",
+      "distance": 772
+    },
+    {
+      "depart": "Isoraka",
+      "arrivee": "Antaninandro",
+      "distance": 306
+    },
+    {
+      "depart": "Tsaralalana",
+      "arrivee": "Antohomadinika",
+      "distance": 571
+    },
+    {
+      "depart": "Antaninandro",
+      "arrivee": "Ampefiloha",
+      "distance": 538
     },
     {
       "depart": "Behoririka",
@@ -129,13 +379,208 @@
     },
     {
       "depart": "Behoririka",
-      "arrivee": "Ankorondrano",
-      "distance": 2592
+      "arrivee": "Ankadifotsy",
+      "distance": 578
+    },
+    {
+      "depart": "Behoririka",
+      "arrivee": "Ambondrona",
+      "distance": 594
     },
     {
       "depart": "Andravoahangy",
+      "arrivee": "Ampandrana",
+      "distance": 306
+    },
+    {
+      "depart": "Ankadifotsy",
+      "arrivee": "Antanimena",
+      "distance": 579
+    },
+    {
+      "depart": "Ankadifotsy",
+      "arrivee": "Ampasanimalo",
+      "distance": 794
+    },
+    {
+      "depart": "Antanimena",
+      "arrivee": "Ankorondrano",
+      "distance": 1671
+    },
+    {
+      "depart": "Antanimena",
+      "arrivee": "Andraharo",
+      "distance": 1524
+    },
+    {
+      "depart": "Antanimena",
+      "arrivee": "Manjakaray",
+      "distance": 1460
+    },
+    {
+      "depart": "Ankorondrano",
+      "arrivee": "Andraharo",
+      "distance": 714
+    },
+    {
+      "depart": "Andraharo",
+      "arrivee": "Ambohimanarina",
+      "distance": 2004
+    },
+    {
+      "depart": "Ankazomanga",
+      "arrivee": "Manjakaray",
+      "distance": 669
+    },
+    {
+      "depart": "Ambohimanarina",
+      "arrivee": "Ivandry",
+      "distance": 1477
+    },
+    {
+      "depart": "Ivandry",
+      "arrivee": "Analamahitsy",
+      "distance": 947
+    },
+    {
+      "depart": "Analamahitsy",
+      "arrivee": "Ampasampito",
+      "distance": 2224
+    },
+    {
+      "depart": "Ampasampito",
+      "arrivee": "Manjakaray",
+      "distance": 623
+    },
+    {
+      "depart": "Manjakaray",
+      "arrivee": "Ambohimanga",
+      "distance": 1006
+    },
+    {
+      "depart": "Besarety",
+      "arrivee": "Ampandrana",
+      "distance": 394
+    },
+    {
+      "depart": "Andohalo",
+      "arrivee": "Faravohitra",
+      "distance": 700
+    },
+    {
+      "depart": "Faravohitra",
+      "arrivee": "Ambanidia",
+      "distance": 1189
+    },
+    {
+      "depart": "Ampasanimalo",
+      "arrivee": "Ankadivato",
+      "distance": 421
+    },
+    {
+      "depart": "Ambanidia",
+      "arrivee": "Mandroseza",
+      "distance": 612
+    },
+    {
+      "depart": "Mandroseza",
+      "arrivee": "Ambohipo",
+      "distance": 639
+    },
+    {
+      "depart": "Mandroseza",
+      "arrivee": "Ankatso",
+      "distance": 421
+    },
+    {
+      "depart": "Ambohipo",
+      "arrivee": "Ankatso",
+      "distance": 566
+    },
+    {
+      "depart": "Ampefiloha",
+      "arrivee": "Isotry",
+      "distance": 457
+    },
+    {
+      "depart": "Ampefiloha",
+      "arrivee": "Antohomadinika",
+      "distance": 394
+    },
+    {
+      "depart": "SoixanteSeptHa",
+      "arrivee": "Isotry",
+      "distance": 537
+    },
+    {
+      "depart": "Andavamamba",
+      "arrivee": "Tsimbazaza",
+      "distance": 905
+    },
+    {
+      "depart": "Anosibe",
+      "arrivee": "Andavamamba",
+      "distance": 594
+    },
+    {
+      "depart": "Anosibe",
+      "arrivee": "Ankadimbahoaka",
+      "distance": 840
+    },
+    {
+      "depart": "Tsimbazaza",
+      "arrivee": "Ankadimbahoaka",
+      "distance": 1049
+    },
+    {
+      "depart": "Parking Analakely",
+      "arrivee": "Analakely",
+      "distance": 77
+    },
+    {
+      "depart": "Parking Anosy",
+      "arrivee": "Anosy",
+      "distance": 77
+    },
+    {
+      "depart": "Parking Behoririka",
+      "arrivee": "Behoririka",
+      "distance": 77
+    },
+    {
+      "depart": "Parking Mahamasina",
+      "arrivee": "Mahamasina",
+      "distance": 77
+    },
+    {
+      "depart": "Parking Ankorondrano",
+      "arrivee": "Ankorondrano",
+      "distance": 123
+    },
+    {
+      "depart": "Parking Andravoahangy",
+      "arrivee": "Andravoahangy",
+      "distance": 77
+    },
+    {
+      "depart": "Parking Tsaralalana",
+      "arrivee": "Tsaralalana",
+      "distance": 77
+    },
+    {
+      "depart": "Parking Ampefiloha",
+      "arrivee": "Ampefiloha",
+      "distance": 77
+    },
+    {
+      "depart": "Parking Antanimena",
+      "arrivee": "Antanimena",
+      "distance": 77
+    },
+    {
+      "depart": "Parking Andohalo",
       "arrivee": "Andohalo",
-      "distance": 2013
+      "distance": 77
     }
   ]
 }
