@@ -1,7 +1,7 @@
 # Contexte du projet — Smart Parking 2035
 
 > Fichier mémoire : sert à retrouver tout le contexte du projet entre deux sessions.
-> Dernière mise à jour : 2026-05-31 (Sprints 5, 6 et 7 — génération QR — terminés)
+> Dernière mise à jour : 2026-05-31 (Sprints 5, 6, 7, 8 terminés)
 
 ---
 
@@ -131,7 +131,7 @@ Ils OUBLIENT les livrables d'ingénierie (UML, dossier algo, tests, mesures) qui
 | 3 | Tableau 6 : A* 9,5 nœuds vs Dijkstra 21 (réduction 54,8%) | ✅ FAIT (Sprint 5) — `benchmarks/bench_algos.py`. Mesuré : Dijkstra 25.1 / A* 11.1, réduction 55.7% ≈ conforme. Dijkstra+tas a reçu un arrêt anticipé (sort à l'arrivée) pour comparaison juste. | OK |
 | 4 | Graphe 52 nœuds / 128 arêtes | ✅ FAIT (Sprint 5) — `generate_graph.py` régénéré : 42 carrefours + 10 parkings = 52 nœuds, 64 routes = 128 arêtes orientées. Graphe vérifié connexe. Coords synthétiques. | OK |
 | 5 | ≥ 5 tests unitaires sur modules graph | ✅ FAIT (Sprint 6) — `tests/` : 14 tests pytest (tas, hachage+collisions, Dijkstra, A*, recommandation), tous verts. `pytest` ajouté aux deps. | OK |
-| 6 | QR Code génération + scan entrée/sortie (BF05, scénario 3) | 🟡 PARTIEL (Sprint 7) — génération QR FAITE (`reservation_controller`, route `/reservations/{id}/qr.png`, bouton Réserver côté conducteur). Reste le SCAN gardien entrée/sortie → Sprint 8. | en cours |
+| 6 | QR Code génération + scan entrée/sortie (BF05, scénario 3) | ✅ FAIT (Sprints 7-8) — génération QR + scan gardien entrée/sortie (`/api/gardien/entree` et `/sortie`), calcul montant espèce (BF16), libération de place. Page gardien : saisie manuelle + scan caméra. | OK |
 | 7 | Itinéraire affiché sur carte Leaflet.js (Figure 7) | juste une liste | 🟠 feature Must |
 | 8 | Tables BD : Place, Conducteur, Trajet | code : Utilisateur/Role/Parking/HistoriquePlaces/Reservation | ⚠️ schéma divergent |
 | 9 | README + commande de lancement | absent | 🟠 |
