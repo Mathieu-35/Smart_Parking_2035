@@ -18,6 +18,7 @@
 # =============================================================
 
 import io
+import math
 import uuid
 from datetime import datetime, timedelta
 
@@ -26,6 +27,11 @@ from sqlalchemy.orm import Session
 
 from app.models import Parking, Reservation
 from app.controllers.parking_controller import ParkingController
+
+
+# Les jours de la semaine dans l'ordre de datetime.weekday()
+# (0 = lundi, 1 = mardi, ... 6 = dimanche).
+JOURS = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
 
 
 class ReservationController:
@@ -109,6 +115,101 @@ class ReservationController:
     def obtenir_par_code(db: Session, code: str) -> Reservation | None:
         """Renvoie la reservation qui porte ce code (ou None)."""
         return db.query(Reservation).filter(Reservation.code_qr == code).first()
+
+    # ---------------------------------------------------------
+    #  ENTREE : le gardien valide l'arrivee du vehicule
+    # ---------------------------------------------------------
+    @staticmethod
+    def valider_entree(db: Session, code: str) -> dict:
+        """Passe la reservation de 'confirmee' a 'arrivee'.
+
+        Renvoie un petit dictionnaire :
+           {"ok": True/False, "message": ..., "reservation": ...}
+        """
+        reservation = ReservationController.obtenir_par_code(db, code)
+
+        if reservation is None:
+            return {"ok": False, "message": "Code inconnu."}
+
+        if reservation.statut != "confirmee":
+            return {"ok": False,
+                    "message": "Entree impossible (statut actuel : " + reservation.statut + ")."}
+
+        # On note l'heure d'arrivee REELLE et on change le statut.
+        reservation.date_arrivee = datetime.utcnow()
+        reservation.statut = "arrivee"
+        db.commit()
+        db.refresh(reservation)
+
+        return {"ok": True, "message": "Entree validee.", "reservation": reservation}
+
+    # ---------------------------------------------------------
+    #  Calculer le montant a payer selon la duree
+    # ---------------------------------------------------------
+    @staticmethod
+    def calculer_montant(parking: Parking, date_arrivee: datetime, date_sortie: datetime) -> float:
+        """Montant = nombre d'heures (arrondi au-dessus) x tarif du jour.
+
+        On facture au minimum 1 heure.
+        """
+        # 1) Duree en heures.
+        secondes = (date_sortie - date_arrivee).total_seconds()
+        heures = secondes / 3600.0
+
+        # On arrondit a l'heure superieure, et au moins 1 heure.
+        heures_facturees = math.ceil(heures)
+        if heures_facturees < 1:
+            heures_facturees = 1
+
+        # 2) Tarif du jour d'arrivee (ex : 2.0 le lundi).
+        nom_du_jour = JOURS[date_arrivee.weekday()]
+        tarif = parking.tarification_par_jour.get(nom_du_jour, 2.0)
+
+        # 3) Montant total.
+        return round(heures_facturees * tarif, 2)
+
+    # ---------------------------------------------------------
+    #  SORTIE : le gardien valide le depart + calcule le montant
+    # ---------------------------------------------------------
+    @staticmethod
+    def valider_sortie(db: Session, code: str) -> dict:
+        """Passe la reservation de 'arrivee' a 'partie', calcule le
+        montant a payer en especes, et libere une place."""
+        reservation = ReservationController.obtenir_par_code(db, code)
+
+        if reservation is None:
+            return {"ok": False, "message": "Code inconnu."}
+
+        if reservation.statut != "arrivee":
+            return {"ok": False,
+                    "message": "Sortie impossible (statut actuel : " + reservation.statut + ")."}
+
+        parking = ParkingController.obtenir_parking(db, reservation.parking_id)
+        if parking is None:
+            return {"ok": False, "message": "Parking introuvable."}
+
+        # 1) On note l'heure de sortie et on calcule le montant.
+        maintenant = datetime.utcnow()
+        montant = ReservationController.calculer_montant(
+            parking, reservation.date_arrivee, maintenant
+        )
+
+        reservation.date_depart = maintenant
+        reservation.cout_total = montant
+        reservation.statut = "partie"
+        db.commit()
+        db.refresh(reservation)
+
+        # 2) On libere une place (et on l'enregistre dans l'historique).
+        ParkingController.mettre_a_jour_places(
+            db,
+            parking.id,
+            parking.places_disponibles + 1,
+            raison="liberation",
+        )
+
+        return {"ok": True, "message": "Sortie validee.",
+                "montant": montant, "reservation": reservation}
 
     # ---------------------------------------------------------
     #  Fabriquer l'image QR a partir d'un code

@@ -105,3 +105,49 @@ def image_qr(
 
     octets_png = ReservationController.generer_image_qr(reservation.code_qr)
     return Response(content=octets_png, media_type="image/png")
+
+
+# -------------------------------------------------------------
+#  4) GARDIEN : valider l'ENTREE d'un vehicule (scan du QR)
+# -------------------------------------------------------------
+@router.post("/api/gardien/entree")
+def api_gardien_entree(
+    code: str,
+    db: Session = Depends(get_db),
+):
+    """Le gardien valide l'entree a partir du code lu dans le QR.
+
+    Exemple : POST /api/gardien/entree?code=RES-3F8063
+    """
+    resultat = ReservationController.valider_entree(db, code)
+
+    reponse = {"ok": resultat["ok"], "message": resultat["message"]}
+    if resultat["ok"]:
+        reservation = resultat["reservation"]
+        reponse["reservation_id"] = reservation.id
+        reponse["statut"] = reservation.statut
+    return reponse
+
+
+# -------------------------------------------------------------
+#  5) GARDIEN : valider la SORTIE + montant a payer
+# -------------------------------------------------------------
+@router.post("/api/gardien/sortie")
+def api_gardien_sortie(
+    code: str,
+    db: Session = Depends(get_db),
+):
+    """Le gardien valide la sortie : calcule le montant en especes
+    et libere une place.
+
+    Exemple : POST /api/gardien/sortie?code=RES-3F8063
+    """
+    resultat = ReservationController.valider_sortie(db, code)
+
+    reponse = {"ok": resultat["ok"], "message": resultat["message"]}
+    if resultat["ok"]:
+        reservation = resultat["reservation"]
+        reponse["reservation_id"] = reservation.id
+        reponse["statut"] = reservation.statut
+        reponse["montant"] = resultat["montant"]
+    return reponse
