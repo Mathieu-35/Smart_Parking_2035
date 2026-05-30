@@ -16,6 +16,7 @@
 # =============================================================
 
 from app.graph.tas_min import TasMin
+from app.graph.table_hachage import TableHachage
 
 
 def plus_court_chemin(graphe, depart, arrivee):
@@ -40,8 +41,12 @@ def plus_court_chemin(graphe, depart, arrivee):
     tas = TasMin()
     tas.ajouter((0, depart))   # (distance 0, nom du depart)
 
-    # La liste des carrefours deja traites (pour ne pas les refaire).
-    traites = []
+    # Les carrefours deja traites, ranges dans une table de hachage
+    # (verifier "deja traite ?" se fait en O(1) en moyenne).
+    traites = TableHachage()
+
+    # Compteur : combien de carrefours on a vraiment traites (explores).
+    nombre_explores = 0
 
     # --- 3) Tant que le tas n'est pas vide ---
     while not tas.est_vide():
@@ -54,7 +59,8 @@ def plus_court_chemin(graphe, depart, arrivee):
             continue
 
         # On le marque comme traite.
-        traites.append(courant)
+        traites.inserer(courant, True)
+        nombre_explores = nombre_explores + 1
 
         # 3b) On regarde les voisins du carrefour courant.
         for voisin, distance_route in graphe.voisins_de(courant):
@@ -70,7 +76,7 @@ def plus_court_chemin(graphe, depart, arrivee):
 
     # --- 4) Si l'arrivee n'a jamais ete atteinte, pas de chemin ---
     if distances[arrivee] == infini:
-        return None, []
+        return None, [], nombre_explores
 
     # --- 5) On reconstruit le chemin en remontant les "precedents" ---
     chemin = []
@@ -81,4 +87,4 @@ def plus_court_chemin(graphe, depart, arrivee):
 
     chemin.reverse()
 
-    return distances[arrivee], chemin
+    return distances[arrivee], chemin, nombre_explores

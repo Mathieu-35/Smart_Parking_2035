@@ -25,6 +25,7 @@
 # =============================================================
 
 from app.graph.tas_min import TasMin
+from app.graph.table_hachage import TableHachage
 from app.graph.distance import distance_metres
 
 
@@ -62,7 +63,14 @@ def plus_court_chemin(graphe, depart, arrivee):
     tas = TasMin()
     tas.ajouter((estimation(depart), depart))
 
-    traites = []
+    # Les carrefours deja traites sont ranges dans une table de hachage
+    # (l'ensemble "ferme" du pseudo-code). Verifier "deja traite ?" se
+    # fait alors en O(1) en moyenne, au lieu de fouiller une liste.
+    traites = TableHachage()
+
+    # Compteur : combien de carrefours on a vraiment traites (explores).
+    # C'est ce chiffre qui montrera que A* explore MOINS que Dijkstra.
+    nombre_explores = 0
 
     # --- 3) Tant que le tas n'est pas vide ---
     while not tas.est_vide():
@@ -78,7 +86,8 @@ def plus_court_chemin(graphe, depart, arrivee):
         if courant == arrivee:
             break
 
-        traites.append(courant)
+        traites.inserer(courant, True)
+        nombre_explores = nombre_explores + 1
 
         # 3b) On regarde les voisins du carrefour courant.
         for voisin, distance_route in graphe.voisins_de(courant):
@@ -96,7 +105,7 @@ def plus_court_chemin(graphe, depart, arrivee):
 
     # --- 4) Si l'arrivee n'a jamais ete atteinte, pas de chemin ---
     if distances[arrivee] == infini:
-        return None, []
+        return None, [], nombre_explores
 
     # --- 5) On reconstruit le chemin en remontant les "precedents" ---
     chemin = []
@@ -107,4 +116,4 @@ def plus_court_chemin(graphe, depart, arrivee):
 
     chemin.reverse()
 
-    return distances[arrivee], chemin
+    return distances[arrivee], chemin, nombre_explores

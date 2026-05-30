@@ -71,7 +71,9 @@ def recommander_parkings(graphe, latitude, longitude, parkings):
         )
 
         # 3c) La distance par la route, avec A*, entre les 2 carrefours.
-        distance, chemin = a_etoile.plus_court_chemin(
+        #     A* renvoie aussi le nombre de carrefours explores ; ici on
+        #     ne s'en sert pas, donc on le met dans "_" (valeur ignoree).
+        distance, chemin, _ = a_etoile.plus_court_chemin(
             graphe, carrefour_depart, carrefour_parking
         )
 
