@@ -11,7 +11,7 @@ from app.exceptions import NotAuthenticatedException
 from app.graph import load_graph
 from app.graph.recommandation import recommander_parkings
 from app.models import Role, Utilisateur, Parking, HistoriquePlaces, Reservation  # noqa: F401
-from app.routes import auth, utilisateur, parking
+from app.routes import auth, utilisateur, parking, reservation
 
 app = FastAPI(title="Smart Parking 2035", docs_url="/api/docs")
 
@@ -29,6 +29,7 @@ app.state.graphe = load_graph()
 app.include_router(auth.router)
 app.include_router(utilisateur.router)
 app.include_router(parking.router)
+app.include_router(reservation.router)
 
 
 @app.exception_handler(NotAuthenticatedException)
@@ -99,6 +100,7 @@ def api_recommandation(request: Request, lat: float, lon: float, db: Session = D
     parkings = []
     for parking in parkings_en_base:
         parkings.append({
+            "id": parking.id,
             "nom": parking.nom,
             "latitude": parking.latitude,
             "longitude": parking.longitude,

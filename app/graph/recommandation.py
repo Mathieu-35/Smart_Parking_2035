@@ -82,7 +82,11 @@ def recommander_parkings(graphe, latitude, longitude, parkings):
             continue
 
         # 3d) On range ce parking dans les resultats.
+        #     On recopie aussi l'identifiant du parking (s'il existe)
+        #     pour pouvoir ensuite le reserver. .get(...) renvoie None
+        #     si la cle "id" n'est pas presente (cas des tests).
         resultats.append({
+            "id": parking.get("id"),
             "nom": parking["nom"],
             "places_disponibles": parking["places_disponibles"],
             "distance": distance,

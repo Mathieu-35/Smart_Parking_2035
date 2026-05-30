@@ -92,7 +92,11 @@ class Reservation(Base):
     # Statut
     statut = Column(String(50), default="confirmee")  # "confirmee", "arrivee", "partie", "annulee"
     cout_total = Column(Float, nullable=True)
-    
+
+    # Code secret unique de la reservation, encode dans le QR code.
+    # Le gardien le lit pour retrouver la reservation a l'entree/sortie.
+    code_qr = Column(String(40), nullable=True, unique=True)
+
     date_creation = Column(DateTime, default=datetime.utcnow)
     
     # Relations

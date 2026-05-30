@@ -21,25 +21,190 @@
 
       <div class="auth-title">Bonjour {{ request.session.get("user_nom", "") }}</div>
       <div class="auth-subtitle">
-        Espace conducteur — interface mobile en cours de developpement.
+        Trouvez le parking le plus proche de vous.
       </div>
 
-      <div style="margin: 24px 0; padding: 16px; background: var(--bg-subtle, #f5f5f5); border-radius: 8px;">
-        <p style="margin: 0 0 8px 0;"><strong>A venir prochainement :</strong></p>
-        <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
-          <li>Recherche de parkings a proximite</li>
-          <li>Recommandation du parking optimal</li>
-          <li>Calcul d'itineraire avec A*</li>
-          <li>Reservation et generation de QR Code</li>
-        </ul>
+      <!-- Le gros bouton : quand on clique, on demande la position GPS. -->
+      <button id="bouton-chercher" class="btn btn-primary"
+              style="width: 100%; justify-content: center; margin: 24px 0 12px 0;">
+        Trouver un parking pres de moi
+      </button>
+
+      <!-- Mode "position de test" : pour aller vite, sans attendre le GPS. -->
+      <div style="margin-bottom: 12px; padding: 12px; background: var(--bg-subtle, #f5f5f5); border-radius: 8px;">
+        <label for="liste-carrefours" style="display: block; margin-bottom: 6px; font-size: 14px;">
+          Ou choisir une position de test :
+        </label>
+        <select id="liste-carrefours" style="width: 100%; padding: 8px; margin-bottom: 8px;">
+          <option value="-18.91,47.521">Analakely</option>
+          <option value="-18.905,47.5215">Soarano</option>
+          <option value="-18.912,47.526">Antaninarenina</option>
+          <option value="-18.916,47.524">Ambohijatovo</option>
+          <option value="-18.92,47.521">Anosy</option>
+          <option value="-18.917,47.527">Mahamasina</option>
+          <option value="-18.911,47.518">Isoraka</option>
+          <option value="-18.907,47.518">Tsaralalana</option>
+          <option value="-18.903,47.527">Behoririka</option>
+          <option value="-18.9,47.532">Andravoahangy</option>
+          <option value="-18.88,47.523">Ankorondrano</option>
+          <option value="-18.918,47.53">Andohalo</option>
+        </select>
+        <button id="bouton-test" class="btn btn-secondary" style="width: 100%; justify-content: center;">
+          Chercher depuis cette position
+        </button>
       </div>
 
-      <a href="/auth/logout" class="btn btn-secondary" style="width: 100%; justify-content: center;">
+      <!-- Petite zone de message (chargement, erreurs...). -->
+      <div id="message" style="margin-bottom: 12px; color: var(--text-muted, #666);"></div>
+
+      <!-- La liste des parkings recommandes s'affichera ici. -->
+      <div id="resultats"></div>
+
+      <a href="/auth/logout" class="btn btn-secondary"
+         style="width: 100%; justify-content: center; margin-top: 16px;">
         Se deconnecter
       </a>
 
     </div>
   </div>
+
+  <!-- ============================================================= -->
+  <!--  Le JavaScript : ce qui se passe quand on clique le bouton.   -->
+  <!-- ============================================================= -->
+  <script>
+    // On retrouve les morceaux de la page dont on a besoin.
+    var bouton = document.getElementById("bouton-chercher");
+    var boutonTest = document.getElementById("bouton-test");
+    var listeCarrefours = document.getElementById("liste-carrefours");
+    var message = document.getElementById("message");
+    var resultats = document.getElementById("resultats");
+
+    // --- Bouton "position de test" : instantane, sans GPS ---
+    boutonTest.addEventListener("click", function () {
+      // La valeur choisie ressemble a "-18.905,47.5215".
+      // On la coupe au niveau de la virgule pour separer lat et lon.
+      var morceaux = listeCarrefours.value.split(",");
+      var lat = morceaux[0];
+      var lon = morceaux[1];
+
+      // On reutilise exactement le meme code que pour le GPS.
+      chercherParkings(lat, lon);
+    });
+
+    // Quand on clique sur le bouton...
+    bouton.addEventListener("click", function () {
+
+      // 1) On verifie que le navigateur sait donner la position GPS.
+      if (!navigator.geolocation) {
+        message.textContent = "Votre navigateur ne sait pas donner votre position.";
+        return;
+      }
+
+      // 2) On previent l'utilisateur et on vide les anciens resultats.
+      message.textContent = "Recherche de votre position... (cela peut prendre quelques secondes)";
+      resultats.innerHTML = "";
+
+      // 3) Quelques reglages pour que la localisation soit plus rapide.
+      var options = {
+        // On ne demande PAS la precision GPS maximale : c'est plus rapide,
+        // et inutile ici (on cherche juste le carrefour le plus proche).
+        enableHighAccuracy: false,
+        // On arrete d'attendre apres 10 secondes (10000 millisecondes).
+        timeout: 10000,
+        // On autorise une position deja connue de moins d'1 minute
+        // (60000 ms) : si on recherche a nouveau, c'est quasi instantane.
+        maximumAge: 60000
+      };
+
+      // 4) On demande la position. Le navigateur affiche un popup
+      //    "Autoriser la localisation ?". Ensuite il appelle soit
+      //    la fonction de succes, soit la fonction d'erreur.
+      navigator.geolocation.getCurrentPosition(succes, erreur, options);
+    });
+
+    // --- Si on a reussi a avoir la position GPS ---
+    function succes(position) {
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+      chercherParkings(lat, lon);
+    }
+
+    // --- Appeler l'endpoint et afficher les parkings ---
+    //  (utilise aussi bien par le GPS que par la position de test)
+    function chercherParkings(lat, lon) {
+      message.textContent = "Recherche des parkings...";
+
+      // On appelle notre endpoint avec la position donnee.
+      var url = "/api/recommandation?lat=" + lat + "&lon=" + lon;
+
+      fetch(url)
+        .then(function (reponse) { return reponse.json(); })
+        .then(function (donnees) { afficher(donnees); })
+        .catch(function () {
+          message.textContent = "Une erreur est survenue. Reessayez.";
+        });
+    }
+
+    // --- Si on n'a PAS pu avoir la position ---
+    //  Le navigateur nous donne un "code" qui dit pourquoi ca a echoue.
+    function erreur(probleme) {
+      if (probleme.code === 1) {
+        message.textContent = "Vous avez refuse la localisation. Autorisez-la puis reessayez.";
+      } else if (probleme.code === 3) {
+        message.textContent = "La localisation a pris trop de temps. Reessayez.";
+      } else {
+        message.textContent = "Impossible d'obtenir votre position. Reessayez.";
+      }
+    }
+
+    // --- Afficher la liste des parkings recommandes ---
+    function afficher(donnees) {
+      var liste = donnees.parkings;
+
+      // Aucun parking dispo ?
+      if (!liste || liste.length === 0) {
+        message.textContent = "Aucun parking disponible pour le moment.";
+        return;
+      }
+
+      message.textContent = liste.length + " parking(s) trouve(s) :";
+
+      // On construit une petite carte pour chaque parking.
+      var html = "";
+      for (var i = 0; i < liste.length; i++) {
+        var p = liste[i];
+        html = html +
+          '<div style="padding: 12px; margin-bottom: 8px; background: var(--bg-subtle, #f5f5f5); border-radius: 8px;">' +
+            '<strong>' + (i + 1) + '. ' + p.nom + '</strong><br>' +
+            'Distance : ' + p.distance + ' m<br>' +
+            'Places libres : ' + p.places_disponibles + '<br>' +
+            // Bouton "Reserver" : il appelle reserver(...) avec l'id du parking.
+            '<button class="btn btn-primary" style="margin-top: 8px; width: 100%; justify-content: center;" ' +
+              'onclick="reserver(' + p.id + ')">Reserver une place</button>' +
+          '</div>';
+      }
+      resultats.innerHTML = html;
+    }
+
+    // --- Reserver une place dans un parking ---
+    function reserver(parkingId) {
+      message.textContent = "Reservation en cours...";
+
+      // On cree la reservation cote serveur (methode POST).
+      fetch("/api/reservations?parking_id=" + parkingId, { method: "POST" })
+        .then(function (reponse) {
+          if (!reponse.ok) { throw new Error("echec"); }
+          return reponse.json();
+        })
+        .then(function (donnees) {
+          // On va sur la page qui affiche le QR code de la reservation.
+          window.location.href = "/reservations/" + donnees.reservation_id;
+        })
+        .catch(function () {
+          message.textContent = "Reservation impossible (parking complet ?). Reessayez.";
+        });
+    }
+  </script>
 
 </body>
 </html>

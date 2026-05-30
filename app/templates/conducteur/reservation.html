@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ma reservation — Smart Parking 2035</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="auth-body">
+
+  <div class="auth-wrapper" style="max-width: 480px;">
+    <div class="auth-card" style="text-align: center;">
+
+      <div class="auth-brand" style="justify-content: center;">
+        <div class="auth-brand-icon">SP</div>
+        <div>
+          <div class="auth-brand-name">Smart Parking</div>
+          <div class="auth-brand-year">2035</div>
+        </div>
+      </div>
+
+      <div class="auth-title">Reservation confirmee</div>
+      <div class="auth-subtitle">
+        Presentez ce QR code au gardien a l'entree du parking.
+      </div>
+
+      <!-- Le parking reserve -->
+      <div style="margin: 16px 0; padding: 12px; background: var(--bg-subtle, #f5f5f5); border-radius: 8px;">
+        {% if parking %}
+        <strong>{{ parking.nom }}</strong><br>
+        <span style="color: var(--text-muted, #666);">{{ parking.adresse }}</span>
+        {% else %}
+        <strong>Parking #{{ reservation.parking_id }}</strong>
+        {% endif %}
+      </div>
+
+      <!-- L'image du QR code (servie par l'endpoint /reservations/{id}/qr.png) -->
+      <img src="/reservations/{{ reservation.id }}/qr.png"
+           alt="QR code de la reservation"
+           style="width: 220px; height: 220px; margin: 8px auto;" />
+
+      <!-- Le code en clair, au cas ou le scan ne marche pas -->
+      <div style="margin: 12px 0; font-size: 18px; letter-spacing: 1px;">
+        Code : <strong>{{ reservation.code_qr }}</strong>
+      </div>
+
+      <div style="font-size: 14px; color: var(--text-muted, #666); margin-bottom: 16px;">
+        Statut : {{ reservation.statut }}
+      </div>
+
+      <a href="/conducteur/" class="btn btn-primary"
+         style="width: 100%; justify-content: center;">
+        Retour a l'accueil
+      </a>
+
+    </div>
+  </div>
+
+</body>
+</html>
