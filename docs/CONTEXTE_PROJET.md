@@ -1,7 +1,7 @@
 # Contexte du projet — Smart Parking 2035
 
 > Fichier mémoire : sert à retrouver tout le contexte du projet entre deux sessions.
-> Dernière mise à jour : 2026-05-30
+> Dernière mise à jour : 2026-05-31 (Sprint 5 terminé)
 
 ---
 
@@ -126,10 +126,10 @@ Ils OUBLIENT les livrables d'ingénierie (UML, dossier algo, tests, mesures) qui
 
 | # | Affirmé dans le rapport | Réalité code | Priorité |
 |---|---|---|---|
-| 1 | Table de hachage implémentée + mesurée (3e structure obligatoire) | absente | 🔴 disqualif |
-| 2 | Tableau 5 : tas 38ms / hachage 12ms / liste 2340ms (100k ops) | aucun script de mesure | 🔴 |
-| 3 | Tableau 6 : A* 9,5 nœuds vs Dijkstra 21 (réduction 54,8%) | algos ne comptent pas les nœuds explorés | 🔴 |
-| 4 | Graphe 52 nœuds / 128 arêtes | json réel = 12 nœuds / 15 arêtes | ⚠️ visible via /api/graphe/stats |
+| 1 | Table de hachage implémentée + mesurée (3e structure obligatoire) | ✅ FAIT (Sprint 4) — `table_hachage.py`, branchée dans A*/Dijkstra | OK |
+| 2 | Tableau 5 : tas 38ms / hachage 12ms / liste 2340ms (100k ops) | ✅ FAIT (Sprint 5) — `benchmarks/bench_structures.py`. Mesuré : liste 1784ms / tas 613ms / hachage 284ms. ⚠️ ORDRE conforme (liste ≫ tas > hachage) mais ms ≠ rapport (impl. pure Python, dépend machine). À expliquer en soutenance. | OK (à nuancer) |
+| 3 | Tableau 6 : A* 9,5 nœuds vs Dijkstra 21 (réduction 54,8%) | ✅ FAIT (Sprint 5) — `benchmarks/bench_algos.py`. Mesuré : Dijkstra 25.1 / A* 11.1, réduction 55.7% ≈ conforme. Dijkstra+tas a reçu un arrêt anticipé (sort à l'arrivée) pour comparaison juste. | OK |
+| 4 | Graphe 52 nœuds / 128 arêtes | ✅ FAIT (Sprint 5) — `generate_graph.py` régénéré : 42 carrefours + 10 parkings = 52 nœuds, 64 routes = 128 arêtes orientées. Graphe vérifié connexe. Coords synthétiques. | OK |
 | 5 | ≥ 5 tests unitaires sur modules graph | aucun test | 🟠 qualité |
 | 6 | QR Code génération + scan entrée/sortie (BF05, scénario 3) | non codé | 🟠 feature Must |
 | 7 | Itinéraire affiché sur carte Leaflet.js (Figure 7) | juste une liste | 🟠 feature Must |
