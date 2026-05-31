@@ -33,14 +33,22 @@
     html.pwa-standalone .sidebar,
     html.pwa-standalone .main-content { display: none !important; }
 
-    /* ...et on affiche le message plein ecran a la place. */
+    /* ...et on affiche le message en PLEIN ECRAN, par-dessus tout.
+       On utilise "position: fixed" + "inset: 0" pour couvrir tout
+       l'ecran : sinon, comme le body de l'admin est en flex, le
+       message se collerait a gauche au lieu d'etre centre. */
     html.pwa-standalone .pwa-block {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      min-height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #ffffff;
       padding: 24px;
     }
   </style>
