@@ -250,6 +250,26 @@
       var ligne = L.polyline(points, { color: "blue", weight: 5 }).addTo(carte);
       dessinsCarte.push(ligne);
 
+      // 3bis) On pose un petit point sur CHAQUE carrefour traverse, avec
+      //       son nom en popup. Ca montre clairement que la ligne passe
+      //       par une suite de carrefours (et non "au hasard").
+      //       parking.chemin contient les noms, dans le meme ordre que
+      //       les points (chemin_coords) : on les parcourt ensemble.
+      var noms = parking.chemin;
+      for (var c = 0; c < points.length; c++) {
+        var pastille = L.circleMarker(points[c], {
+          radius: 5,
+          color: "blue",
+          fillColor: "white",
+          fillOpacity: 1
+        }).addTo(carte);
+        // Si on a le nom de ce carrefour, on l'affiche au clic.
+        if (noms && noms[c]) {
+          pastille.bindPopup((c + 1) + ". " + noms[c]);
+        }
+        dessinsCarte.push(pastille);
+      }
+
       // 4) Un marqueur VERT au depart (position du conducteur).
       if (positionConducteur !== null) {
         var depart = L.marker(positionConducteur).addTo(carte);
