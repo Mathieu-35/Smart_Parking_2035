@@ -1,7 +1,7 @@
 # Contexte du projet — Smart Parking 2035
 
 > Fichier mémoire : sert à retrouver tout le contexte du projet entre deux sessions.
-> Dernière mise à jour : 2026-05-31 (Sprints 5, 6, 7, 8, 9 terminés)
+> Dernière mise à jour : 2026-05-31 (Sprints 5, 6, 7, 8, 9, 10 terminés)
 
 ---
 
@@ -93,7 +93,7 @@ Exigences obligatoires :
 - Dossier algorithmique (plan 7 points).
 - ≥ 5 tests unitaires sur les modules `app/graph/`.
 - README + réorganisation dépôt (`/docs /src /data`).
-- Couche PWA (manifest, service worker, icônes) pour gardien + conducteur.
+- ~~Couche PWA (manifest, service worker, icônes) pour gardien + conducteur.~~ ✅ FAIT (Sprint 10) — `manifest.json`, `sw.js` (servis à la racine via main.py), `offline.html`, icônes 192/512, branchés dans conducteur+gardien (installable + hors-ligne).
 - Features : réservation, QR code, paiement espèce, calcul montant, stats admin (BF10-16).
 
 ## 7. Besoins fonctionnels (rappel)
