@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Espace gardien — Smart Parking 2035</title>
   <link rel="stylesheet" href="/static/css/style.css" />
+  <!-- PWA : le manifeste (nom, icones, couleurs) rend l'app installable. -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1e3a8a" />
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
 </head>
 <body class="auth-body">
 
@@ -59,6 +63,13 @@
 
     </div>
   </div>
+
+  <!-- PWA : on active le service worker (cache + hors-ligne). -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+  </script>
 
   <!-- Librairie de scan QR par la camera (chargee depuis internet). -->
   <script src="https://unpkg.com/html5-qrcode" defer></script>

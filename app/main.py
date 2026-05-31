@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -53,6 +53,28 @@ def root(request: Request):
     # Role inconnu : on deconnecte par securite
     request.session.clear()
     return RedirectResponse(url="/auth/login")
+
+
+# -------------------------------------------------------------
+#  PWA : le service worker et le manifeste, servis a la RACINE
+# -------------------------------------------------------------
+#  Le service worker doit etre a l'adresse "/sw.js" (et non
+#  "/static/...") pour pouvoir controler TOUTES les pages du site
+#  (sa "portee" est le dossier d'ou il est servi).
+@app.get("/sw.js")
+def service_worker():
+    return FileResponse(
+        "app/static/sw.js",
+        media_type="application/javascript",
+    )
+
+
+@app.get("/manifest.json")
+def manifest():
+    return FileResponse(
+        "app/static/manifest.json",
+        media_type="application/manifest+json",
+    )
 
 
 @app.get("/api/graphe/stats")
