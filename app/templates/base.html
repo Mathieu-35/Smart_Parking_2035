@@ -5,8 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}Smart Parking 2035{% endblock %}</title>
   <link rel="stylesheet" href="/static/css/style.css" />
+
+  <!-- ========================================================= -->
+  <!--  CLOISONNEMENT : l'espace admin est une interface WEB.    -->
+  <!--  S'il est ouvert DANS l'app mobile installee (mode        -->
+  <!--  "standalone"), on cache l'admin et on affiche un message.-->
+  <!-- ========================================================= -->
+  <script>
+    // Le navigateur dit "standalone" quand la page tourne dans
+    // l'application installee (et non dans un onglet classique).
+    var dansAppInstallee =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+
+    if (dansAppInstallee) {
+      // On marque la page tres tot (avant l'affichage) pour eviter
+      // que l'admin apparaisse une fraction de seconde.
+      document.documentElement.className += " pwa-standalone";
+    }
+  </script>
+
+  <style>
+    /* Le message de blocage est cache par defaut. */
+    .pwa-block { display: none; }
+
+    /* Dans l'app installee : on cache l'admin... */
+    html.pwa-standalone .sidebar,
+    html.pwa-standalone .main-content { display: none !important; }
+
+    /* ...et on affiche le message plein ecran a la place. */
+    html.pwa-standalone .pwa-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Message affiche UNIQUEMENT si l'admin est ouvert dans l'app mobile. -->
+  <div class="pwa-block">
+    <div class="auth-brand" style="justify-content: center; margin-bottom: 16px;">
+      <div class="auth-brand-icon">SP</div>
+      <div>
+        <div class="auth-brand-name">Smart Parking</div>
+        <div class="auth-brand-year">2035</div>
+      </div>
+    </div>
+    <h2 style="margin: 8px 0;">Espace administrateur</h2>
+    <p style="max-width: 360px; color: #555;">
+      L'espace administrateur s'utilise dans un <strong>navigateur web</strong>,
+      pas dans l'application mobile.<br><br>
+      Ouvrez l'adresse du site dans Chrome ou Firefox sur un ordinateur.
+    </p>
+    <a href="/auth/logout" class="btn btn-secondary"
+       style="margin-top: 16px; justify-content: center;">
+      Se deconnecter
+    </a>
+  </div>
 
   <aside class="sidebar" id="sidebar">
 
