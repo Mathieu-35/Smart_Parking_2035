@@ -133,10 +133,54 @@ def api_recommandation(request: Request, lat: float, lon: float, db: Session = D
     resultats = recommander_parkings(graphe, lat, lon, parkings)
 
     # 5) On renvoie le tout en JSON.
+    #    On ajoute le nombre TOTAL de carrefours du reseau : ca permet
+    #    d'afficher "A* a explore X carrefours sur 52" cote interface.
     return {
         "position_conducteur": {"latitude": lat, "longitude": lon},
         "nombre_parkings_proposes": len(resultats),
+        "nombre_noeuds_total": len(graphe.noeuds),
         "parkings": resultats,
+    }
+
+
+@app.get("/api/graphe/carte")
+def graphe_carte(request: Request):
+    """Renvoie tout le reseau (carrefours + routes) pour le dessiner.
+
+    Sert a afficher le graphe complet en gris sur la carte : le prof
+    voit ainsi toutes les routes possibles, et donc pourquoi A* a
+    choisi tel chemin plutot qu'un autre.
+    """
+    graphe = request.app.state.graphe
+
+    # 1) Tous les carrefours, avec leur position.
+    noeuds = []
+    for nom, infos in graphe.noeuds.items():
+        noeuds.append({
+            "nom": nom,
+            "latitude": infos["latitude"],
+            "longitude": infos["longitude"],
+        })
+
+    # 2) Toutes les routes, chacune une seule fois.
+    #    Les voisins sont ranges dans les 2 sens (A->B et B->A) : pour
+    #    ne dessiner chaque route qu'une fois, on ne garde que le sens
+    #    ou le nom de depart est "avant" celui d'arrivee (ordre alpha).
+    aretes = []
+    for depart, liste_voisins in graphe.voisins.items():
+        for arrivee, _distance in liste_voisins:
+            if depart < arrivee:
+                a = graphe.noeuds[depart]
+                b = graphe.noeuds[arrivee]
+                aretes.append([
+                    [a["latitude"], a["longitude"]],
+                    [b["latitude"], b["longitude"]],
+                ])
+
+    return {
+        "nombre_noeuds": len(noeuds),
+        "noeuds": noeuds,
+        "aretes": aretes,
     }
 
 

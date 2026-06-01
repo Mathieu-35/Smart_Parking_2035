@@ -71,9 +71,9 @@ def recommander_parkings(graphe, latitude, longitude, parkings):
         )
 
         # 3c) La distance par la route, avec A*, entre les 2 carrefours.
-        #     A* renvoie aussi le nombre de carrefours explores ; ici on
-        #     ne s'en sert pas, donc on le met dans "_" (valeur ignoree).
-        distance, chemin, _ = a_etoile.plus_court_chemin(
+        #     A* renvoie aussi le nombre de carrefours explores : on le
+        #     garde pour MONTRER a l'ecran que A* explore peu (optimisation).
+        distance, chemin, nombre_explores = a_etoile.plus_court_chemin(
             graphe, carrefour_depart, carrefour_parking
         )
 
@@ -103,6 +103,7 @@ def recommander_parkings(graphe, latitude, longitude, parkings):
             "distance": distance,
             "chemin": chemin,
             "chemin_coords": chemin_coords,
+            "nombre_explores": nombre_explores,
         })
 
     # --- 4) On trie du plus proche au plus loin ---

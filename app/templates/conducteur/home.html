@@ -114,6 +114,22 @@
     // On garde la ligne et les marqueurs deja dessines pour pouvoir les
     // effacer avant de dessiner un nouveau trajet.
     var dessinsCarte = [];
+    // Les traits gris du reseau complet (dessines une seule fois).
+    var dessinsReseau = [];
+
+    // Le reseau complet (tous les carrefours + toutes les routes) et le
+    // nombre total de carrefours. On le charge une fois au demarrage pour
+    // pouvoir dessiner le graphe en gris sous le trajet choisi.
+    var reseau = null;
+    var nombreNoeudsTotal = 52;
+
+    fetch("/api/graphe/carte")
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        reseau = d;
+        nombreNoeudsTotal = d.nombre_noeuds;
+      })
+      .catch(function () { /* pas grave : la carte marchera sans le gris */ });
 
     // --- Bouton "position de test" : instantane, sans GPS ---
     boutonTest.addEventListener("click", function () {
@@ -209,17 +225,40 @@
       // On garde la liste en memoire pour le bouton "Voir le trajet".
       derniersParkings = liste;
 
+      // On retient le nombre total de carrefours (pour "X sur 52").
+      if (donnees.nombre_noeuds_total) {
+        nombreNoeudsTotal = donnees.nombre_noeuds_total;
+      }
+
       message.textContent = liste.length + " parking(s) trouve(s) :";
 
       // On construit une petite carte pour chaque parking.
       var html = "";
       for (var i = 0; i < liste.length; i++) {
         var p = liste[i];
+
+        // L'itineraire en toutes lettres : "Anosy -> Isoraka -> ... -> 67ha".
+        var itineraire = p.chemin.join(" → ");
+
+        // Le 1er parking de la liste = le plus proche = le recommande.
+        var badge = "";
+        if (i === 0) {
+          badge = ' <span style="color: green; font-weight: bold;">✅ Recommande</span>';
+        }
+
         html = html +
           '<div style="padding: 12px; margin-bottom: 8px; background: var(--bg-subtle, #f5f5f5); border-radius: 8px;">' +
-            '<strong>' + (i + 1) + '. ' + p.nom + '</strong><br>' +
-            'Distance : ' + p.distance + ' m<br>' +
+            '<strong>' + (i + 1) + '. ' + p.nom + '</strong>' + badge + '<br>' +
+            'Distance par la route : <strong>' + p.distance + ' m</strong><br>' +
             'Places libres : ' + p.places_disponibles + '<br>' +
+            // L'itineraire choisi par A* (la suite de carrefours).
+            '<div style="margin-top: 6px; font-size: 13px; color: #444;">' +
+              'Itineraire : ' + itineraire +
+            '</div>' +
+            // La preuve d'optimisation : A* explore peu de carrefours.
+            '<div style="margin-top: 4px; font-size: 12px; color: #777;">' +
+              'A* a explore ' + p.nombre_explores + ' carrefours sur ' + nombreNoeudsTotal +
+            '</div>' +
             // Bouton "Voir le trajet" : dessine l'itineraire sur la carte.
             '<button class="btn btn-secondary" style="margin-top: 8px; width: 100%; justify-content: center;" ' +
               'onclick="afficherTrajet(' + i + ')">Voir le trajet</button>' +
@@ -229,6 +268,33 @@
           '</div>';
       }
       resultats.innerHTML = html;
+    }
+
+    // --- Dessiner TOUT le reseau en gris (carrefours + routes) ---
+    //  Appelee une seule fois, a la creation de la carte. Le gris reste
+    //  sous le trajet bleu (qu'on redessine a chaque "Voir le trajet").
+    function dessinerReseauGris() {
+      if (reseau === null) {
+        return;   // le reseau n'est pas (encore) charge : tant pis.
+      }
+
+      // 1) Toutes les routes, en traits gris fins.
+      for (var a = 0; a < reseau.aretes.length; a++) {
+        var trait = L.polyline(reseau.aretes[a], {
+          color: "#bbbbbb", weight: 2
+        }).addTo(carte);
+        dessinsReseau.push(trait);
+      }
+
+      // 2) Tous les carrefours, en petits points gris avec leur nom.
+      for (var n = 0; n < reseau.noeuds.length; n++) {
+        var noeud = reseau.noeuds[n];
+        var point = L.circleMarker([noeud.latitude, noeud.longitude], {
+          radius: 3, color: "#999999", fillColor: "#cccccc", fillOpacity: 1
+        }).addTo(carte);
+        point.bindPopup(noeud.nom);
+        dessinsReseau.push(point);
+      }
     }
 
     // --- Dessiner le trajet d'un parking sur la carte Leaflet ---
@@ -253,6 +319,11 @@
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "© OpenStreetMap"
         }).addTo(carte);
+
+        // On dessine TOUT le reseau en gris (une seule fois), pour que
+        // le prof voie toutes les routes possibles et comprenne pourquoi
+        // A* a choisi tel chemin plutot qu'un autre.
+        dessinerReseauGris();
       }
 
       // 2) On efface les dessins precedents (ancienne ligne et marqueurs).
