@@ -1,3 +1,15 @@
+/* ─── Reglages "app mobile" (anti-zoom navigateur) ───────── */
+/* Empeche le double-tap qui zoome et le surlignage gris au
+   toucher : ca donne une sensation de vraie application et non
+   de page web. Sans effet sur l'usage bureau (admin). */
+html {
+  -webkit-text-size-adjust: 100%;   /* iOS ne grossit pas le texte tout seul */
+}
+body {
+  -webkit-tap-highlight-color: transparent;  /* pas de flash gris au toucher */
+  touch-action: manipulation;                /* coupe le double-tap zoom */
+}
+
 /* ─── Variables ─────────────────────────────────────────── */
 :root {
   --blue:          #0052CC;
