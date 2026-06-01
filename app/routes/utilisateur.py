@@ -38,10 +38,14 @@ def list_utilisateurs(
 
 @router.get("/creer", response_class=HTMLResponse)
 def create_form(request: Request, db: Session = Depends(get_db)):
-    roles = role_controller.get_all(db)
+    # Un administrateur ne cree QUE des comptes gardien (cahier des
+    # charges, BF15). Les conducteurs s'inscrivent eux-memes, et le
+    # premier admin est cree par le script create_admin.py.
+    # On ne propose donc que le role "gardien" dans le formulaire.
+    gardien = role_controller.get_by_nom(db, "gardien")
     return templates.TemplateResponse("utilisateurs/form.html", {
         "request": request,
-        "roles": roles,
+        "roles": [gardien] if gardien else [],
         "utilisateur": None,
         "action": "creer",
         "error": None,
@@ -60,6 +64,13 @@ def create_utilisateur(
     actif: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
+    # SECURITE : on force le role a "gardien", quel que soit le role_id
+    # envoye par le formulaire. Ainsi, meme une requete bricolee ne peut
+    # pas creer un admin ou un conducteur depuis cette page.
+    gardien = role_controller.get_by_nom(db, "gardien")
+    if gardien is not None:
+        role_id = gardien.id
+
     try:
         utilisateur_controller.create(
             db=db,
@@ -71,12 +82,11 @@ def create_utilisateur(
             role_id=role_id,
             actif=actif == "on",
         )
-        return RedirectResponse(url="/utilisateurs/?msg=Utilisateur créé avec succès", status_code=303)
+        return RedirectResponse(url="/utilisateurs/?msg=Compte gardien créé avec succès", status_code=303)
     except Exception as e:
-        roles = role_controller.get_all(db)
         return templates.TemplateResponse("utilisateurs/form.html", {
             "request": request,
-            "roles": roles,
+            "roles": [gardien] if gardien else [],
             "utilisateur": None,
             "action": "creer",
             "error": "Cet email est déjà utilisé ou les données sont invalides.",

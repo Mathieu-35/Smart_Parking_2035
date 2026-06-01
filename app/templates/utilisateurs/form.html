@@ -83,15 +83,22 @@
 
         <div class="form-group">
           <label class="form-label" for="role_id">Role <span class="required">*</span></label>
-          <select class="form-control" id="role_id" name="role_id" required>
-            <option value="" disabled {% if not utilisateur %}selected{% endif %}>Selectionner un role</option>
-            {% for role in roles %}
-            <option value="{{ role.id }}"
-              {% if utilisateur and utilisateur.role_id == role.id %}selected{% endif %}>
-              {{ role.nom | capitalize }}
-            </option>
-            {% endfor %}
-          </select>
+          {% if action == 'creer' %}
+            {# Un administrateur ne cree que des comptes gardien (BF15). #}
+            <input class="form-control" type="text" value="Gardien" disabled />
+            <input type="hidden" name="role_id" value="{{ roles[0].id if roles else '' }}" />
+            <div class="form-hint">Un administrateur cree uniquement des comptes gardien.</div>
+          {% else %}
+            <select class="form-control" id="role_id" name="role_id" required>
+              <option value="" disabled>Selectionner un role</option>
+              {% for role in roles %}
+              <option value="{{ role.id }}"
+                {% if utilisateur and utilisateur.role_id == role.id %}selected{% endif %}>
+                {{ role.nom | capitalize }}
+              </option>
+              {% endfor %}
+            </select>
+          {% endif %}
         </div>
 
         <div class="form-group" style="justify-content: flex-end;">
