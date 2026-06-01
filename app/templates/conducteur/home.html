@@ -278,19 +278,19 @@
         return;   // le reseau n'est pas (encore) charge : tant pis.
       }
 
-      // 1) Toutes les routes, en traits gris fins.
+      // 1) Toutes les routes, en traits ORANGE (bien visibles).
       for (var a = 0; a < reseau.aretes.length; a++) {
         var trait = L.polyline(reseau.aretes[a], {
-          color: "#bbbbbb", weight: 2
+          color: "#ff8c00", weight: 2, opacity: 0.8
         }).addTo(carte);
         dessinsReseau.push(trait);
       }
 
-      // 2) Tous les carrefours, en petits points gris avec leur nom.
+      // 2) Tous les carrefours, en petits points orange avec leur nom.
       for (var n = 0; n < reseau.noeuds.length; n++) {
         var noeud = reseau.noeuds[n];
         var point = L.circleMarker([noeud.latitude, noeud.longitude], {
-          radius: 3, color: "#999999", fillColor: "#cccccc", fillOpacity: 1
+          radius: 3, color: "#cc6600", fillColor: "#ffae42", fillOpacity: 1
         }).addTo(carte);
         point.bindPopup(noeud.nom);
         dessinsReseau.push(point);
@@ -356,20 +356,43 @@
         dessinsCarte.push(pastille);
       }
 
-      // 4) Un marqueur VERT au depart (position du conducteur).
+      // 4) Le marqueur du PARKING d'arrivee (sa vraie position).
+      var pointParking = [parking.latitude, parking.longitude];
+      var arrivee = L.marker(pointParking).addTo(carte);
+      arrivee.bindPopup(parking.nom);
+      dessinsCarte.push(arrivee);
+
+      // 4bis) Le "dernier bout" : du dernier carrefour JUSQU'AU parking.
+      //       A* relie carrefour -> carrefour ; il reste un acces final
+      //       entre le carrefour le plus proche et le parking reel.
+      //       On le trace en POINTILLES bleus pour que la ligne arrive
+      //       bien jusqu'au repere du parking.
+      var dernierCarrefour = points[points.length - 1];
+      var accesParking = L.polyline([dernierCarrefour, pointParking], {
+        color: "blue", weight: 3, dashArray: "6, 8"
+      }).addTo(carte);
+      dessinsCarte.push(accesParking);
+
+      // 5) Un marqueur au depart (position du conducteur) + le "1er bout"
+      //    en pointilles : de la position jusqu'au 1er carrefour du trajet.
       if (positionConducteur !== null) {
         var depart = L.marker(positionConducteur).addTo(carte);
         depart.bindPopup("Vous etes ici");
         dessinsCarte.push(depart);
+
+        var accesDepart = L.polyline([positionConducteur, points[0]], {
+          color: "blue", weight: 3, dashArray: "6, 8"
+        }).addTo(carte);
+        dessinsCarte.push(accesDepart);
       }
 
-      // 5) Un marqueur sur le PARKING d'arrivee.
-      var arrivee = L.marker([parking.latitude, parking.longitude]).addTo(carte);
-      arrivee.bindPopup(parking.nom);
-      dessinsCarte.push(arrivee);
-
-      // 6) On cadre la carte pour que tout le trajet soit visible.
-      carte.fitBounds(ligne.getBounds(), { padding: [30, 30] });
+      // 6) On cadre la carte pour que TOUT soit visible (depart, trajet,
+      //    parking et les deux bouts en pointilles).
+      var tousLesPoints = points.concat([pointParking]);
+      if (positionConducteur !== null) {
+        tousLesPoints = tousLesPoints.concat([positionConducteur]);
+      }
+      carte.fitBounds(L.latLngBounds(tousLesPoints), { padding: [30, 30] });
 
       // Leaflet a parfois besoin qu'on lui dise que sa taille a change
       // (car la carte etait cachee juste avant). On le force ici.
