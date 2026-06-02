@@ -36,16 +36,22 @@ def list_utilisateurs(
     })
 
 
+def _roles_creables(db: Session):
+    """Les roles qu'un admin a le droit de creer : gardien + administrateur.
+    JAMAIS conducteur (ceux-la s'inscrivent eux-memes)."""
+    gardien = role_controller.get_by_nom(db, "gardien")
+    admin = role_controller.get_by_nom(db, "administrateur")
+    return [r for r in [gardien, admin] if r is not None]
+
+
 @router.get("/creer", response_class=HTMLResponse)
 def create_form(request: Request, db: Session = Depends(get_db)):
-    # Un administrateur ne cree QUE des comptes gardien (cahier des
-    # charges, BF15). Les conducteurs s'inscrivent eux-memes, et le
-    # premier admin est cree par le script create_admin.py.
-    # On ne propose donc que le role "gardien" dans le formulaire.
-    gardien = role_controller.get_by_nom(db, "gardien")
+    # Un admin peut creer un compte gardien OU un autre administrateur
+    # (modele "admins egaux"). Les conducteurs s'inscrivent eux-memes :
+    # ils ne sont donc pas proposes ici.
     return templates.TemplateResponse("utilisateurs/form.html", {
         "request": request,
-        "roles": [gardien] if gardien else [],
+        "roles": _roles_creables(db),
         "utilisateur": None,
         "action": "creer",
         "error": None,
@@ -64,12 +70,14 @@ def create_utilisateur(
     actif: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
-    # SECURITE : on force le role a "gardien", quel que soit le role_id
-    # envoye par le formulaire. Ainsi, meme une requete bricolee ne peut
-    # pas creer un admin ou un conducteur depuis cette page.
-    gardien = role_controller.get_by_nom(db, "gardien")
-    if gardien is not None:
-        role_id = gardien.id
+    # SECURITE : le role choisi doit faire partie des roles autorises
+    # (gardien ou administrateur). Si la requete a ete bricolee pour
+    # mettre autre chose (ex. conducteur), on retombe sur "gardien".
+    roles_ok = _roles_creables(db)
+    ids_ok = [r.id for r in roles_ok]
+    if role_id not in ids_ok:
+        gardien = role_controller.get_by_nom(db, "gardien")
+        role_id = gardien.id if gardien else role_id
 
     try:
         utilisateur_controller.create(
@@ -82,11 +90,11 @@ def create_utilisateur(
             role_id=role_id,
             actif=actif == "on",
         )
-        return RedirectResponse(url="/utilisateurs/?msg=Compte gardien créé avec succès", status_code=303)
+        return RedirectResponse(url="/utilisateurs/?msg=Compte créé avec succès", status_code=303)
     except Exception as e:
         return templates.TemplateResponse("utilisateurs/form.html", {
             "request": request,
-            "roles": [gardien] if gardien else [],
+            "roles": roles_ok,
             "utilisateur": None,
             "action": "creer",
             "error": "Cet email est déjà utilisé ou les données sont invalides.",
@@ -110,21 +118,24 @@ def edit_form(utilisateur_id: int, request: Request, db: Session = Depends(get_d
     if not utilisateur:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 
-    # MOINDRE PRIVILEGE : l'admin ne peut modifier QUE les comptes gardien.
-    # Les conducteurs gerent leurs propres donnees ; les admins viennent
-    # du script. On bloque donc la modification des autres roles.
-    if utilisateur.role.nom != "gardien":
+    # On gere les gardiens ET les admins ; les conducteurs gerent leurs
+    # propres donnees (ils ne sont pas modifiables ici).
+    if utilisateur.role.nom == "conducteur":
         return RedirectResponse(
-            url="/utilisateurs/?msg=Seuls les comptes gardien peuvent être modifiés",
+            url="/utilisateurs/?msg=Les conducteurs gèrent eux-mêmes leur compte",
             status_code=303,
         )
 
+    # "verrou_admin" : si la cible est un admin, on verrouille email +
+    # mot de passe (chaque admin change ses identifiants via "Mon profil",
+    # pour empecher un admin d'en pirater un autre).
     return templates.TemplateResponse("utilisateurs/form.html", {
         "request": request,
         "roles": role_controller.get_all(db),
         "utilisateur": utilisateur,
         "action": "modifier",
         "error": None,
+        "verrou_admin": utilisateur.role.nom == "administrateur",
     })
 
 
@@ -145,14 +156,37 @@ def update_utilisateur(
     if cible is None:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 
-    # MOINDRE PRIVILEGE : on ne modifie que les gardiens...
-    if cible.role.nom != "gardien":
+    # Les conducteurs gerent leur propre compte : pas modifiables ici.
+    if cible.role.nom == "conducteur":
         return RedirectResponse(
-            url="/utilisateurs/?msg=Action non autorisée : seuls les gardiens sont modifiables",
+            url="/utilisateurs/?msg=Les conducteurs gèrent eux-mêmes leur compte",
             status_code=303,
         )
-    # ...et on FORCE le role a rester gardien (pas d'escalade vers admin).
+
+    # On ne change JAMAIS le role via "Modifier" (pas d'escalade).
     role_id = cible.role_id
+    nouveau_actif = actif == "on"
+    moi = request.session.get("user_id")
+    cible_est_admin = cible.role.nom == "administrateur"
+
+    # Pour un AUTRE/MEME admin : on ne touche ni a l'email ni au mot de
+    # passe (chacun gere ses identifiants via "Mon profil").
+    if cible_est_admin:
+        email = cible.email          # email inchange
+        mot_passe = None             # mot de passe inchange
+
+        # Garde-fou : on ne se desactive pas soi-meme...
+        if cible.id == moi and not nouveau_actif:
+            return RedirectResponse(
+                url="/utilisateurs/?msg=Vous ne pouvez pas désactiver votre propre compte",
+                status_code=303,
+            )
+        # ...et on ne desactive pas le DERNIER admin actif.
+        if cible.actif and not nouveau_actif and utilisateur_controller.compter_admins_actifs(db) <= 1:
+            return RedirectResponse(
+                url="/utilisateurs/?msg=Impossible : il doit rester au moins un administrateur actif",
+                status_code=303,
+            )
 
     try:
         utilisateur_controller.update(
@@ -163,7 +197,7 @@ def update_utilisateur(
             email=email,
             telephone=telephone or None,
             role_id=role_id,
-            actif=actif == "on",
+            actif=nouveau_actif,
             mot_passe=mot_passe or None,
         )
         return RedirectResponse(url="/utilisateurs/?msg=Utilisateur mis à jour", status_code=303)
@@ -176,21 +210,38 @@ def update_utilisateur(
             "utilisateur": utilisateur,
             "action": "modifier",
             "error": "Cet email est déjà utilisé ou les données sont invalides.",
+            "verrou_admin": cible_est_admin,
         })
 
 
 @router.post("/{utilisateur_id}/supprimer")
-def delete_utilisateur(utilisateur_id: int, db: Session = Depends(get_db)):
+def delete_utilisateur(utilisateur_id: int, request: Request, db: Session = Depends(get_db)):
     cible = utilisateur_controller.get_by_id(db, utilisateur_id)
     if cible is None:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 
-    # MOINDRE PRIVILEGE : on ne supprime que les comptes gardien.
-    if cible.role.nom != "gardien":
+    # Les conducteurs gerent leur propre compte : pas supprimables ici.
+    if cible.role.nom == "conducteur":
         return RedirectResponse(
-            url="/utilisateurs/?msg=Action non autorisée : seuls les gardiens sont supprimables",
+            url="/utilisateurs/?msg=Les conducteurs gèrent eux-mêmes leur compte",
             status_code=303,
         )
 
+    # Garde-fous quand la cible est un admin :
+    if cible.role.nom == "administrateur":
+        moi = request.session.get("user_id")
+        # ...on ne se supprime pas soi-meme...
+        if cible.id == moi:
+            return RedirectResponse(
+                url="/utilisateurs/?msg=Vous ne pouvez pas supprimer votre propre compte",
+                status_code=303,
+            )
+        # ...et on ne supprime pas le DERNIER admin actif.
+        if cible.actif and utilisateur_controller.compter_admins_actifs(db) <= 1:
+            return RedirectResponse(
+                url="/utilisateurs/?msg=Impossible : il doit rester au moins un administrateur actif",
+                status_code=303,
+            )
+
     utilisateur_controller.delete(db, utilisateur_id)
-    return RedirectResponse(url="/utilisateurs/?msg=Compte gardien supprimé", status_code=303)
+    return RedirectResponse(url="/utilisateurs/?msg=Compte supprimé", status_code=303)

@@ -28,12 +28,15 @@
     </div>
   </div>
   <div style="display: flex; gap: 8px; align-items: center;">
-    {# Modifier/Supprimer seulement pour les comptes gardien (BF15). #}
-    {% if utilisateur.role.nom == 'gardien' %}
+    {# Modifier/Supprimer pour gardiens ET admins. Pas de "Supprimer" sur
+       soi-meme. Les conducteurs ne sont pas geres ici. #}
+    {% if utilisateur.role.nom in ('gardien', 'administrateur') %}
     <a href="/utilisateurs/{{ utilisateur.id }}/modifier" class="btn btn-secondary">Modifier</a>
+    {% if utilisateur.id != request.session.get('user_id') %}
     <form method="POST" action="/utilisateurs/{{ utilisateur.id }}/supprimer" onsubmit="return confirmDelete(this)">
       <button type="submit" class="btn btn-danger">Supprimer</button>
     </form>
+    {% endif %}
     {% endif %}
   </div>
 </div>

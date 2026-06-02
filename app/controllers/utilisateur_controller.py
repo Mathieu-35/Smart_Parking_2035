@@ -20,6 +20,20 @@ def get_by_id(db: Session, utilisateur_id: int):
     return db.query(Utilisateur).filter(Utilisateur.id == utilisateur_id).first()
 
 
+def compter_admins_actifs(db: Session) -> int:
+    """Combien d'administrateurs ACTIFS (= qui peuvent se connecter) ?
+
+    Sert de garde-fou : on ne doit jamais tomber a zero admin actif,
+    sinon plus personne ne peut entrer dans l'espace admin.
+    """
+    return (
+        db.query(Utilisateur)
+        .join(Utilisateur.role)
+        .filter(Role.nom == "administrateur", Utilisateur.actif == True)  # noqa: E712
+        .count()
+    )
+
+
 def create(
     db: Session,
     nom: str,

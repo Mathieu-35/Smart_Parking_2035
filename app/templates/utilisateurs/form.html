@@ -59,7 +59,11 @@
           <input class="form-control" type="email" id="email" name="email"
             placeholder="jean.dupont@example.com"
             value="{{ utilisateur.email if utilisateur else '' }}"
+            {% if verrou_admin %}readonly{% endif %}
             required />
+          {% if verrou_admin %}
+          <div class="form-hint">L'email d'un administrateur se change via « Mon profil ».</div>
+          {% endif %}
         </div>
 
         <div class="form-group">
@@ -73,26 +77,36 @@
           <label class="form-label" for="mot_passe">
             Mot de passe{% if action == 'creer' %} <span class="required">*</span>{% endif %}
           </label>
+          {% if verrou_admin %}
+          {# On ne touche pas au mot de passe d'un autre admin (anti-piratage). #}
+          <input class="form-control" type="password" value="" placeholder="••••••••" disabled />
+          <div class="form-hint">Le mot de passe d'un administrateur se change via « Mon profil ».</div>
+          {% else %}
           <input class="form-control" type="password" id="mot_passe" name="mot_passe"
             placeholder="••••••••"
             {% if action == 'creer' %}required{% endif %} />
           {% if action == 'modifier' %}
           <div class="form-hint">Laisser vide pour conserver le mot de passe actuel.</div>
           {% endif %}
+          {% endif %}
         </div>
 
         <div class="form-group">
           <label class="form-label" for="role_id">Role <span class="required">*</span></label>
-          {# L'admin ne gere que des comptes gardien (BF15). Le role est
-             donc fige a "Gardien", a la creation comme a la modification
-             (pas d'escalade de privilege possible). #}
-          <input class="form-control" type="text" value="Gardien" disabled />
           {% if action == 'creer' %}
-            <input type="hidden" name="role_id" value="{{ roles[0].id if roles else '' }}" />
+            {# A la creation : Gardien ou Administrateur (jamais conducteur). #}
+            <select class="form-control" id="role_id" name="role_id" required>
+              {% for r in roles %}
+              <option value="{{ r.id }}">{{ r.nom | capitalize }}</option>
+              {% endfor %}
+            </select>
+            <div class="form-hint">Gardien ou Administrateur (les conducteurs s'inscrivent eux-memes).</div>
           {% else %}
+            {# A la modification : le role ne change pas (pas d'escalade). #}
+            <input class="form-control" type="text" value="{{ utilisateur.role.nom | capitalize }}" disabled />
             <input type="hidden" name="role_id" value="{{ utilisateur.role_id }}" />
+            <div class="form-hint">Le role ne se change pas ici.</div>
           {% endif %}
-          <div class="form-hint">Un administrateur gere uniquement des comptes gardien.</div>
         </div>
 
         <div class="form-group" style="justify-content: flex-end;">

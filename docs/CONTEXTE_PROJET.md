@@ -5,8 +5,11 @@
 >
 > Sprint 11 = tableau de bord admin (BF13 stats + BF14 revenus) : `stats_controller.py`,
 > route `/tableau-de-bord` (admin), `dashboard.html`. L'admin y arrive après connexion.
-> Aussi faits hors-sprint : cloisonnement admin hors PWA, anti-zoom PWA, logique rôles
-> (admin ne crée/gère que des gardiens, moindre privilège), page « Mon profil » (self-service).
+> Aussi faits hors-sprint : cloisonnement admin hors PWA, anti-zoom PWA, page « Mon profil »
+> (self-service). Logique rôles = modèle « admins égaux » : un admin peut créer/gérer des
+> gardiens ET d'autres admins (les conducteurs s'inscrivent seuls). Garde-fous : pas de
+> suppression/désactivation du dernier admin actif ni de soi-même ; un admin ne peut pas
+> changer l'email/mot de passe d'un autre admin (chacun via « Mon profil »).
 
 ---
 
