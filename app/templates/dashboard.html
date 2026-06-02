@@ -98,8 +98,8 @@
       <tbody>
         {% for h in stats.historiques %}
         <tr>
-          <td style="color: var(--text-subtle);">{{ h.date_enregistrement.strftime('%d/%m/%Y %H:%M') }}</td>
-          <td>{{ h.parking.nom }}</td>
+          <td style="color: var(--text-subtle);">{{ h.date_locale }}</td>
+          <td>{{ h.parking_nom }}</td>
           <td><span class="lozenge lozenge-info">{{ h.raison if h.raison else '—' }}</span></td>
           <td>{{ h.places_disponibles }}</td>
           <td>{{ h.places_occupees }}</td>

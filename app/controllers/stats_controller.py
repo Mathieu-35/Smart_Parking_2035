@@ -10,12 +10,17 @@
 #
 # =============================================================
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models import Parking, Reservation, HistoriquePlaces
+
+# Les dates sont enregistrees en UTC (heure de reference mondiale).
+# Antananarivo est a UTC+3 : on ajoute donc 3 heures pour afficher
+# l'heure locale de Madagascar.
+DECALAGE_MADAGASCAR = timedelta(hours=3)
 
 
 def calculer_statistiques(db: Session) -> dict:
@@ -50,8 +55,13 @@ def calculer_statistiques(db: Session) -> dict:
         func.coalesce(func.sum(Reservation.cout_total), 0.0)
     ).filter(Reservation.statut == "partie").scalar()
 
-    # Revenus du jour : reservations terminees depuis minuit (UTC).
-    debut_jour = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    # Revenus du jour : reservations terminees depuis MINUIT a Madagascar.
+    #  1) heure locale = heure UTC + 3h
+    #  2) on prend minuit local
+    #  3) on revient en UTC (-3h) pour comparer avec les dates en base.
+    maintenant_mada = datetime.utcnow() + DECALAGE_MADAGASCAR
+    minuit_mada = maintenant_mada.replace(hour=0, minute=0, second=0, microsecond=0)
+    debut_jour = minuit_mada - DECALAGE_MADAGASCAR
     revenus_jour = db.query(
         func.coalesce(func.sum(Reservation.cout_total), 0.0)
     ).filter(
@@ -82,12 +92,24 @@ def calculer_statistiques(db: Session) -> dict:
         })
 
     # ----- 5) ACTIVITE RECENTE (derniers changements de places) -----
-    historiques = (
+    lignes_historiques = (
         db.query(HistoriquePlaces)
         .order_by(HistoriquePlaces.date_enregistrement.desc())
         .limit(8)
         .all()
     )
+    #  On prepare un petit dictionnaire par ligne, avec la date deja
+    #  remise a l'heure de Madagascar (+3h) et formatee pour l'affichage.
+    historiques = []
+    for h in lignes_historiques:
+        date_locale = h.date_enregistrement + DECALAGE_MADAGASCAR
+        historiques.append({
+            "date_locale": date_locale.strftime("%d/%m/%Y %H:%M"),
+            "parking_nom": h.parking.nom if h.parking else "—",
+            "raison": h.raison,
+            "places_disponibles": h.places_disponibles,
+            "places_occupees": h.places_occupees,
+        })
 
     return {
         "nb_parkings": nb_parkings,
