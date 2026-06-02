@@ -20,27 +20,31 @@
 </head>
 <body class="m-screen">
 
-  <!-- ===================== EN-TETE BLEU ===================== -->
-  <header class="m-header">
-    <div class="m-brand">
+  <!-- ===================== EN-TETE (barre compacte, repliable) ===================== -->
+  <header class="m-header" id="entete">
+    <div class="m-bar">
       <div class="m-brand-icon">SP</div>
       <div>
         <div class="m-brand-name">Smart Parking</div>
         <div class="m-brand-year">2035</div>
       </div>
+      <!-- Bouton chevron : replie / deplie le bloc "Bonjour". -->
+      <button class="m-toggle" id="bouton-replier" title="Reduire l'en-tete">⌃</button>
     </div>
-    <div class="m-greeting">Bonjour {{ request.session.get("user_nom", "") }}</div>
-    <div class="m-subtitle">Trouvez le parking le plus proche de vous.</div>
+    <div class="m-hero">
+      <div class="m-greeting">Bonjour {{ request.session.get("user_nom", "") }}</div>
+      <div class="m-subtitle">Trouvez le parking le plus proche de vous.</div>
+    </div>
   </header>
 
   <!-- ===================== CONTENU ===================== -->
-  <main class="m-content m-content--overlap">
+  <main class="m-content">
 
     <!-- Carte d'action : trouver un parking -->
     <div class="m-card">
       <!-- Le gros bouton : quand on clique, on demande la position GPS. -->
       <button id="bouton-chercher" class="m-btn m-btn-primary">
-        📍 Trouver un parking pres de moi
+        Trouver un parking pres de moi
       </button>
 
       <div class="m-or">— ou —</div>
@@ -88,6 +92,13 @@
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js");
     }
+
+    // Bouton "replier l'en-tete" : on ajoute/enleve la classe "replie".
+    var entete = document.getElementById("entete");
+    var boutonReplier = document.getElementById("bouton-replier");
+    boutonReplier.addEventListener("click", function () {
+      entete.classList.toggle("replie");
+    });
   </script>
 
   <!-- Librairie de carte Leaflet (chargee depuis internet). -->
@@ -247,7 +258,7 @@
         var badge = "";
         var classeTop = "";
         if (i === 0) {
-          badge = '<span class="m-badge">✅ Recommande</span>';
+          badge = '<span class="m-badge">Recommande</span>';
           classeTop = " m-result--top";
         }
 
@@ -260,8 +271,8 @@
             '</div>' +
             // Les "stats" en pilules : distance + places libres.
             '<div class="m-chips">' +
-              '<span class="m-chip">🚗 ' + p.distance + ' m</span>' +
-              '<span class="m-chip">🅿️ ' + p.places_disponibles + ' places</span>' +
+              '<span class="m-chip">' + p.distance + ' m</span>' +
+              '<span class="m-chip">' + p.places_disponibles + ' places libres</span>' +
             '</div>' +
             // L'itineraire choisi par A* (la suite de carrefours).
             '<div class="m-route"><b>Itineraire :</b> ' + itineraire + '</div>' +

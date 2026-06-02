@@ -18,30 +18,33 @@
 </head>
 <body class="m-screen">
 
-  <!-- ===================== EN-TETE BLEU ===================== -->
-  <header class="m-header">
-    <div class="m-brand">
+  <!-- ===================== EN-TETE (barre compacte, repliable) ===================== -->
+  <header class="m-header" id="entete">
+    <div class="m-bar">
       <div class="m-brand-icon">SP</div>
       <div>
         <div class="m-brand-name">Smart Parking</div>
         <div class="m-brand-year">2035</div>
       </div>
+      <button class="m-toggle" id="bouton-replier" title="Reduire l'en-tete">⌃</button>
     </div>
-    <div class="m-greeting">Bonjour {{ request.session.get("user_nom", "") }}</div>
-    <div class="m-subtitle">
-      Scannez ou tapez le code du conducteur, puis validez l'entree ou la sortie.
+    <div class="m-hero">
+      <div class="m-greeting">Bonjour {{ request.session.get("user_nom", "") }}</div>
+      <div class="m-subtitle">
+        Scannez ou tapez le code, puis validez l'entree ou la sortie.
+      </div>
     </div>
   </header>
 
   <!-- ===================== CONTENU ===================== -->
-  <main class="m-content m-content--overlap">
+  <main class="m-content">
 
     <div class="m-card">
       <!-- Zone camera (le scan dessine ici). Cachee tant qu'on ne scanne pas. -->
       <div id="zone-camera" class="m-camera" style="display: none;"></div>
 
       <button id="bouton-scanner" class="m-btn m-btn-secondary">
-        📷 Scanner avec la camera
+        Scanner avec la camera
       </button>
 
       <div class="m-or">— ou —</div>
@@ -74,6 +77,13 @@
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js");
     }
+
+    // Bouton "replier l'en-tete" : on ajoute/enleve la classe "replie".
+    var entete = document.getElementById("entete");
+    var boutonReplier = document.getElementById("bouton-replier");
+    boutonReplier.addEventListener("click", function () {
+      entete.classList.toggle("replie");
+    });
   </script>
 
   <!-- Librairie de scan QR par la camera (chargee depuis internet). -->

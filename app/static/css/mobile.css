@@ -1,291 +1,291 @@
 /* =============================================================
-   mobile.css  -  Design "app moderne" pour les pages MOBILES
-   (conducteur + gardien) UNIQUEMENT.
-
-   Ce fichier est separe de style.css (qui sert a l'admin web).
-   Ainsi, changer le design mobile ne touche JAMAIS l'admin.
-
-   Idee du design : un grand en-tete bleu degrade arrondi en bas,
-   puis des cartes blanches arrondies avec une ombre douce.
+   mobile.css  -  Interface mobile (conducteur + gardien)
+   Style sobre, compact. Separe de style.css (admin web intact).
    ============================================================= */
 
-/* ----- Couleurs et reglages du theme mobile ----- */
 :root {
-  --m-bleu:        #1e3a8a;   /* bleu fonce (couleur de l'app) */
-  --m-bleu-clair:  #2563eb;   /* bleu plus clair (degrade) */
-  --m-bleu-vif:    #3b82f6;   /* bleu vif (survol/active) */
-  --m-fond:        #eef2f9;   /* fond gris-bleute tres doux */
-  --m-surface:     #ffffff;   /* blanc des cartes */
-  --m-texte:       #1f2937;   /* texte principal */
-  --m-texte-doux:  #6b7280;   /* texte secondaire (gris) */
-  --m-vert:        #16a34a;   /* vert "recommande / succes" */
-  --m-vert-fond:   #dcfce7;
-  --m-rouge:       #dc2626;   /* rouge "erreur" */
-  --m-rouge-fond:  #fee2e2;
-  --m-bord:        #e5e7eb;   /* bord tres clair */
-  --m-rayon:       16px;      /* coins arrondis des cartes */
-  --m-rayon-btn:   14px;      /* coins arrondis des boutons */
-  --m-ombre:       0 6px 20px rgba(30, 58, 138, 0.08);
+  --m-bleu:        #1e3a8a;   /* bleu principal (plat, sans degrade) */
+  --m-bleu-fonce:  #172e6e;   /* bleu plus fonce (appui) */
+  --m-fond:        #f5f6f8;   /* fond gris neutre */
+  --m-surface:     #ffffff;
+  --m-texte:       #1f2533;
+  --m-texte-doux:  #687087;
+  --m-vert:        #157347;
+  --m-vert-fond:   #e7f4ec;
+  --m-rouge:       #b42318;
+  --m-rouge-fond:  #fdeceb;
+  --m-bord:        #e7e9ee;
+  --m-rayon:       12px;
+  --m-ombre:       0 1px 2px rgba(16, 24, 40, 0.06);
 }
 
-/* ----- L'ecran complet (fond doux, occupe toute la hauteur) ----- */
+/* ----- Ecran complet ----- */
 .m-screen {
   min-height: 100vh;
   background: var(--m-fond);
   color: var(--m-texte);
-  /* On laisse de la place pour l'encoche de l'iPhone en haut/bas. */
-  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
-/* ----- L'en-tete bleu degrade, arrondi en bas ----- */
+/* ----- En-tete : barre compacte, repliable ----- */
 .m-header {
-  background: linear-gradient(135deg, var(--m-bleu) 0%, var(--m-bleu-clair) 100%);
+  background: var(--m-bleu);
   color: #ffffff;
-  padding: calc(28px + env(safe-area-inset-top)) 22px 28px 22px;
-  border-radius: 0 0 26px 26px;
-  box-shadow: 0 8px 24px rgba(30, 58, 138, 0.22);
+  padding: calc(10px + env(safe-area-inset-top)) 16px 12px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
 }
 
-/* La petite marque "SP / Smart Parking 2035" dans l'en-tete */
-.m-brand {
+/* Ligne du haut : logo + nom a gauche, bouton replier a droite */
+.m-bar {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 18px;
 }
 .m-brand-icon {
-  width: 36px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 11px;
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
   color: #ffffff;
+  flex-shrink: 0;
 }
 .m-brand-name { font-size: 14px; font-weight: 700; line-height: 1.1; }
-.m-brand-year { font-size: 11px; opacity: 0.8; }
+.m-brand-year { font-size: 11px; opacity: 0.75; }
 
-.m-greeting { font-size: 23px; font-weight: 800; letter-spacing: -0.02em; }
-.m-subtitle { font-size: 14px; opacity: 0.9; margin-top: 4px; line-height: 1.4; }
+/* Le bouton chevron pour replier/deplier l'en-tete */
+.m-toggle {
+  margin-left: auto;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-/* ----- La zone de contenu (sous l'en-tete) ----- */
+/* Le bloc "Bonjour + sous-titre" : c'est lui qu'on replie */
+.m-hero {
+  margin-top: 12px;
+  overflow: hidden;
+  transition: max-height 0.2s ease, opacity 0.2s ease, margin-top 0.2s ease;
+  max-height: 120px;
+  opacity: 1;
+}
+.m-greeting { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+.m-subtitle { font-size: 13px; opacity: 0.85; margin-top: 2px; line-height: 1.35; }
+
+/* Etat replie : le bloc disparait, il ne reste que la barre fine */
+.m-header.replie .m-hero {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
+.m-header.replie .m-toggle { transform: rotate(180deg); }
+
+/* ----- Contenu ----- */
 .m-content {
-  padding: 18px 16px 0 16px;
+  padding: 14px 14px 0 14px;
   max-width: 560px;
   margin: 0 auto;
 }
 
-/* On remonte un peu le contenu pour qu'il "chevauche" l'en-tete. */
-.m-content--overlap { margin-top: -16px; }
-
-/* ----- Une carte blanche arrondie avec ombre douce ----- */
+/* ----- Carte blanche ----- */
 .m-card {
   background: var(--m-surface);
+  border: 1px solid var(--m-bord);
   border-radius: var(--m-rayon);
   box-shadow: var(--m-ombre);
-  padding: 18px;
-  margin-bottom: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
 }
 
-/* Petit titre de section a l'interieur d'une carte */
-.m-card-label {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--m-texte-doux);
-  margin-bottom: 10px;
-}
-
-/* ----- Les boutons (pleine largeur, bien arrondis) ----- */
+/* ----- Boutons ----- */
 .m-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 7px;
   width: 100%;
-  padding: 15px 16px;
-  border-radius: var(--m-rayon-btn);
-  font-size: 15.5px;
-  font-weight: 700;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
   font-family: var(--font);
   border: none;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.05s ease, filter 0.15s ease, background 0.15s ease;
+  transition: background 0.12s ease;
 }
-.m-btn:active { transform: scale(0.98); }   /* petit effet "appui" */
-
-.m-btn-primary {
-  background: linear-gradient(135deg, var(--m-bleu) 0%, var(--m-bleu-vif) 100%);
-  color: #ffffff;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.32);
-}
-.m-btn-primary:active { filter: brightness(0.95); }
+.m-btn-primary { background: var(--m-bleu); color: #ffffff; }
+.m-btn-primary:active { background: var(--m-bleu-fonce); }
 
 .m-btn-secondary {
-  background: #ffffff;
+  background: var(--m-surface);
   color: var(--m-bleu);
-  border: 1.5px solid var(--m-bleu);
+  border: 1px solid var(--m-bleu);
 }
-.m-btn-secondary:active { background: #f0f5ff; }
+.m-btn-secondary:active { background: #eef2fb; }
 
 .m-btn-ghost {
   background: transparent;
   color: var(--m-texte-doux);
-  border: 1.5px solid var(--m-bord);
+  border: 1px solid var(--m-bord);
 }
-.m-btn-ghost:active { background: #f3f4f6; }
+.m-btn-ghost:active { background: #eef0f3; }
 
-/* Petite marge entre boutons empiles */
-.m-btn + .m-btn { margin-top: 10px; }
+.m-btn + .m-btn { margin-top: 8px; }
 
-/* ----- Champs de saisie (input / select) ----- */
+/* ----- Champs ----- */
 .m-field {
   width: 100%;
-  padding: 14px 14px;
-  border: 1.5px solid var(--m-bord);
-  border-radius: var(--m-rayon-btn);
+  padding: 11px 12px;
+  border: 1px solid var(--m-bord);
+  border-radius: 10px;
   font-size: 15px;
   font-family: var(--font);
   color: var(--m-texte);
-  background: #f9fafb;
-  margin-bottom: 12px;
+  background: #fbfbfc;
+  margin-bottom: 10px;
 }
 .m-field:focus {
   outline: none;
-  border-color: var(--m-bleu-clair);
+  border-color: var(--m-bleu);
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 .m-label {
   display: block;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--m-texte);
-  margin-bottom: 7px;
+  color: var(--m-texte-doux);
+  margin-bottom: 6px;
 }
 
-/* Deux boutons cote a cote (gardien : entree / sortie) */
-.m-row {
-  display: flex;
-  gap: 10px;
-}
+/* Deux boutons cote a cote (gardien) */
+.m-row { display: flex; gap: 8px; }
 .m-row .m-btn { margin-top: 0; }
 
-/* Petit separateur "ou" entre deux blocs */
+/* Separateur "ou" */
 .m-or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   text-align: center;
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--m-texte-doux);
-  margin: 6px 0 14px 0;
-  font-weight: 600;
+  margin: 12px 0;
+}
+.m-or::before, .m-or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--m-bord);
 }
 
-/* ----- Petite zone de message (chargement, infos) ----- */
+/* ----- Message ----- */
 .m-message {
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--m-texte-doux);
-  text-align: center;
-  margin-bottom: 12px;
-  min-height: 18px;
+  margin: 2px 2px 10px 2px;
+  min-height: 16px;
 }
 
-/* ----- Une carte de RESULTAT (un parking recommande) ----- */
+/* ----- Carte de resultat (un parking) ----- */
 .m-result {
   background: var(--m-surface);
   border: 1px solid var(--m-bord);
   border-radius: var(--m-rayon);
   box-shadow: var(--m-ombre);
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
 }
-/* La 1ere carte (le parking recommande) a un lisere bleu a gauche. */
-.m-result--top { border-left: 4px solid var(--m-bleu-clair); }
+.m-result--top { border-left: 3px solid var(--m-bleu); }
 
 .m-result-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
-.m-result-name { font-size: 16.5px; font-weight: 700; }
+.m-result-name { font-size: 15.5px; font-weight: 700; }
 
-/* Le badge "pilule" (vert = recommande) */
 .m-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11.5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   background: var(--m-vert-fond);
   color: var(--m-vert);
   white-space: nowrap;
 }
 
-/* Les "stats" du parking (distance, places) en pilules grises */
-.m-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+/* Stats du parking */
+.m-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 9px; }
 .m-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 11px;
-  border-radius: 999px;
-  background: #eef2f9;
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: #eef2fb;
   color: var(--m-bleu);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
 }
 
-/* L'itineraire en toutes lettres */
+/* Itineraire */
 .m-route {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--m-texte);
-  background: #f9fafb;
-  border-radius: 10px;
-  padding: 9px 11px;
-  margin-bottom: 8px;
-  line-height: 1.5;
+  background: #f7f8fa;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 7px;
+  line-height: 1.45;
 }
-.m-route b { color: var(--m-bleu); }
+.m-route b { color: var(--m-texte-doux); font-weight: 600; }
 
-/* La preuve d'optimisation A* (petit texte gris) */
 .m-explore {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--m-texte-doux);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-/* ----- Bandeaux de message (succes / erreur) version mobile ----- */
+/* ----- Bandeaux succes / erreur ----- */
 .m-alert {
-  padding: 13px 14px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 11px 12px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
   line-height: 1.45;
 }
 .m-alert-success { background: var(--m-vert-fond); color: var(--m-vert); }
 .m-alert-error   { background: var(--m-rouge-fond); color: var(--m-rouge); }
 
-/* ----- La carte Leaflet (coins arrondis) ----- */
+/* ----- Carte Leaflet ----- */
 .m-map {
-  height: 320px;
+  height: 300px;
   border-radius: var(--m-rayon);
-  box-shadow: var(--m-ombre);
+  border: 1px solid var(--m-bord);
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
-/* La zone camera du scanner QR (gardien) */
+/* Zone camera (scanner QR) */
 .m-camera {
   border-radius: var(--m-rayon);
   overflow: hidden;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
