@@ -20,84 +20,41 @@
   --m-ombre:       0 1px 2px rgba(16, 24, 40, 0.06);
 }
 
-/* ----- Ecran complet ----- */
+/* ----- Ecran complet -----
+   On laisse a gauche la largeur du rail d'icones (52px) pour que
+   le contenu ne passe pas dessous. */
 .m-screen {
   min-height: 100vh;
   background: var(--m-fond);
   color: var(--m-texte);
+  padding-left: 52px;
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
-/* ----- Barre fine en haut (toujours visible) ----- */
-.m-topbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--m-bleu);
-  color: #ffffff;
-  padding: calc(10px + env(safe-area-inset-top)) 16px 10px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 30;
-}
-.m-burger {
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  border-radius: 9px;
-  font-size: 19px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.m-topbar-title { font-size: 15px; font-weight: 700; }
-
-/* ----- Le voile sombre derriere le tiroir ----- */
-.m-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-  z-index: 40;
-}
-.m-overlay.visible { opacity: 1; visibility: visible; }
-
-/* ----- Le tiroir lateral (sidebar) ----- */
-.m-drawer {
+/* ----- Le rail d'icones fixe (sidebar reduite) -----
+   Une barre verticale fine, toujours visible, qui ne montre QUE
+   des icones : ca laisse presque tout l'ecran au contenu. */
+.m-rail {
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  width: 268px;
-  max-width: 80%;
-  background: var(--m-surface);
-  z-index: 50;
-  transform: translateX(-100%);
-  transition: transform 0.22s ease;
+  width: 52px;
+  background: var(--m-bleu);
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 16px rgba(0, 0, 0, 0.12);
+  align-items: center;
+  gap: 6px;
+  padding: calc(10px + env(safe-area-inset-top)) 0 16px 0;
+  z-index: 30;
 }
-.m-drawer.ouvert { transform: translateX(0); }
 
-/* En-tete du tiroir : logo + nom de l'utilisateur */
-.m-drawer-head {
-  background: var(--m-bleu);
-  color: #ffffff;
-  padding: calc(20px + env(safe-area-inset-top)) 18px 18px 18px;
-}
-.m-drawer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+/* Le logo "SP" en haut du rail */
 .m-brand-icon {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   background: rgba(255, 255, 255, 0.16);
-  border-radius: 8px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,24 +63,23 @@
   color: #ffffff;
   flex-shrink: 0;
 }
-.m-brand-name { font-size: 13px; font-weight: 700; line-height: 1.1; }
-.m-brand-year { font-size: 11px; opacity: 0.75; }
-.m-drawer-user { font-size: 16px; font-weight: 700; }
-.m-drawer-role { font-size: 12px; opacity: 0.8; margin-top: 2px; }
 
-/* Liens du tiroir */
-.m-drawer-nav { padding: 8px; flex: 1; }
-.m-drawer-link {
-  display: block;
-  padding: 13px 14px;
-  border-radius: 9px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--m-texte);
+/* Pousse les icones du bas (profil, deconnexion) tout en bas */
+.m-rail-spacer { flex: 1; }
+
+/* Les boutons-icones du rail */
+.m-rail-link {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
 }
-.m-drawer-link:active { background: #eef0f3; }
-.m-drawer-link.deconnexion { color: var(--m-rouge); }
+.m-rail-link:active { background: rgba(255, 255, 255, 0.18); }
+.m-rail-link svg { width: 21px; height: 21px; }
 
 /* ----- Contenu : un peu d'air ----- */
 .m-content {
