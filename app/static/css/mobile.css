@@ -5,8 +5,8 @@
    ============================================================= */
 
 :root {
-  --m-bleu:        #1e3a8a;
-  --m-bleu-fonce:  #172e6e;
+  --m-bleu:        #2c5be0;   /* bleu royal vif (inspiration #1) */
+  --m-bleu-fonce:  #1e44b0;
   --m-fond:        #f5f6f8;
   --m-surface:     #ffffff;
   --m-texte:       #1f2533;
@@ -21,39 +21,49 @@
 }
 
 /* ----- Ecran complet -----
-   On laisse a gauche la largeur du rail d'icones (52px) pour que
-   le contenu ne passe pas dessous. */
+   On laisse en bas la hauteur de la barre d'onglets pour que le
+   contenu ne passe pas dessous. */
 .m-screen {
   min-height: 100vh;
   background: var(--m-fond);
   color: var(--m-texte);
-  padding-left: 52px;
-  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  padding-bottom: calc(70px + env(safe-area-inset-bottom));
 }
 
-/* ----- Le rail d'icones fixe (sidebar reduite) -----
-   Une barre verticale fine, toujours visible, qui ne montre QUE
-   des icones : ca laisse presque tout l'ecran au contenu. */
-.m-rail {
+/* ----- La barre d'onglets en BAS (tab bar) -----
+   Toujours visible, style app classique : icone + petit label. */
+.m-tabbar {
   position: fixed;
-  top: 0;
   left: 0;
+  right: 0;
   bottom: 0;
-  width: 52px;
-  background: var(--m-bleu);
+  display: flex;
+  background: var(--m-surface);
+  border-top: 1px solid var(--m-bord);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 40;
+}
+.m-tab {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: calc(10px + env(safe-area-inset-top)) 0 16px 0;
-  z-index: 30;
+  gap: 3px;
+  padding: 9px 0 8px 0;
+  color: var(--m-texte-doux);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
 }
+.m-tab svg { width: 22px; height: 22px; }
+.m-tab.actif { color: var(--m-bleu); }
+.m-tab.deconnexion { color: var(--m-rouge); }
 
-/* Le logo "SP" en haut du rail */
+/* Logo "SP" (utilise dans la fiche/le ticket si besoin) */
 .m-brand-icon {
   width: 34px;
   height: 34px;
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--m-bleu);
   border-radius: 9px;
   display: flex;
   align-items: center;
@@ -63,23 +73,6 @@
   color: #ffffff;
   flex-shrink: 0;
 }
-
-/* Pousse les icones du bas (profil, deconnexion) tout en bas */
-.m-rail-spacer { flex: 1; }
-
-/* Les boutons-icones du rail */
-.m-rail-link {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.85);
-  text-decoration: none;
-}
-.m-rail-link:active { background: rgba(255, 255, 255, 0.18); }
-.m-rail-link svg { width: 21px; height: 21px; }
 
 /* ----- Contenu : un peu d'air ----- */
 .m-content {
@@ -257,13 +250,67 @@
 .m-alert-success { background: var(--m-vert-fond); color: var(--m-vert); }
 .m-alert-error   { background: var(--m-rouge-fond); color: var(--m-rouge); }
 
-/* ----- Carte Leaflet ----- */
-.m-map {
-  height: 300px;
-  border-radius: var(--m-rayon);
-  border: 1px solid var(--m-bord);
-  overflow: hidden;
-  margin-top: 4px;
+/* ----- Vue carte PLEIN ECRAN (itineraire) -----
+   S'ouvre par-dessus tout quand on clique "Voir le trajet". */
+.m-mapview {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  background: var(--m-fond);
+}
+.m-mapview.actif { display: block; }
+
+/* La carte Leaflet remplit tout l'ecran de la vue. */
+.m-fullmap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Le bouton rond pour fermer la vue carte (en haut a gauche). */
+.m-map-close {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  left: 14px;
+  z-index: 70;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--m-texte);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.m-map-close svg { width: 22px; height: 22px; }
+
+/* La fiche d'infos qui "remonte" du bas (bottom sheet). */
+.m-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 70;
+  background: var(--m-surface);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -4px 22px rgba(0, 0, 0, 0.16);
+  padding: 12px 16px calc(18px + env(safe-area-inset-bottom)) 16px;
+  max-height: 56%;
+  overflow-y: auto;
+}
+/* La petite poignee grise en haut de la fiche. */
+.m-sheet-handle {
+  width: 42px;
+  height: 4px;
+  border-radius: 2px;
+  background: #d8dce3;
+  margin: 0 auto 12px auto;
 }
 
 /* Zone camera (scanner QR) */

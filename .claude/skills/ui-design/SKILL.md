@@ -31,9 +31,12 @@ Retours explicites donnés pendant le projet :
 - ✅ **Ombres grises légères** (`0 1px 2px rgba(16,24,40,.06)`), pas bleutées.
 - ✅ Contenu **aéré** : marges/espaces généreux, surtout autour des champs
   de saisie.
-- ✅ Sur mobile : **rail d'icônes vertical fin (52px)**, toujours visible,
-  **icônes seules** (logo SP en haut ; profil + déconnexion en bas). Le
-  contenu occupe presque tout l'écran.
+- ✅ Sur mobile : **barre d'onglets en BAS** (tab bar, style app classique,
+  icônes + petit label), décidé le 2026-06-02 d'après l'inspiration #1
+  (remplace l'ancien rail d'icônes à gauche).
+- ✅ **Bleu royal vif `#2c5be0`** (décidé 2026-06-02, remplace le marine).
+- ✅ Pour l'itinéraire : **carte plein écran + fiche qui remonte du bas**
+  (bottom sheet) — l'étudiant tient à une GRANDE carte pour voir le trajet.
 
 ## 3. Palette (mobile)
 | Rôle | Couleur |
@@ -74,3 +77,21 @@ Les captures d'écran d'apps que l'étudiant aime sont dans **`references/`**.
 Pour chaque image, il indique ce qu'il aime (ex. « les cartes épurées »).
 S'aligner sur ces images en priorité ; mettre à jour ce fichier quand de
 nouvelles inspirations arrivent.
+
+### Inspiration #1 — UI kit "app de parking" bleu & blanc (2026-06-02)
+Planche de maquettes d'une app de parking (onboarding, login, liste de
+parkings, carte, réservation, ticket QR, profil). Ce que l'étudiant aime :
+- **Bleu & blanc franc, très épuré**, beaucoup de blanc → ça respire.
+  (Leur bleu est plus VIF/royal que notre `#1e3a8a` marine — possibilité de
+  l'éclaircir si l'étudiant valide.)
+- **Cartes de parking riches** : vignette/photo + nom + note (étoiles) +
+  prix + distance, empilées en liste.
+- **GRANDE carte plein écran** avec une fiche qui remonte du bas
+  (« bottom sheet ») → idéal pour voir l'itinéraire en grand. Point
+  explicitement apprécié : « la carte est grande pour voir l'itinéraire ».
+- Navigation par **barre d'onglets en bas** (tab bar) dans la maquette.
+  ⚠️ Mais l'étudiant avait demandé un **rail d'icônes à gauche** : à
+  reconfirmer avec lui avant de basculer en tab bar.
+- Écrans profil et ticket QR épurés.
+> Pour garder l'image : déposer le PNG dans `references/` (le chat ne la
+> persiste pas tout seul).
