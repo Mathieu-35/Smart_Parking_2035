@@ -1,7 +1,12 @@
 # Contexte du projet — Smart Parking 2035
 
 > Fichier mémoire : sert à retrouver tout le contexte du projet entre deux sessions.
-> Dernière mise à jour : 2026-05-31 (Sprints 5, 6, 7, 8, 9, 10 terminés)
+> Dernière mise à jour : 2026-06-02 (Sprints 5 à 11 terminés)
+>
+> Sprint 11 = tableau de bord admin (BF13 stats + BF14 revenus) : `stats_controller.py`,
+> route `/tableau-de-bord` (admin), `dashboard.html`. L'admin y arrive après connexion.
+> Aussi faits hors-sprint : cloisonnement admin hors PWA, anti-zoom PWA, logique rôles
+> (admin ne crée/gère que des gardiens, moindre privilège), page « Mon profil » (self-service).
 
 ---
 
