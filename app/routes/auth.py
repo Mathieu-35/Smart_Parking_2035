@@ -114,11 +114,13 @@ def logout(request: Request):
 @router.get("/profil", response_class=HTMLResponse)
 def profil_form(
     request: Request,
-    msg: Optional[str] = None,
+    enregistre: Optional[str] = None,
     db: Session = Depends(get_db),
     _: int = Depends(require_login),
 ):
     utilisateur = utilisateur_controller.get_by_id(db, request.session.get("user_id"))
+    # Message de succes affiche apres un enregistrement reussi.
+    msg = "Vos informations ont été enregistrées avec succès." if enregistre else None
     return templates.TemplateResponse("auth/profil.html", {
         "request": request,
         "utilisateur": utilisateur,
@@ -134,7 +136,7 @@ def profil_save(
     nom: str = Form(...),
     email: str = Form(...),
     telephone: Optional[str] = Form(None),
-    mot_passe_actuel: str = Form(...),
+    mot_passe_actuel: Optional[str] = Form(None),
     nouveau_mot_passe: Optional[str] = Form(None),
     db: Session = Depends(get_db),
     _: int = Depends(require_login),
@@ -149,11 +151,21 @@ def profil_save(
             "msg": None,
         })
 
-    # 1) On verifie le mot de passe actuel (preuve d'identite).
-    if not auth_controller.verifier_mot_passe(utilisateur, mot_passe_actuel):
-        return reafficher("Mot de passe actuel incorrect.")
+    # On ne demande le mot de passe actuel QUE pour les changements
+    # sensibles : changer le mot de passe, ou changer l'email.
+    veut_changer_mdp = bool(nouveau_mot_passe)
+    veut_changer_email = email.strip().lower() != (utilisateur.email or "").lower()
+    changement_sensible = veut_changer_mdp or veut_changer_email
 
-    # 2) On met a jour SES infos, sans toucher au role ni au statut.
+    if changement_sensible:
+        if not mot_passe_actuel:
+            return reafficher(
+                "Pour changer votre email ou votre mot de passe, entrez votre mot de passe actuel."
+            )
+        if not auth_controller.verifier_mot_passe(utilisateur, mot_passe_actuel):
+            return reafficher("Mot de passe actuel incorrect.")
+
+    # On met a jour SES infos, sans toucher au role ni au statut.
     try:
         utilisateur_controller.update(
             db=db,
@@ -169,7 +181,7 @@ def profil_save(
     except Exception:
         return reafficher("Cet email est déjà utilisé ou les données sont invalides.")
 
-    # 3) On rafraichit le nom affiche dans la barre du haut.
+    # On rafraichit le nom affiche dans la barre du haut.
     request.session["user_nom"] = f"{prenom} {nom}"
 
-    return RedirectResponse(url="/auth/profil?msg=Profil mis à jour", status_code=303)
+    return RedirectResponse(url="/auth/profil?enregistre=1", status_code=303)

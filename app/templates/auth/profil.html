@@ -21,14 +21,15 @@
 
       <div class="auth-title">Mon profil</div>
       <div class="auth-subtitle">
-        Modifiez vos informations. Le mot de passe actuel est demandé pour confirmer.
+        Modifiez vos informations. Le mot de passe actuel n'est demandé
+        que si vous changez votre email ou votre mot de passe.
       </div>
 
       {% if msg %}
       <div class="alert alert-success" style="margin-bottom: 12px;">{{ msg }}</div>
       {% endif %}
       {% if error %}
-      <div class="alert alert-error" style="margin-bottom: 12px;">{{ error }}</div>
+      <div class="alert alert-danger" style="margin-bottom: 12px;">{{ error }}</div>
       {% endif %}
 
       <form method="POST" action="/auth/profil">
@@ -56,9 +57,10 @@
 
         <div class="divider" style="margin: 12px 0;"></div>
 
-        <label class="form-label" for="mot_passe_actuel">Mot de passe actuel <span class="required">*</span></label>
+        <label class="form-label" for="mot_passe_actuel">Mot de passe actuel</label>
         <input class="form-control" type="password" id="mot_passe_actuel" name="mot_passe_actuel"
-               placeholder="Pour confirmer les changements" required style="margin-bottom: 16px;" />
+               placeholder="Requis seulement pour changer l'email ou le mot de passe"
+               style="margin-bottom: 16px;" />
 
         <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
           Enregistrer
