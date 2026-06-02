@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.controllers import auth_controller, role_controller, utilisateur_controller
+from app.dependencies import require_login
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 templates = Jinja2Templates(directory="app/templates")
@@ -101,3 +102,74 @@ def signup(
 def logout(request: Request):
     request.session.clear()
     return RedirectResponse(url="/auth/login", status_code=303)
+
+
+# -------------------------------------------------------------
+#  MON PROFIL : chaque utilisateur modifie SES propres infos
+# -------------------------------------------------------------
+#  Accessible a TOUT utilisateur connecte (admin, gardien, conducteur).
+#  On peut changer nom, prenom, email, telephone et mot de passe, MAIS
+#  PAS son role ni son statut. Pour confirmer l'identite, on demande le
+#  mot de passe actuel.
+@router.get("/profil", response_class=HTMLResponse)
+def profil_form(
+    request: Request,
+    msg: Optional[str] = None,
+    db: Session = Depends(get_db),
+    _: int = Depends(require_login),
+):
+    utilisateur = utilisateur_controller.get_by_id(db, request.session.get("user_id"))
+    return templates.TemplateResponse("auth/profil.html", {
+        "request": request,
+        "utilisateur": utilisateur,
+        "error": None,
+        "msg": msg,
+    })
+
+
+@router.post("/profil")
+def profil_save(
+    request: Request,
+    prenom: str = Form(...),
+    nom: str = Form(...),
+    email: str = Form(...),
+    telephone: Optional[str] = Form(None),
+    mot_passe_actuel: str = Form(...),
+    nouveau_mot_passe: Optional[str] = Form(None),
+    db: Session = Depends(get_db),
+    _: int = Depends(require_login),
+):
+    utilisateur = utilisateur_controller.get_by_id(db, request.session.get("user_id"))
+
+    def reafficher(erreur):
+        return templates.TemplateResponse("auth/profil.html", {
+            "request": request,
+            "utilisateur": utilisateur,
+            "error": erreur,
+            "msg": None,
+        })
+
+    # 1) On verifie le mot de passe actuel (preuve d'identite).
+    if not auth_controller.verifier_mot_passe(utilisateur, mot_passe_actuel):
+        return reafficher("Mot de passe actuel incorrect.")
+
+    # 2) On met a jour SES infos, sans toucher au role ni au statut.
+    try:
+        utilisateur_controller.update(
+            db=db,
+            utilisateur_id=utilisateur.id,
+            nom=nom,
+            prenom=prenom,
+            email=email,
+            telephone=telephone or None,
+            role_id=utilisateur.role_id,     # role inchange
+            actif=utilisateur.actif,         # statut inchange
+            mot_passe=nouveau_mot_passe or None,  # vide = on garde l'ancien
+        )
+    except Exception:
+        return reafficher("Cet email est déjà utilisé ou les données sont invalides.")
+
+    # 3) On rafraichit le nom affiche dans la barre du haut.
+    request.session["user_nom"] = f"{prenom} {nom}"
+
+    return RedirectResponse(url="/auth/profil?msg=Profil mis à jour", status_code=303)

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Mon profil — Smart Parking 2035</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="auth-body">
+
+  <div class="auth-wrapper" style="max-width: 480px;">
+    <div class="auth-card">
+
+      <div class="auth-brand">
+        <div class="auth-brand-icon">SP</div>
+        <div>
+          <div class="auth-brand-name">Smart Parking</div>
+          <div class="auth-brand-year">2035</div>
+        </div>
+      </div>
+
+      <div class="auth-title">Mon profil</div>
+      <div class="auth-subtitle">
+        Modifiez vos informations. Le mot de passe actuel est demandé pour confirmer.
+      </div>
+
+      {% if msg %}
+      <div class="alert alert-success" style="margin-bottom: 12px;">{{ msg }}</div>
+      {% endif %}
+      {% if error %}
+      <div class="alert alert-error" style="margin-bottom: 12px;">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="/auth/profil">
+
+        <label class="form-label" for="prenom">Prenom</label>
+        <input class="form-control" type="text" id="prenom" name="prenom"
+               value="{{ utilisateur.prenom }}" required style="margin-bottom: 10px;" />
+
+        <label class="form-label" for="nom">Nom</label>
+        <input class="form-control" type="text" id="nom" name="nom"
+               value="{{ utilisateur.nom }}" required style="margin-bottom: 10px;" />
+
+        <label class="form-label" for="email">Adresse e-mail</label>
+        <input class="form-control" type="email" id="email" name="email"
+               value="{{ utilisateur.email }}" required style="margin-bottom: 10px;" />
+
+        <label class="form-label" for="telephone">Telephone</label>
+        <input class="form-control" type="tel" id="telephone" name="telephone"
+               value="{{ utilisateur.telephone if utilisateur.telephone else '' }}"
+               style="margin-bottom: 10px;" />
+
+        <label class="form-label" for="nouveau_mot_passe">Nouveau mot de passe</label>
+        <input class="form-control" type="password" id="nouveau_mot_passe" name="nouveau_mot_passe"
+               placeholder="Laisser vide pour ne pas changer" style="margin-bottom: 10px;" />
+
+        <div class="divider" style="margin: 12px 0;"></div>
+
+        <label class="form-label" for="mot_passe_actuel">Mot de passe actuel <span class="required">*</span></label>
+        <input class="form-control" type="password" id="mot_passe_actuel" name="mot_passe_actuel"
+               placeholder="Pour confirmer les changements" required style="margin-bottom: 16px;" />
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+          Enregistrer
+        </button>
+      </form>
+
+      <a href="/" class="btn btn-secondary"
+         style="width: 100%; justify-content: center; margin-top: 8px;">
+        Retour
+      </a>
+
+    </div>
+  </div>
+
+</body>
+</html>
