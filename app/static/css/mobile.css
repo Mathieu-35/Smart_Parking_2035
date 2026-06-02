@@ -274,7 +274,7 @@
 .m-map-close {
   position: absolute;
   top: calc(14px + env(safe-area-inset-top));
-  left: 14px;
+  right: 14px;
   z-index: 70;
   width: 42px;
   height: 42px;

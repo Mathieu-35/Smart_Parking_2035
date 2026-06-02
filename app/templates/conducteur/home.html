@@ -451,13 +451,21 @@
       }
 
       // La carte vient d'apparaitre (elle etait cachee) : on dit a Leaflet
-      // que sa taille a change, PUIS on cadre. On laisse aussi de la place
-      // en bas (la fiche couvre le bas de l'ecran).
+      // que sa taille a change, PUIS on cadre.
       setTimeout(function () {
         carte.invalidateSize();
+
+        // On mesure la hauteur REELLE de la fiche du bas pour ne reserver
+        // que l'espace necessaire (sinon la carte se dezoome trop).
+        var hauteurFiche = document.getElementById("fiche-trajet").offsetHeight;
+
         carte.fitBounds(L.latLngBounds(tousLesPoints), {
-          paddingTopLeft: [30, 70],
-          paddingBottomRight: [30, 260]
+          // un peu de place en haut (boutons zoom + fermer)
+          paddingTopLeft: [30, 80],
+          // juste la hauteur de la fiche en bas
+          paddingBottomRight: [30, hauteurFiche + 20],
+          // on empeche un zoom trop serre OU trop large
+          maxZoom: 16
         });
       }, 250);
     }
