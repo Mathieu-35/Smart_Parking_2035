@@ -21,11 +21,12 @@
 // On donne un nom + un numero de version a notre cache.
 // Si on change les fichiers, on augmente le numero (v2, v3...)
 // pour que le navigateur remplace l'ancien cache.
-var NOM_CACHE = "smart-parking-v2";
+var NOM_CACHE = "smart-parking-v3";
 
 // La liste des fichiers a garder pour le hors-ligne.
 var FICHIERS_A_GARDER = [
   "/static/css/style.css",
+  "/static/css/mobile.css",
   "/static/offline.html",
   "/static/icons/icon-192.png",
   "/static/icons/icon-512.png"

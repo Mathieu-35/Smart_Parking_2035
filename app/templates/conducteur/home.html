@@ -9,6 +9,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Espace conducteur — Smart Parking 2035</title>
   <link rel="stylesheet" href="/static/css/style.css" />
+  <!-- Design "app moderne" reserve aux pages mobiles. -->
+  <link rel="stylesheet" href="/static/css/mobile.css" />
   <!-- Feuille de style de la carte Leaflet (chargee depuis internet). -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <!-- PWA : le manifeste (nom, icones, couleurs) rend l'app installable. -->
@@ -16,74 +18,70 @@
   <meta name="theme-color" content="#1e3a8a" />
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
 </head>
-<body class="auth-body">
+<body class="m-screen">
 
-  <div class="auth-wrapper" style="max-width: 520px;">
-    <div class="auth-card">
-
-      <div class="auth-brand">
-        <div class="auth-brand-icon">SP</div>
-        <div>
-          <div class="auth-brand-name">Smart Parking</div>
-          <div class="auth-brand-year">2035</div>
-        </div>
+  <!-- ===================== EN-TETE BLEU ===================== -->
+  <header class="m-header">
+    <div class="m-brand">
+      <div class="m-brand-icon">SP</div>
+      <div>
+        <div class="m-brand-name">Smart Parking</div>
+        <div class="m-brand-year">2035</div>
       </div>
+    </div>
+    <div class="m-greeting">Bonjour {{ request.session.get("user_nom", "") }}</div>
+    <div class="m-subtitle">Trouvez le parking le plus proche de vous.</div>
+  </header>
 
-      <div class="auth-title">Bonjour {{ request.session.get("user_nom", "") }}</div>
-      <div class="auth-subtitle">
-        Trouvez le parking le plus proche de vous.
-      </div>
+  <!-- ===================== CONTENU ===================== -->
+  <main class="m-content m-content--overlap">
 
+    <!-- Carte d'action : trouver un parking -->
+    <div class="m-card">
       <!-- Le gros bouton : quand on clique, on demande la position GPS. -->
-      <button id="bouton-chercher" class="btn btn-primary"
-              style="width: 100%; justify-content: center; margin: 24px 0 12px 0;">
-        Trouver un parking pres de moi
+      <button id="bouton-chercher" class="m-btn m-btn-primary">
+        📍 Trouver un parking pres de moi
       </button>
 
+      <div class="m-or">— ou —</div>
+
       <!-- Mode "position de test" : pour aller vite, sans attendre le GPS. -->
-      <div style="margin-bottom: 12px; padding: 12px; background: var(--bg-subtle, #f5f5f5); border-radius: 8px;">
-        <label for="liste-carrefours" style="display: block; margin-bottom: 6px; font-size: 14px;">
-          Ou choisir une position de test :
-        </label>
-        <select id="liste-carrefours" style="width: 100%; padding: 8px; margin-bottom: 8px;">
-          <option value="-18.91,47.521">Analakely</option>
-          <option value="-18.905,47.5215">Soarano</option>
-          <option value="-18.912,47.526">Antaninarenina</option>
-          <option value="-18.916,47.524">Ambohijatovo</option>
-          <option value="-18.92,47.521">Anosy</option>
-          <option value="-18.917,47.527">Mahamasina</option>
-          <option value="-18.911,47.518">Isoraka</option>
-          <option value="-18.907,47.518">Tsaralalana</option>
-          <option value="-18.903,47.527">Behoririka</option>
-          <option value="-18.9,47.532">Andravoahangy</option>
-          <option value="-18.88,47.523">Ankorondrano</option>
-          <option value="-18.918,47.53">Andohalo</option>
-        </select>
-        <button id="bouton-test" class="btn btn-secondary" style="width: 100%; justify-content: center;">
-          Chercher depuis cette position
-        </button>
-      </div>
-
-      <!-- Petite zone de message (chargement, erreurs...). -->
-      <div id="message" style="margin-bottom: 12px; color: var(--text-muted, #666);"></div>
-
-      <!-- La liste des parkings recommandes s'affichera ici. -->
-      <div id="resultats"></div>
-
-      <!-- La carte du trajet. Cachee tant qu'on n'a pas choisi de trajet. -->
-      <div id="carte" style="height: 300px; margin-top: 12px; border-radius: 8px; display: none;"></div>
-
-      <a href="/auth/profil" class="btn btn-secondary"
-         style="width: 100%; justify-content: center; margin-top: 16px;">
-        Mon profil
-      </a>
-      <a href="/auth/logout" class="btn btn-secondary"
-         style="width: 100%; justify-content: center; margin-top: 8px;">
-        Se deconnecter
-      </a>
-
+      <label class="m-label" for="liste-carrefours">Choisir une position de test :</label>
+      <select id="liste-carrefours" class="m-field">
+        <option value="-18.91,47.521">Analakely</option>
+        <option value="-18.905,47.5215">Soarano</option>
+        <option value="-18.912,47.526">Antaninarenina</option>
+        <option value="-18.916,47.524">Ambohijatovo</option>
+        <option value="-18.92,47.521">Anosy</option>
+        <option value="-18.917,47.527">Mahamasina</option>
+        <option value="-18.911,47.518">Isoraka</option>
+        <option value="-18.907,47.518">Tsaralalana</option>
+        <option value="-18.903,47.527">Behoririka</option>
+        <option value="-18.9,47.532">Andravoahangy</option>
+        <option value="-18.88,47.523">Ankorondrano</option>
+        <option value="-18.918,47.53">Andohalo</option>
+      </select>
+      <button id="bouton-test" class="m-btn m-btn-secondary">
+        Chercher depuis cette position
+      </button>
     </div>
-  </div>
+
+    <!-- Petite zone de message (chargement, erreurs...). -->
+    <div id="message" class="m-message"></div>
+
+    <!-- La liste des parkings recommandes s'affichera ici. -->
+    <div id="resultats"></div>
+
+    <!-- La carte du trajet. Cachee tant qu'on n'a pas choisi de trajet. -->
+    <div id="carte" class="m-map" style="display: none;"></div>
+
+    <!-- Liens bas de page -->
+    <div style="margin-top: 16px;">
+      <a href="/auth/profil" class="m-btn m-btn-ghost">Mon profil</a>
+      <a href="/auth/logout" class="m-btn m-btn-ghost">Se deconnecter</a>
+    </div>
+
+  </main>
 
   <!-- PWA : on active le service worker (cache + hors-ligne). -->
   <script>
@@ -236,7 +234,7 @@
 
       message.textContent = liste.length + " parking(s) trouve(s) :";
 
-      // On construit une petite carte pour chaque parking.
+      // On construit une jolie carte pour chaque parking.
       var html = "";
       for (var i = 0; i < liste.length; i++) {
         var p = liste[i];
@@ -245,29 +243,36 @@
         var itineraire = p.chemin.join(" → ");
 
         // Le 1er parking de la liste = le plus proche = le recommande.
+        // Il recoit un badge vert et un lisere bleu (classe "m-result--top").
         var badge = "";
+        var classeTop = "";
         if (i === 0) {
-          badge = ' <span style="color: green; font-weight: bold;">✅ Recommande</span>';
+          badge = '<span class="m-badge">✅ Recommande</span>';
+          classeTop = " m-result--top";
         }
 
         html = html +
-          '<div style="padding: 12px; margin-bottom: 8px; background: var(--bg-subtle, #f5f5f5); border-radius: 8px;">' +
-            '<strong>' + (i + 1) + '. ' + p.nom + '</strong>' + badge + '<br>' +
-            'Distance par la route : <strong>' + p.distance + ' m</strong><br>' +
-            'Places libres : ' + p.places_disponibles + '<br>' +
+          '<div class="m-result' + classeTop + '">' +
+            // Ligne du haut : nom du parking + badge eventuel.
+            '<div class="m-result-head">' +
+              '<div class="m-result-name">' + (i + 1) + '. ' + p.nom + '</div>' +
+              badge +
+            '</div>' +
+            // Les "stats" en pilules : distance + places libres.
+            '<div class="m-chips">' +
+              '<span class="m-chip">🚗 ' + p.distance + ' m</span>' +
+              '<span class="m-chip">🅿️ ' + p.places_disponibles + ' places</span>' +
+            '</div>' +
             // L'itineraire choisi par A* (la suite de carrefours).
-            '<div style="margin-top: 6px; font-size: 13px; color: #444;">' +
-              'Itineraire : ' + itineraire +
-            '</div>' +
+            '<div class="m-route"><b>Itineraire :</b> ' + itineraire + '</div>' +
             // La preuve d'optimisation : A* explore peu de carrefours.
-            '<div style="margin-top: 4px; font-size: 12px; color: #777;">' +
-              'A* a explore ' + p.nombre_explores + ' carrefours sur ' + nombreNoeudsTotal +
-            '</div>' +
+            '<div class="m-explore">A* a explore ' + p.nombre_explores +
+              ' carrefours sur ' + nombreNoeudsTotal + '</div>' +
             // Bouton "Voir le trajet" : dessine l'itineraire sur la carte.
-            '<button class="btn btn-secondary" style="margin-top: 8px; width: 100%; justify-content: center;" ' +
+            '<button class="m-btn m-btn-secondary" ' +
               'onclick="afficherTrajet(' + i + ')">Voir le trajet</button>' +
             // Bouton "Reserver" : il appelle reserver(...) avec l'id du parking.
-            '<button class="btn btn-primary" style="margin-top: 8px; width: 100%; justify-content: center;" ' +
+            '<button class="m-btn m-btn-primary" ' +
               'onclick="reserver(' + p.id + ')">Reserver une place</button>' +
           '</div>';
       }

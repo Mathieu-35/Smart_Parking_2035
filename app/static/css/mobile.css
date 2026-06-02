@@ -1,0 +1,291 @@
+/* =============================================================
+   mobile.css  -  Design "app moderne" pour les pages MOBILES
+   (conducteur + gardien) UNIQUEMENT.
+
+   Ce fichier est separe de style.css (qui sert a l'admin web).
+   Ainsi, changer le design mobile ne touche JAMAIS l'admin.
+
+   Idee du design : un grand en-tete bleu degrade arrondi en bas,
+   puis des cartes blanches arrondies avec une ombre douce.
+   ============================================================= */
+
+/* ----- Couleurs et reglages du theme mobile ----- */
+:root {
+  --m-bleu:        #1e3a8a;   /* bleu fonce (couleur de l'app) */
+  --m-bleu-clair:  #2563eb;   /* bleu plus clair (degrade) */
+  --m-bleu-vif:    #3b82f6;   /* bleu vif (survol/active) */
+  --m-fond:        #eef2f9;   /* fond gris-bleute tres doux */
+  --m-surface:     #ffffff;   /* blanc des cartes */
+  --m-texte:       #1f2937;   /* texte principal */
+  --m-texte-doux:  #6b7280;   /* texte secondaire (gris) */
+  --m-vert:        #16a34a;   /* vert "recommande / succes" */
+  --m-vert-fond:   #dcfce7;
+  --m-rouge:       #dc2626;   /* rouge "erreur" */
+  --m-rouge-fond:  #fee2e2;
+  --m-bord:        #e5e7eb;   /* bord tres clair */
+  --m-rayon:       16px;      /* coins arrondis des cartes */
+  --m-rayon-btn:   14px;      /* coins arrondis des boutons */
+  --m-ombre:       0 6px 20px rgba(30, 58, 138, 0.08);
+}
+
+/* ----- L'ecran complet (fond doux, occupe toute la hauteur) ----- */
+.m-screen {
+  min-height: 100vh;
+  background: var(--m-fond);
+  color: var(--m-texte);
+  /* On laisse de la place pour l'encoche de l'iPhone en haut/bas. */
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+}
+
+/* ----- L'en-tete bleu degrade, arrondi en bas ----- */
+.m-header {
+  background: linear-gradient(135deg, var(--m-bleu) 0%, var(--m-bleu-clair) 100%);
+  color: #ffffff;
+  padding: calc(28px + env(safe-area-inset-top)) 22px 28px 22px;
+  border-radius: 0 0 26px 26px;
+  box-shadow: 0 8px 24px rgba(30, 58, 138, 0.22);
+}
+
+/* La petite marque "SP / Smart Parking 2035" dans l'en-tete */
+.m-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.m-brand-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+}
+.m-brand-name { font-size: 14px; font-weight: 700; line-height: 1.1; }
+.m-brand-year { font-size: 11px; opacity: 0.8; }
+
+.m-greeting { font-size: 23px; font-weight: 800; letter-spacing: -0.02em; }
+.m-subtitle { font-size: 14px; opacity: 0.9; margin-top: 4px; line-height: 1.4; }
+
+/* ----- La zone de contenu (sous l'en-tete) ----- */
+.m-content {
+  padding: 18px 16px 0 16px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* On remonte un peu le contenu pour qu'il "chevauche" l'en-tete. */
+.m-content--overlap { margin-top: -16px; }
+
+/* ----- Une carte blanche arrondie avec ombre douce ----- */
+.m-card {
+  background: var(--m-surface);
+  border-radius: var(--m-rayon);
+  box-shadow: var(--m-ombre);
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+/* Petit titre de section a l'interieur d'une carte */
+.m-card-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--m-texte-doux);
+  margin-bottom: 10px;
+}
+
+/* ----- Les boutons (pleine largeur, bien arrondis) ----- */
+.m-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px 16px;
+  border-radius: var(--m-rayon-btn);
+  font-size: 15.5px;
+  font-weight: 700;
+  font-family: var(--font);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.05s ease, filter 0.15s ease, background 0.15s ease;
+}
+.m-btn:active { transform: scale(0.98); }   /* petit effet "appui" */
+
+.m-btn-primary {
+  background: linear-gradient(135deg, var(--m-bleu) 0%, var(--m-bleu-vif) 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.32);
+}
+.m-btn-primary:active { filter: brightness(0.95); }
+
+.m-btn-secondary {
+  background: #ffffff;
+  color: var(--m-bleu);
+  border: 1.5px solid var(--m-bleu);
+}
+.m-btn-secondary:active { background: #f0f5ff; }
+
+.m-btn-ghost {
+  background: transparent;
+  color: var(--m-texte-doux);
+  border: 1.5px solid var(--m-bord);
+}
+.m-btn-ghost:active { background: #f3f4f6; }
+
+/* Petite marge entre boutons empiles */
+.m-btn + .m-btn { margin-top: 10px; }
+
+/* ----- Champs de saisie (input / select) ----- */
+.m-field {
+  width: 100%;
+  padding: 14px 14px;
+  border: 1.5px solid var(--m-bord);
+  border-radius: var(--m-rayon-btn);
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--m-texte);
+  background: #f9fafb;
+  margin-bottom: 12px;
+}
+.m-field:focus {
+  outline: none;
+  border-color: var(--m-bleu-clair);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.m-label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--m-texte);
+  margin-bottom: 7px;
+}
+
+/* Deux boutons cote a cote (gardien : entree / sortie) */
+.m-row {
+  display: flex;
+  gap: 10px;
+}
+.m-row .m-btn { margin-top: 0; }
+
+/* Petit separateur "ou" entre deux blocs */
+.m-or {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--m-texte-doux);
+  margin: 6px 0 14px 0;
+  font-weight: 600;
+}
+
+/* ----- Petite zone de message (chargement, infos) ----- */
+.m-message {
+  font-size: 13.5px;
+  color: var(--m-texte-doux);
+  text-align: center;
+  margin-bottom: 12px;
+  min-height: 18px;
+}
+
+/* ----- Une carte de RESULTAT (un parking recommande) ----- */
+.m-result {
+  background: var(--m-surface);
+  border: 1px solid var(--m-bord);
+  border-radius: var(--m-rayon);
+  box-shadow: var(--m-ombre);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+/* La 1ere carte (le parking recommande) a un lisere bleu a gauche. */
+.m-result--top { border-left: 4px solid var(--m-bleu-clair); }
+
+.m-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.m-result-name { font-size: 16.5px; font-weight: 700; }
+
+/* Le badge "pilule" (vert = recommande) */
+.m-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: var(--m-vert-fond);
+  color: var(--m-vert);
+  white-space: nowrap;
+}
+
+/* Les "stats" du parking (distance, places) en pilules grises */
+.m-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.m-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: #eef2f9;
+  color: var(--m-bleu);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* L'itineraire en toutes lettres */
+.m-route {
+  font-size: 13px;
+  color: var(--m-texte);
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 9px 11px;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.m-route b { color: var(--m-bleu); }
+
+/* La preuve d'optimisation A* (petit texte gris) */
+.m-explore {
+  font-size: 12px;
+  color: var(--m-texte-doux);
+  margin-bottom: 12px;
+}
+
+/* ----- Bandeaux de message (succes / erreur) version mobile ----- */
+.m-alert {
+  padding: 13px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.m-alert-success { background: var(--m-vert-fond); color: var(--m-vert); }
+.m-alert-error   { background: var(--m-rouge-fond); color: var(--m-rouge); }
+
+/* ----- La carte Leaflet (coins arrondis) ----- */
+.m-map {
+  height: 320px;
+  border-radius: var(--m-rayon);
+  box-shadow: var(--m-ombre);
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+/* La zone camera du scanner QR (gardien) */
+.m-camera {
+  border-radius: var(--m-rayon);
+  overflow: hidden;
+  margin-bottom: 14px;
+}

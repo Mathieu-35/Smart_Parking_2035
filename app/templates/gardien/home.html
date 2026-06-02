@@ -9,68 +9,65 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Espace gardien — Smart Parking 2035</title>
   <link rel="stylesheet" href="/static/css/style.css" />
+  <!-- Design "app moderne" reserve aux pages mobiles. -->
+  <link rel="stylesheet" href="/static/css/mobile.css" />
   <!-- PWA : le manifeste (nom, icones, couleurs) rend l'app installable. -->
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#1e3a8a" />
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
 </head>
-<body class="auth-body">
+<body class="m-screen">
 
-  <div class="auth-wrapper" style="max-width: 520px;">
-    <div class="auth-card">
-
-      <div class="auth-brand">
-        <div class="auth-brand-icon">SP</div>
-        <div>
-          <div class="auth-brand-name">Smart Parking</div>
-          <div class="auth-brand-year">2035</div>
-        </div>
+  <!-- ===================== EN-TETE BLEU ===================== -->
+  <header class="m-header">
+    <div class="m-brand">
+      <div class="m-brand-icon">SP</div>
+      <div>
+        <div class="m-brand-name">Smart Parking</div>
+        <div class="m-brand-year">2035</div>
       </div>
+    </div>
+    <div class="m-greeting">Bonjour {{ request.session.get("user_nom", "") }}</div>
+    <div class="m-subtitle">
+      Scannez ou tapez le code du conducteur, puis validez l'entree ou la sortie.
+    </div>
+  </header>
 
-      <div class="auth-title">Bonjour {{ request.session.get("user_nom", "") }}</div>
-      <div class="auth-subtitle">
-        Scannez ou tapez le code du conducteur, puis validez l'entree ou la sortie.
-      </div>
+  <!-- ===================== CONTENU ===================== -->
+  <main class="m-content m-content--overlap">
 
+    <div class="m-card">
       <!-- Zone camera (le scan dessine ici). Cachee tant qu'on ne scanne pas. -->
-      <div id="zone-camera" style="margin: 16px 0; display: none;"></div>
+      <div id="zone-camera" class="m-camera" style="display: none;"></div>
 
-      <button id="bouton-scanner" class="btn btn-secondary"
-              style="width: 100%; justify-content: center; margin-bottom: 12px;">
-        Scanner avec la camera
+      <button id="bouton-scanner" class="m-btn m-btn-secondary">
+        📷 Scanner avec la camera
       </button>
 
+      <div class="m-or">— ou —</div>
+
       <!-- Saisie manuelle du code (marche toujours, meme sans camera). -->
-      <label for="champ-code" style="display:block; margin-bottom:6px; font-size:14px;">
-        Code de la reservation :
-      </label>
+      <label class="m-label" for="champ-code">Code de la reservation :</label>
       <input id="champ-code" type="text" placeholder="RES-XXXXXX"
-             style="width:100%; padding:10px; margin-bottom:12px; text-transform:uppercase;" />
+             class="m-field" style="text-transform: uppercase;" />
 
-      <!-- Les deux boutons d'action -->
-      <div style="display:flex; gap:8px; margin-bottom:12px;">
-        <button id="bouton-entree" class="btn btn-primary" style="flex:1; justify-content:center;">
-          Valider l'entree
-        </button>
-        <button id="bouton-sortie" class="btn btn-primary" style="flex:1; justify-content:center;">
-          Valider la sortie
-        </button>
+      <!-- Les deux boutons d'action, cote a cote -->
+      <div class="m-row">
+        <button id="bouton-entree" class="m-btn m-btn-primary">Entree</button>
+        <button id="bouton-sortie" class="m-btn m-btn-primary">Sortie</button>
       </div>
-
-      <!-- Zone de resultat (message + montant a payer) -->
-      <div id="resultat" style="margin-bottom:12px;"></div>
-
-      <a href="/auth/profil" class="btn btn-secondary"
-         style="width: 100%; justify-content: center; margin-top: 8px;">
-        Mon profil
-      </a>
-      <a href="/auth/logout" class="btn btn-secondary"
-         style="width: 100%; justify-content: center; margin-top: 8px;">
-        Se deconnecter
-      </a>
-
     </div>
-  </div>
+
+    <!-- Zone de resultat (message + montant a payer) -->
+    <div id="resultat" style="margin-bottom: 12px;"></div>
+
+    <!-- Liens bas de page -->
+    <div>
+      <a href="/auth/profil" class="m-btn m-btn-ghost">Mon profil</a>
+      <a href="/auth/logout" class="m-btn m-btn-ghost">Se deconnecter</a>
+    </div>
+
+  </main>
 
   <!-- PWA : on active le service worker (cache + hors-ligne). -->
   <script>
@@ -94,7 +91,7 @@
     function envoyer(action) {
       var code = champCode.value.trim().toUpperCase();
       if (code === "") {
-        resultat.innerHTML = "<div class='alert alert-error'>Entrez un code d'abord.</div>";
+        resultat.innerHTML = "<div class='m-alert m-alert-error'>Entrez un code d'abord.</div>";
         return;
       }
 
@@ -105,10 +102,10 @@
         .then(function (r) { return r.json(); })
         .then(function (d) {
           if (!d.ok) {
-            resultat.innerHTML = "<div class='alert alert-error'>" + d.message + "</div>";
+            resultat.innerHTML = "<div class='m-alert m-alert-error'>" + d.message + "</div>";
             return;
           }
-          var texte = "<div class='alert alert-success'>" + d.message;
+          var texte = "<div class='m-alert m-alert-success'>" + d.message;
           if (action === "sortie") {
             // On affiche le montant a encaisser en especes.
             texte = texte + "<br><strong>Montant a payer : " + d.montant + "</strong>";
@@ -117,7 +114,7 @@
           resultat.innerHTML = texte;
         })
         .catch(function () {
-          resultat.innerHTML = "<div class='alert alert-error'>Erreur reseau. Reessayez.</div>";
+          resultat.innerHTML = "<div class='m-alert m-alert-error'>Erreur reseau. Reessayez.</div>";
         });
     }
 
@@ -128,7 +125,7 @@
     boutonScanner.addEventListener("click", function () {
       // Si la librairie n'a pas pu se charger (ex : hors-ligne), on previent.
       if (typeof Html5Qrcode === "undefined") {
-        resultat.innerHTML = "<div class='alert alert-error'>" +
+        resultat.innerHTML = "<div class='m-alert m-alert-error'>" +
           "Scanner indisponible. Tapez le code a la main.</div>";
         return;
       }
@@ -145,11 +142,11 @@
           scanner.stop().then(function () {
             zoneCamera.style.display = "none";
           });
-          resultat.innerHTML = "<div class='alert alert-success'>Code lu : " + codeLu + "</div>";
+          resultat.innerHTML = "<div class='m-alert m-alert-success'>Code lu : " + codeLu + "</div>";
         },
         function () { /* on ignore les images sans QR */ }
       ).catch(function () {
-        resultat.innerHTML = "<div class='alert alert-error'>" +
+        resultat.innerHTML = "<div class='m-alert m-alert-error'>" +
           "Impossible d'ouvrir la camera. Tapez le code a la main.</div>";
       });
     });
