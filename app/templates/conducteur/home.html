@@ -20,25 +20,39 @@
 </head>
 <body class="m-screen">
 
-  <!-- ===================== EN-TETE (barre compacte, repliable) ===================== -->
-  <header class="m-header" id="entete">
-    <div class="m-bar">
-      <div class="m-brand-icon">SP</div>
-      <div>
-        <div class="m-brand-name">Smart Parking</div>
-        <div class="m-brand-year">2035</div>
-      </div>
-      <!-- Bouton chevron : replie / deplie le bloc "Bonjour". -->
-      <button class="m-toggle" id="bouton-replier" title="Reduire l'en-tete">⌃</button>
-    </div>
-    <div class="m-hero">
-      <div class="m-greeting">Bonjour {{ request.session.get("user_nom", "") }}</div>
-      <div class="m-subtitle">Trouvez le parking le plus proche de vous.</div>
-    </div>
+  <!-- ===================== BARRE DU HAUT (menu burger) ===================== -->
+  <header class="m-topbar">
+    <button class="m-burger" id="bouton-menu" title="Menu">☰</button>
+    <div class="m-topbar-title">Smart Parking 2035</div>
   </header>
+
+  <!-- ===================== TIROIR LATERAL (sidebar) ===================== -->
+  <div class="m-overlay" id="voile"></div>
+  <aside class="m-drawer" id="tiroir">
+    <div class="m-drawer-head">
+      <div class="m-drawer-brand">
+        <div class="m-brand-icon">SP</div>
+        <div>
+          <div class="m-brand-name">Smart Parking</div>
+          <div class="m-brand-year">2035</div>
+        </div>
+      </div>
+      <div class="m-drawer-user">{{ request.session.get("user_nom", "") }}</div>
+      <div class="m-drawer-role">Conducteur</div>
+    </div>
+    <nav class="m-drawer-nav">
+      <a href="/auth/profil" class="m-drawer-link">Mon profil</a>
+      <a href="/auth/logout" class="m-drawer-link deconnexion">Se deconnecter</a>
+    </nav>
+  </aside>
 
   <!-- ===================== CONTENU ===================== -->
   <main class="m-content">
+
+    <div class="m-intro">
+      <div class="m-intro-title">Bonjour {{ request.session.get("user_nom", "") }}</div>
+      <div class="m-intro-sub">Trouvez le parking le plus proche de vous.</div>
+    </div>
 
     <!-- Carte d'action : trouver un parking -->
     <div class="m-card">
@@ -79,12 +93,6 @@
     <!-- La carte du trajet. Cachee tant qu'on n'a pas choisi de trajet. -->
     <div id="carte" class="m-map" style="display: none;"></div>
 
-    <!-- Liens bas de page -->
-    <div style="margin-top: 16px;">
-      <a href="/auth/profil" class="m-btn m-btn-ghost">Mon profil</a>
-      <a href="/auth/logout" class="m-btn m-btn-ghost">Se deconnecter</a>
-    </div>
-
   </main>
 
   <!-- PWA : on active le service worker (cache + hors-ligne). -->
@@ -93,12 +101,21 @@
       navigator.serviceWorker.register("/sw.js");
     }
 
-    // Bouton "replier l'en-tete" : on ajoute/enleve la classe "replie".
-    var entete = document.getElementById("entete");
-    var boutonReplier = document.getElementById("bouton-replier");
-    boutonReplier.addEventListener("click", function () {
-      entete.classList.toggle("replie");
-    });
+    // Tiroir lateral : le bouton burger l'ouvre, le voile le ferme.
+    var tiroir = document.getElementById("tiroir");
+    var voile = document.getElementById("voile");
+    var boutonMenu = document.getElementById("bouton-menu");
+
+    function ouvrirTiroir() {
+      tiroir.classList.add("ouvert");
+      voile.classList.add("visible");
+    }
+    function fermerTiroir() {
+      tiroir.classList.remove("ouvert");
+      voile.classList.remove("visible");
+    }
+    boutonMenu.addEventListener("click", ouvrirTiroir);
+    voile.addEventListener("click", fermerTiroir);
   </script>
 
   <!-- Librairie de carte Leaflet (chargee depuis internet). -->

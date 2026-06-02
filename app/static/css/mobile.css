@@ -1,12 +1,13 @@
 /* =============================================================
    mobile.css  -  Interface mobile (conducteur + gardien)
-   Style sobre, compact. Separe de style.css (admin web intact).
+   Barre fine en haut + tiroir lateral (sidebar) qui glisse.
+   Separe de style.css (admin web intact).
    ============================================================= */
 
 :root {
-  --m-bleu:        #1e3a8a;   /* bleu principal (plat, sans degrade) */
-  --m-bleu-fonce:  #172e6e;   /* bleu plus fonce (appui) */
-  --m-fond:        #f5f6f8;   /* fond gris neutre */
+  --m-bleu:        #1e3a8a;
+  --m-bleu-fonce:  #172e6e;
+  --m-fond:        #f5f6f8;
   --m-surface:     #ffffff;
   --m-texte:       #1f2533;
   --m-texte-doux:  #687087;
@@ -24,28 +25,77 @@
   min-height: 100vh;
   background: var(--m-fond);
   color: var(--m-texte);
-  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
-/* ----- En-tete : barre compacte, repliable ----- */
-.m-header {
+/* ----- Barre fine en haut (toujours visible) ----- */
+.m-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   background: var(--m-bleu);
   color: #ffffff;
-  padding: calc(10px + env(safe-area-inset-top)) 16px 12px 16px;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px 16px;
   position: sticky;
   top: 0;
   z-index: 30;
 }
-
-/* Ligne du haut : logo + nom a gauche, bouton replier a droite */
-.m-bar {
+.m-burger {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 9px;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
 }
+.m-topbar-title { font-size: 15px; font-weight: 700; }
+
+/* ----- Le voile sombre derriere le tiroir ----- */
+.m-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 40;
+}
+.m-overlay.visible { opacity: 1; visibility: visible; }
+
+/* ----- Le tiroir lateral (sidebar) ----- */
+.m-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 268px;
+  max-width: 80%;
+  background: var(--m-surface);
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 0.22s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 16px rgba(0, 0, 0, 0.12);
+}
+.m-drawer.ouvert { transform: translateX(0); }
+
+/* En-tete du tiroir : logo + nom de l'utilisateur */
+.m-drawer-head {
+  background: var(--m-bleu);
+  color: #ffffff;
+  padding: calc(20px + env(safe-area-inset-top)) 18px 18px 18px;
+}
+.m-drawer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .m-brand-icon {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   background: rgba(255, 255, 255, 0.16);
   border-radius: 8px;
   display: flex;
@@ -56,51 +106,36 @@
   color: #ffffff;
   flex-shrink: 0;
 }
-.m-brand-name { font-size: 14px; font-weight: 700; line-height: 1.1; }
+.m-brand-name { font-size: 13px; font-weight: 700; line-height: 1.1; }
 .m-brand-year { font-size: 11px; opacity: 0.75; }
+.m-drawer-user { font-size: 16px; font-weight: 700; }
+.m-drawer-role { font-size: 12px; opacity: 0.8; margin-top: 2px; }
 
-/* Le bouton chevron pour replier/deplier l'en-tete */
-.m-toggle {
-  margin-left: auto;
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
-  border-radius: 8px;
-  font-size: 16px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Liens du tiroir */
+.m-drawer-nav { padding: 8px; flex: 1; }
+.m-drawer-link {
+  display: block;
+  padding: 13px 14px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--m-texte);
+  text-decoration: none;
 }
+.m-drawer-link:active { background: #eef0f3; }
+.m-drawer-link.deconnexion { color: var(--m-rouge); }
 
-/* Le bloc "Bonjour + sous-titre" : c'est lui qu'on replie */
-.m-hero {
-  margin-top: 12px;
-  overflow: hidden;
-  transition: max-height 0.2s ease, opacity 0.2s ease, margin-top 0.2s ease;
-  max-height: 120px;
-  opacity: 1;
-}
-.m-greeting { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
-.m-subtitle { font-size: 13px; opacity: 0.85; margin-top: 2px; line-height: 1.35; }
-
-/* Etat replie : le bloc disparait, il ne reste que la barre fine */
-.m-header.replie .m-hero {
-  max-height: 0;
-  opacity: 0;
-  margin-top: 0;
-}
-.m-header.replie .m-toggle { transform: rotate(180deg); }
-
-/* ----- Contenu ----- */
+/* ----- Contenu : un peu d'air ----- */
 .m-content {
-  padding: 14px 14px 0 14px;
+  padding: 18px 16px 0 16px;
   max-width: 560px;
   margin: 0 auto;
 }
+
+/* Intro de page (bonjour + sous-titre) dans le contenu */
+.m-intro { margin-bottom: 18px; }
+.m-intro-title { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+.m-intro-sub { font-size: 14px; color: var(--m-texte-doux); margin-top: 4px; line-height: 1.4; }
 
 /* ----- Carte blanche ----- */
 .m-card {
@@ -108,8 +143,8 @@
   border: 1px solid var(--m-bord);
   border-radius: var(--m-rayon);
   box-shadow: var(--m-ombre);
-  padding: 14px;
-  margin-bottom: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
 }
 
 /* ----- Boutons ----- */
@@ -119,7 +154,7 @@
   justify-content: center;
   gap: 7px;
   width: 100%;
-  padding: 12px 14px;
+  padding: 13px 14px;
   border-radius: 10px;
   font-size: 14.5px;
   font-weight: 600;
@@ -139,26 +174,19 @@
 }
 .m-btn-secondary:active { background: #eef2fb; }
 
-.m-btn-ghost {
-  background: transparent;
-  color: var(--m-texte-doux);
-  border: 1px solid var(--m-bord);
-}
-.m-btn-ghost:active { background: #eef0f3; }
-
-.m-btn + .m-btn { margin-top: 8px; }
+.m-btn + .m-btn { margin-top: 10px; }
 
 /* ----- Champs ----- */
 .m-field {
   width: 100%;
-  padding: 11px 12px;
+  padding: 12px 12px;
   border: 1px solid var(--m-bord);
   border-radius: 10px;
   font-size: 15px;
   font-family: var(--font);
   color: var(--m-texte);
   background: #fbfbfc;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .m-field:focus {
   outline: none;
@@ -170,11 +198,11 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--m-texte-doux);
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 }
 
 /* Deux boutons cote a cote (gardien) */
-.m-row { display: flex; gap: 8px; }
+.m-row { display: flex; gap: 10px; }
 .m-row .m-btn { margin-top: 0; }
 
 /* Separateur "ou" */
@@ -182,10 +210,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  text-align: center;
   font-size: 12px;
   color: var(--m-texte-doux);
-  margin: 12px 0;
+  margin: 14px 0;
 }
 .m-or::before, .m-or::after {
   content: "";
@@ -198,7 +225,7 @@
 .m-message {
   font-size: 13px;
   color: var(--m-texte-doux);
-  margin: 2px 2px 10px 2px;
+  margin: 4px 2px 12px 2px;
   min-height: 16px;
 }
 
@@ -208,8 +235,8 @@
   border: 1px solid var(--m-bord);
   border-radius: var(--m-rayon);
   box-shadow: var(--m-ombre);
-  padding: 14px;
-  margin-bottom: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
 }
 .m-result--top { border-left: 3px solid var(--m-bleu); }
 
@@ -218,7 +245,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 9px;
 }
 .m-result-name { font-size: 15.5px; font-weight: 700; }
 
@@ -235,9 +262,9 @@
 }
 
 /* Stats du parking */
-.m-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 9px; }
+.m-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
 .m-chip {
-  padding: 4px 9px;
+  padding: 5px 10px;
   border-radius: 6px;
   background: #eef2fb;
   color: var(--m-bleu);
@@ -251,8 +278,8 @@
   color: var(--m-texte);
   background: #f7f8fa;
   border-radius: 8px;
-  padding: 8px 10px;
-  margin-bottom: 7px;
+  padding: 9px 11px;
+  margin-bottom: 8px;
   line-height: 1.45;
 }
 .m-route b { color: var(--m-texte-doux); font-weight: 600; }
@@ -260,12 +287,12 @@
 .m-explore {
   font-size: 11.5px;
   color: var(--m-texte-doux);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 /* ----- Bandeaux succes / erreur ----- */
 .m-alert {
-  padding: 11px 12px;
+  padding: 12px 13px;
   border-radius: 10px;
   font-size: 13.5px;
   font-weight: 500;
@@ -280,12 +307,12 @@
   border-radius: var(--m-rayon);
   border: 1px solid var(--m-bord);
   overflow: hidden;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 /* Zone camera (scanner QR) */
 .m-camera {
   border-radius: var(--m-rayon);
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
