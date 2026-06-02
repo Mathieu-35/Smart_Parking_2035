@@ -28,10 +28,13 @@
     </div>
   </div>
   <div style="display: flex; gap: 8px; align-items: center;">
+    {# Modifier/Supprimer seulement pour les comptes gardien (BF15). #}
+    {% if utilisateur.role.nom == 'gardien' %}
     <a href="/utilisateurs/{{ utilisateur.id }}/modifier" class="btn btn-secondary">Modifier</a>
     <form method="POST" action="/utilisateurs/{{ utilisateur.id }}/supprimer" onsubmit="return confirmDelete(this)">
       <button type="submit" class="btn btn-danger">Supprimer</button>
     </form>
+    {% endif %}
   </div>
 </div>
 

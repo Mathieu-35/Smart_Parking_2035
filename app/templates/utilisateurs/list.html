@@ -77,11 +77,17 @@
           </td>
           <td>
             <div class="td-actions">
+              {# L'admin ne gere (modifier/supprimer) que les gardiens.
+                 Pour les autres, on propose seulement de consulter. #}
+              {% if u.role.nom == 'gardien' %}
               <a href="/utilisateurs/{{ u.id }}/modifier" class="action-link">Modifier</a>
               <span class="td-actions-sep">|</span>
               <form method="POST" action="/utilisateurs/{{ u.id }}/supprimer" onsubmit="return confirmDelete(this)" style="display:inline;">
                 <button type="submit" class="action-link danger">Supprimer</button>
               </form>
+              {% else %}
+              <a href="/utilisateurs/{{ u.id }}" class="action-link">Voir</a>
+              {% endif %}
             </div>
           </td>
         </tr>

@@ -109,10 +109,19 @@ def edit_form(utilisateur_id: int, request: Request, db: Session = Depends(get_d
     utilisateur = utilisateur_controller.get_by_id(db, utilisateur_id)
     if not utilisateur:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
-    roles = role_controller.get_all(db)
+
+    # MOINDRE PRIVILEGE : l'admin ne peut modifier QUE les comptes gardien.
+    # Les conducteurs gerent leurs propres donnees ; les admins viennent
+    # du script. On bloque donc la modification des autres roles.
+    if utilisateur.role.nom != "gardien":
+        return RedirectResponse(
+            url="/utilisateurs/?msg=Seuls les comptes gardien peuvent être modifiés",
+            status_code=303,
+        )
+
     return templates.TemplateResponse("utilisateurs/form.html", {
         "request": request,
-        "roles": roles,
+        "roles": role_controller.get_all(db),
         "utilisateur": utilisateur,
         "action": "modifier",
         "error": None,
@@ -132,6 +141,19 @@ def update_utilisateur(
     actif: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
+    cible = utilisateur_controller.get_by_id(db, utilisateur_id)
+    if cible is None:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+
+    # MOINDRE PRIVILEGE : on ne modifie que les gardiens...
+    if cible.role.nom != "gardien":
+        return RedirectResponse(
+            url="/utilisateurs/?msg=Action non autorisée : seuls les gardiens sont modifiables",
+            status_code=303,
+        )
+    # ...et on FORCE le role a rester gardien (pas d'escalade vers admin).
+    role_id = cible.role_id
+
     try:
         utilisateur_controller.update(
             db=db,
@@ -159,5 +181,16 @@ def update_utilisateur(
 
 @router.post("/{utilisateur_id}/supprimer")
 def delete_utilisateur(utilisateur_id: int, db: Session = Depends(get_db)):
+    cible = utilisateur_controller.get_by_id(db, utilisateur_id)
+    if cible is None:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+
+    # MOINDRE PRIVILEGE : on ne supprime que les comptes gardien.
+    if cible.role.nom != "gardien":
+        return RedirectResponse(
+            url="/utilisateurs/?msg=Action non autorisée : seuls les gardiens sont supprimables",
+            status_code=303,
+        )
+
     utilisateur_controller.delete(db, utilisateur_id)
-    return RedirectResponse(url="/utilisateurs/?msg=Utilisateur supprimé", status_code=303)
+    return RedirectResponse(url="/utilisateurs/?msg=Compte gardien supprimé", status_code=303)
