@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de bord — Smart Parking 2035{% endblock %}
+
+{% block breadcrumb %}
+  <span class="topbar-breadcrumb-current">Tableau de bord</span>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header" style="margin-bottom: 16px;">
+  <div>
+    <h1 class="page-title">Tableau de bord</h1>
+    <p class="page-meta">Vue d'ensemble du parc, des reservations et des revenus</p>
+  </div>
+</div>
+
+<!-- ===================== CARTES DE STATISTIQUES ===================== -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 20px;">
+
+  <div class="card"><div class="card-body">
+    <div style="font-size: 13px; color: var(--text-subtle);">Parkings actifs</div>
+    <div style="font-size: 28px; font-weight: 700;">{{ stats.nb_parkings_actifs }}<span style="font-size:14px; color:var(--text-subtle);"> / {{ stats.nb_parkings }}</span></div>
+  </div></div>
+
+  <div class="card"><div class="card-body">
+    <div style="font-size: 13px; color: var(--text-subtle);">Places occupees</div>
+    <div style="font-size: 28px; font-weight: 700;">{{ stats.places_occupees }}<span style="font-size:14px; color:var(--text-subtle);"> / {{ stats.total_places }}</span></div>
+  </div></div>
+
+  <div class="card"><div class="card-body">
+    <div style="font-size: 13px; color: var(--text-subtle);">Taux d'occupation</div>
+    <div style="font-size: 28px; font-weight: 700;">{{ stats.taux_occupation }} %</div>
+  </div></div>
+
+  <div class="card"><div class="card-body">
+    <div style="font-size: 13px; color: var(--text-subtle);">Reservations en cours</div>
+    <div style="font-size: 28px; font-weight: 700;">{{ stats.nb_en_cours }}</div>
+  </div></div>
+
+  <div class="card"><div class="card-body">
+    <div style="font-size: 13px; color: var(--text-subtle);">Reservations terminees</div>
+    <div style="font-size: 28px; font-weight: 700;">{{ stats.nb_terminees }}</div>
+  </div></div>
+
+  <div class="card"><div class="card-body">
+    <div style="font-size: 13px; color: var(--text-subtle);">Revenus (aujourd'hui)</div>
+    <div style="font-size: 28px; font-weight: 700;">{{ stats.revenus_jour }}</div>
+  </div></div>
+
+  <div class="card"><div class="card-body">
+    <div style="font-size: 13px; color: var(--text-subtle);">Revenus (total)</div>
+    <div style="font-size: 28px; font-weight: 700;">{{ stats.revenus_total }}</div>
+  </div></div>
+
+</div>
+
+<!-- ===================== TOP PARKINGS PAR REVENUS ===================== -->
+<div class="card" style="margin-bottom: 20px;">
+  <div class="card-header">
+    <div class="card-title">Top parkings par revenus</div>
+  </div>
+  <div class="table-wrapper">
+    {% if stats.top_parkings %}
+    <table>
+      <thead>
+        <tr><th>Parking</th><th>Reservations terminees</th><th>Revenus</th></tr>
+      </thead>
+      <tbody>
+        {% for p in stats.top_parkings %}
+        <tr>
+          <td>{{ p.nom }}</td>
+          <td>{{ p.nb }}</td>
+          <td><strong>{{ p.revenu }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state-desc">Aucun revenu enregistre pour le moment.</div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ===================== ACTIVITE RECENTE ===================== -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Activite recente (places)</div>
+  </div>
+  <div class="table-wrapper">
+    {% if stats.historiques %}
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Parking</th><th>Raison</th><th>Places dispo</th><th>Places occupees</th></tr>
+      </thead>
+      <tbody>
+        {% for h in stats.historiques %}
+        <tr>
+          <td style="color: var(--text-subtle);">{{ h.date_enregistrement.strftime('%d/%m/%Y %H:%M') }}</td>
+          <td>{{ h.parking.nom }}</td>
+          <td><span class="lozenge lozenge-info">{{ h.raison if h.raison else '—' }}</span></td>
+          <td>{{ h.places_disponibles }}</td>
+          <td>{{ h.places_occupees }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state-desc">Aucune activite enregistree pour le moment.</div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

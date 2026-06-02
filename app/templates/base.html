@@ -100,7 +100,9 @@
 
       <div class="nav-section">
         <span class="nav-section-label">Planning</span>
-        <a href="/" class="nav-item" title="Tableau de bord">
+        <a href="/tableau-de-bord"
+           class="nav-item {% if '/tableau-de-bord' in request.url.path %}active{% endif %}"
+           title="Tableau de bord">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
@@ -145,7 +147,7 @@
 
       <div class="nav-section">
         <span class="nav-section-label">Rapports</span>
-        <a href="#" class="nav-item" title="Statistiques">
+        <a href="/tableau-de-bord" class="nav-item" title="Statistiques">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="20" x2="18" y2="10"/>

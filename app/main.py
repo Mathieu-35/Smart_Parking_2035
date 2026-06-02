@@ -11,7 +11,7 @@ from app.exceptions import NotAuthenticatedException
 from app.graph import load_graph
 from app.graph.recommandation import recommander_parkings
 from app.models import Role, Utilisateur, Parking, HistoriquePlaces, Reservation  # noqa: F401
-from app.routes import auth, utilisateur, parking, reservation
+from app.routes import auth, utilisateur, parking, reservation, dashboard
 
 app = FastAPI(title="Smart Parking 2035", docs_url="/api/docs")
 
@@ -30,6 +30,7 @@ app.include_router(auth.router)
 app.include_router(utilisateur.router)
 app.include_router(parking.router)
 app.include_router(reservation.router)
+app.include_router(dashboard.router)
 
 
 @app.exception_handler(NotAuthenticatedException)
@@ -45,7 +46,7 @@ def root(request: Request):
 
     role = request.session.get("user_role")
     if role == "administrateur":
-        return RedirectResponse(url="/utilisateurs/")
+        return RedirectResponse(url="/tableau-de-bord")
     if role == "gardien":
         return RedirectResponse(url="/gardien/")
     if role == "conducteur":

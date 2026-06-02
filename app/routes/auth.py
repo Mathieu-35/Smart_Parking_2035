@@ -15,7 +15,7 @@ templates = Jinja2Templates(directory="app/templates")
 @router.get("/login", response_class=HTMLResponse)
 def login_form(request: Request):
     if request.session.get("user_id"):
-        return RedirectResponse(url="/utilisateurs/")
+        return RedirectResponse(url="/")
     return templates.TemplateResponse("auth/login.html", {
         "request": request,
         "error": None,
@@ -41,7 +41,7 @@ def login(
 
     # Redirection selon le rôle
     if user.role.nom == "administrateur":
-        return RedirectResponse(url="/utilisateurs/", status_code=303)
+        return RedirectResponse(url="/tableau-de-bord", status_code=303)
     # Gardien et conducteur ont leurs interfaces mobiles (à venir)
     return RedirectResponse(url="/", status_code=303)
 
