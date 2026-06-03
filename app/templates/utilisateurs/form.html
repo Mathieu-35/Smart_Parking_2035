@@ -16,6 +16,8 @@
 
 {% block content %}
 
+<div style="max-width: 740px; margin: 0 auto;">
+
 <div class="breadcrumb">
   <a href="/utilisateurs/">Utilisateurs</a>
   <span class="breadcrumb-sep">/</span>
@@ -28,7 +30,7 @@
   </h1>
 </div>
 
-<div class="card" style="max-width: 740px;">
+<div class="card">
   <div class="card-body">
 
     {% if error %}
@@ -131,6 +133,8 @@
     </form>
 
   </div>
+</div>
+
 </div>
 
 {% endblock %}
