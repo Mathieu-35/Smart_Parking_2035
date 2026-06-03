@@ -24,6 +24,31 @@
     .auth-head .auth-subtitle { margin-top: 4px; }
     .btn-app { background: #2c5be0; color: #fff; width: 100%; justify-content: center; padding: 11px 12px; }
     .btn-app:hover, .btn-app:active { background: #1e44b0; }
+
+    /* ---- Fond photo aerien + voile bleu (lisibilite) ---- */
+    .auth-body {
+      background: url('/static/images/login-bg.jpg') center / cover no-repeat fixed;
+      position: relative;
+    }
+    .auth-body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.55), rgba(44, 91, 224, 0.40));
+      z-index: 0;
+    }
+    .auth-wrapper { position: relative; z-index: 1; }
+
+    /* ---- Carte en verre depoli (glassmorphism) ---- */
+    .auth-card {
+      background: rgba(255, 255, 255, 0.72);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      backdrop-filter: blur(14px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+    }
+    .auth-card .form-control { background: rgba(255, 255, 255, 0.85); }
   </style>
 </head>
 <body class="auth-body">
