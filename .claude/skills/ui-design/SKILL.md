@@ -95,3 +95,17 @@ parkings, carte, réservation, ticket QR, profil). Ce que l'étudiant aime :
 - Écrans profil et ticket QR épurés.
 > Pour garder l'image : déposer le PNG dans `references/` (le chat ne la
 > persiste pas tout seul).
+
+### Inspiration #2 — 4 dashboards "bento" (2026-06-03)
+Planche de 4 dashboards (parking beige/ambre, AeuxGlobal vert, Crextio bleu,
+eCoursie violet). ADN retenu pour l'ADMIN web :
+- **Layout « bento »** : grille de cartes très arrondies (16px), ombres
+  douces, beaucoup d'air.
+- **UN seul accent** sur fond clair (pour nous : bleu `#2c5be0`).
+- **KPI = pictogramme + gros chiffre + petit label** ; au moins une
+  **data-viz** (donut « taux d'occupation » en CSS `conic-gradient`, sans
+  librairie).
+- En-tête type **« Bonjour, [nom] »** puis rangée de KPI puis tableaux.
+- NE PAS emprunter : le plan des places individuelles (la base compte des
+  *nombres* de places, pas chaque place → changerait le modèle verrouillé) ;
+  une 2e carte géo (déjà Leaflet côté conducteur) ; le multi-couleurs.

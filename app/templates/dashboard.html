@@ -8,58 +8,156 @@
 
 {% block content %}
 
-<div class="page-header" style="margin-bottom: 16px;">
-  <div>
-    <h1 class="page-title">Tableau de bord</h1>
-    <p class="page-meta">Vue d'ensemble du parc, des reservations et des revenus</p>
-  </div>
+<style>
+  /* ===== En-tete de bienvenue ===== */
+  .db-head { margin-bottom: 18px; }
+  .db-hello { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
+  .db-sub { font-size: 13px; color: var(--text-subtlest); margin-top: 2px; }
+
+  /* ===== Grille "bento" ===== */
+  .db-bento {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .db-tile {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+    padding: 16px;
+  }
+  .db-ico {
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    background: #eef2fb;
+    color: #2c5be0;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+  }
+  .db-ico svg { width: 20px; height: 20px; }
+  .db-label { font-size: 12.5px; color: var(--text-subtlest); }
+  .db-value { font-size: 26px; font-weight: 800; color: var(--text); line-height: 1.1; margin-top: 2px; }
+  .db-value small { font-size: 13px; font-weight: 600; color: var(--text-subtlest); }
+
+  /* ===== Carte "occupation" avec donut ===== */
+  .db-occ { grid-column: span 2; display: flex; align-items: center; gap: 20px; }
+  @media (max-width: 560px) { .db-occ { grid-column: span 1; } }
+  .donut {
+    width: 132px; height: 132px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .donut-hole {
+    width: 100px; height: 100px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .donut-val { font-size: 25px; font-weight: 800; color: var(--text); }
+  .donut-lbl { font-size: 10.5px; color: var(--text-subtlest); text-transform: uppercase; letter-spacing: 0.05em; }
+  .db-occ-side { display: flex; flex-direction: column; gap: 10px; }
+  .db-occ-stat { font-size: 13px; color: var(--text-subtle); }
+  .db-occ-stat b { font-size: 19px; font-weight: 800; color: var(--text); display: block; }
+
+  /* ===== Cartes (tableaux) ===== */
+  .db-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .db-card-head { padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px; }
+</style>
+
+<!-- ===================== EN-TETE ===================== -->
+<div class="db-head">
+  <div class="db-hello">Bonjour, {{ request.session.get("user_nom", "") }}</div>
+  <div class="db-sub">Vue d'ensemble du parc, des reservations et des revenus</div>
 </div>
 
-<!-- ===================== CARTES DE STATISTIQUES ===================== -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 20px;">
+<!-- ===================== BENTO : DONUT + KPI ===================== -->
+<div class="db-bento">
 
-  <div class="card"><div class="card-body">
-    <div style="font-size: 13px; color: var(--text-subtle);">Parkings actifs</div>
-    <div style="font-size: 28px; font-weight: 700;">{{ stats.nb_parkings_actifs }}<span style="font-size:14px; color:var(--text-subtle);"> / {{ stats.nb_parkings }}</span></div>
-  </div></div>
+  <!-- Carte occupation (donut) -->
+  <div class="db-tile db-occ">
+    <div class="donut" style="background: conic-gradient(#2c5be0 {{ stats.taux_occupation }}%, #e9edf5 0);">
+      <div class="donut-hole">
+        <div class="donut-val">{{ stats.taux_occupation }}%</div>
+        <div class="donut-lbl">occupe</div>
+      </div>
+    </div>
+    <div class="db-occ-side">
+      <div class="db-occ-stat"><b>{{ stats.places_occupees }}</b> places occupees</div>
+      <div class="db-occ-stat"><b>{{ stats.places_dispo }}</b> places libres</div>
+      <div class="db-occ-stat"><b>{{ stats.total_places }}</b> capacite totale</div>
+    </div>
+  </div>
 
-  <div class="card"><div class="card-body">
-    <div style="font-size: 13px; color: var(--text-subtle);">Places occupees</div>
-    <div style="font-size: 28px; font-weight: 700;">{{ stats.places_occupees }}<span style="font-size:14px; color:var(--text-subtle);"> / {{ stats.total_places }}</span></div>
-  </div></div>
+  <!-- Parkings actifs -->
+  <div class="db-tile">
+    <div class="db-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>
+      </svg>
+    </div>
+    <div class="db-label">Parkings actifs</div>
+    <div class="db-value">{{ stats.nb_parkings_actifs }}<small> / {{ stats.nb_parkings }}</small></div>
+  </div>
 
-  <div class="card"><div class="card-body">
-    <div style="font-size: 13px; color: var(--text-subtle);">Taux d'occupation</div>
-    <div style="font-size: 28px; font-weight: 700;">{{ stats.taux_occupation }} %</div>
-  </div></div>
+  <!-- Reservations en cours -->
+  <div class="db-tile">
+    <div class="db-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+      </svg>
+    </div>
+    <div class="db-label">Reservations en cours</div>
+    <div class="db-value">{{ stats.nb_en_cours }}</div>
+  </div>
 
-  <div class="card"><div class="card-body">
-    <div style="font-size: 13px; color: var(--text-subtle);">Reservations en cours</div>
-    <div style="font-size: 28px; font-weight: 700;">{{ stats.nb_en_cours }}</div>
-  </div></div>
+  <!-- Reservations terminees -->
+  <div class="db-tile">
+    <div class="db-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 6 9 17l-5-5"/>
+      </svg>
+    </div>
+    <div class="db-label">Reservations terminees</div>
+    <div class="db-value">{{ stats.nb_terminees }}</div>
+  </div>
 
-  <div class="card"><div class="card-body">
-    <div style="font-size: 13px; color: var(--text-subtle);">Reservations terminees</div>
-    <div style="font-size: 28px; font-weight: 700;">{{ stats.nb_terminees }}</div>
-  </div></div>
+  <!-- Revenus aujourd'hui -->
+  <div class="db-tile">
+    <div class="db-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>
+      </svg>
+    </div>
+    <div class="db-label">Revenus (aujourd'hui)</div>
+    <div class="db-value">{{ stats.revenus_jour }}<small> Ar</small></div>
+  </div>
 
-  <div class="card"><div class="card-body">
-    <div style="font-size: 13px; color: var(--text-subtle);">Revenus (aujourd'hui)</div>
-    <div style="font-size: 28px; font-weight: 700;">{{ stats.revenus_jour }} <span style="font-size:14px; color:var(--text-subtle);">Ar</span></div>
-  </div></div>
-
-  <div class="card"><div class="card-body">
-    <div style="font-size: 13px; color: var(--text-subtle);">Revenus (total)</div>
-    <div style="font-size: 28px; font-weight: 700;">{{ stats.revenus_total }} <span style="font-size:14px; color:var(--text-subtle);">Ar</span></div>
-  </div></div>
+  <!-- Revenus total -->
+  <div class="db-tile">
+    <div class="db-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 17l6-6 4 4 7-7"/><path d="M21 8v5h-5"/>
+      </svg>
+    </div>
+    <div class="db-label">Revenus (total)</div>
+    <div class="db-value">{{ stats.revenus_total }}<small> Ar</small></div>
+  </div>
 
 </div>
 
-<!-- ===================== TOP PARKINGS PAR REVENUS ===================== -->
-<div class="card" style="margin-bottom: 20px;">
-  <div class="card-header">
-    <div class="card-title">Top parkings par revenus</div>
-  </div>
+<!-- ===================== TOP PARKINGS ===================== -->
+<div class="db-card">
+  <div class="db-card-head">Top parkings par revenus</div>
   <div class="table-wrapper">
     {% if stats.top_parkings %}
     <table>
@@ -85,10 +183,8 @@
 </div>
 
 <!-- ===================== ACTIVITE RECENTE ===================== -->
-<div class="card">
-  <div class="card-header">
-    <div class="card-title">Activite recente (places)</div>
-  </div>
+<div class="db-card">
+  <div class="db-card-head">Activite recente (places)</div>
   <div class="table-wrapper">
     {% if stats.historiques %}
     <table>
