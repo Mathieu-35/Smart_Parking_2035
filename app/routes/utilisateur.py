@@ -16,16 +16,39 @@ router = APIRouter(
 templates = Jinja2Templates(directory="app/templates")
 
 
+#  Nombre d'utilisateurs affiches par page (pagination).
+PAR_PAGE = 10
+
+
 @router.get("/", response_class=HTMLResponse)
 def list_utilisateurs(
     request: Request,
     db: Session = Depends(get_db),
     msg: Optional[str] = None,
     role: Optional[str] = None,
+    page: int = 1,
 ):
     # Filtre par role : "administrateur", "gardien", "conducteur" ou None (= tous)
     role_filtre = role if role in ("administrateur", "gardien", "conducteur") else None
-    utilisateurs = utilisateur_controller.get_all(db, role_nom=role_filtre)
+
+    # 1) Combien d'utilisateurs au total (avec le filtre) -> nombre de pages.
+    total = utilisateur_controller.compter(db, role_nom=role_filtre)
+    total_pages = (total + PAR_PAGE - 1) // PAR_PAGE  # division arrondie au-dessus
+    if total_pages < 1:
+        total_pages = 1
+
+    # 2) On borne la page demandee entre 1 et total_pages.
+    if page < 1:
+        page = 1
+    if page > total_pages:
+        page = total_pages
+
+    # 3) On recupere seulement la tranche de cette page.
+    debut = (page - 1) * PAR_PAGE
+    utilisateurs = utilisateur_controller.get_all(
+        db, role_nom=role_filtre, skip=debut, limit=PAR_PAGE
+    )
+
     roles = role_controller.get_all(db)
     return templates.TemplateResponse("utilisateurs/list.html", {
         "request": request,
@@ -33,6 +56,9 @@ def list_utilisateurs(
         "roles": roles,
         "role_actif": role_filtre,
         "msg": msg,
+        "page": page,
+        "total_pages": total_pages,
+        "total": total,
     })
 
 

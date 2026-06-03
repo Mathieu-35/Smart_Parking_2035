@@ -12,8 +12,9 @@
   <div>
     <h1 class="page-title">Utilisateurs</h1>
     <p class="page-meta">
-      {{ utilisateurs | length }} utilisateur{{ 's' if utilisateurs | length != 1 }}
+      {{ total }} utilisateur{{ 's' if total != 1 }}
       {% if role_actif %} — filtre : {{ role_actif | capitalize }}{% endif %}
+      {% if total_pages > 1 %} — page {{ page }} / {{ total_pages }}{% endif %}
     </p>
   </div>
   <a href="/utilisateurs/creer" class="btn btn-primary">Ajouter un utilisateur</a>
@@ -104,6 +105,33 @@
     </div>
     {% endif %}
   </div>
+
+  {# ---------- Pagination : Precedent / Suivant ---------- #}
+  {% if total_pages > 1 %}
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-top:1px solid var(--border);">
+
+    {% if page > 1 %}
+    <a class="btn btn-secondary btn-sm"
+       href="/utilisateurs/?page={{ page - 1 }}{% if role_actif %}&role={{ role_actif }}{% endif %}">
+      ‹ Precedent
+    </a>
+    {% else %}
+    <span class="btn btn-secondary btn-sm" style="opacity:0.5; pointer-events:none;">‹ Precedent</span>
+    {% endif %}
+
+    <span style="font-size:12.5px; color:var(--text-subtlest);">Page {{ page }} / {{ total_pages }}</span>
+
+    {% if page < total_pages %}
+    <a class="btn btn-secondary btn-sm"
+       href="/utilisateurs/?page={{ page + 1 }}{% if role_actif %}&role={{ role_actif }}{% endif %}">
+      Suivant ›
+    </a>
+    {% else %}
+    <span class="btn btn-secondary btn-sm" style="opacity:0.5; pointer-events:none;">Suivant ›</span>
+    {% endif %}
+
+  </div>
+  {% endif %}
 </div>
 
 {% endblock %}

@@ -9,11 +9,30 @@ def _hash(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
-def get_all(db: Session, role_nom: Optional[str] = None):
+def get_all(
+    db: Session,
+    role_nom: Optional[str] = None,
+    skip: int = 0,
+    limit: Optional[int] = None,
+):
+    """Liste les utilisateurs. Si 'limit' est donne, on ne renvoie qu'une
+    tranche (pagination) : on saute 'skip' lignes puis on prend 'limit'.
+    On trie par id pour que l'ordre des pages soit stable."""
     query = db.query(Utilisateur).join(Utilisateur.role)
     if role_nom:
         query = query.filter(Role.nom == role_nom)
+    query = query.order_by(Utilisateur.id)
+    if limit is not None:
+        query = query.offset(skip).limit(limit)
     return query.all()
+
+
+def compter(db: Session, role_nom: Optional[str] = None) -> int:
+    """Combien d'utilisateurs au total (pour calculer le nombre de pages) ?"""
+    query = db.query(Utilisateur).join(Utilisateur.role)
+    if role_nom:
+        query = query.filter(Role.nom == role_nom)
+    return query.count()
 
 
 def get_by_id(db: Session, utilisateur_id: int):
