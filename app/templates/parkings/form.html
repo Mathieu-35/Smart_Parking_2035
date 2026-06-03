@@ -77,6 +77,47 @@
       <p class="form-help">Ne doit pas dépasser le nombre total de places</p>
     </div>
 
+    <!-- ============ TARIFICATION & HORAIRES (semaine / week-end) ============ -->
+    <div class="form-group form-full">
+      <label class="form-label" style="font-size:15px;">Tarification &amp; horaires</label>
+      <p class="form-help" style="margin-top:0;">
+        Un tarif (par heure) et une plage horaire pour la semaine (lun-ven),
+        et un autre pour le week-end (sam-dim).
+      </p>
+    </div>
+
+    <div class="form-group">
+      <label for="prix_semaine" class="form-label">Tarif semaine / heure *</label>
+      <input type="number" id="prix_semaine" name="prix_semaine" class="form-input"
+             value="{{ vals.prix_semaine }}" required min="0" step="0.5"/>
+      <p class="form-help">Du lundi au vendredi</p>
+    </div>
+
+    <div class="form-group">
+      <label for="prix_weekend" class="form-label">Tarif week-end / heure *</label>
+      <input type="number" id="prix_weekend" name="prix_weekend" class="form-input"
+             value="{{ vals.prix_weekend }}" required min="0" step="0.5"/>
+      <p class="form-help">Samedi et dimanche</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Horaires semaine *</label>
+      <div style="display:flex; gap:8px;">
+        <input type="time" name="ouverture_semaine" class="form-input" value="{{ vals.ouv_sem }}" required/>
+        <input type="time" name="fermeture_semaine" class="form-input" value="{{ vals.ferm_sem }}" required/>
+      </div>
+      <p class="form-help">Ouverture / fermeture (lun-ven)</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Horaires week-end *</label>
+      <div style="display:flex; gap:8px;">
+        <input type="time" name="ouverture_weekend" class="form-input" value="{{ vals.ouv_we }}" required/>
+        <input type="time" name="fermeture_weekend" class="form-input" value="{{ vals.ferm_we }}" required/>
+      </div>
+      <p class="form-help">Ouverture / fermeture (sam-dim)</p>
+    </div>
+
     {% if action == 'modifier' %}
     <div class="form-group">
       <label class="form-label">
