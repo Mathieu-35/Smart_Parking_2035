@@ -9,22 +9,37 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Inscription — Smart Parking 2035</title>
   <link rel="stylesheet" href="/static/css/style.css" />
+  <style>
+    .auth-logo {
+      width: 60px; height: 60px;
+      background: #2c5be0;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 22px;
+      margin: 0 auto 12px auto;
+    }
+    .auth-head { text-align: center; margin-bottom: 22px; }
+    .auth-head .auth-brand-name { font-size: 15px; }
+    .auth-head .auth-title { margin-top: 10px; }
+    .auth-head .auth-subtitle { margin-top: 4px; }
+    .btn-app { background: #2c5be0; color: #fff; width: 100%; justify-content: center; padding: 11px 12px; }
+    .btn-app:hover, .btn-app:active { background: #1e44b0; }
+  </style>
 </head>
 <body class="auth-body">
 
   <div class="auth-wrapper" style="max-width: 480px;">
     <div class="auth-card">
 
-      <div class="auth-brand">
-        <div class="auth-brand-icon">SP</div>
-        <div>
-          <div class="auth-brand-name">Smart Parking</div>
-          <div class="auth-brand-year">2035</div>
+      <div class="auth-head">
+        <div class="auth-logo">SP</div>
+        <div class="auth-brand-name">Smart Parking 2035</div>
+        <div class="auth-title">Creer votre compte</div>
+        <div class="auth-subtitle">
+          L'inscription est reservee aux conducteurs.<br/>
+          Les comptes gardien et administrateur sont crees par l'administrateur.
         </div>
       </div>
-
-      <div class="auth-title">Creer un compte conducteur</div>
-      <div class="auth-subtitle">L'inscription publique est reservee aux conducteurs.<br/>Les comptes gardien et administrateur sont crees par l'administrateur.</div>
 
       {% if error %}
       <div class="form-error" style="margin-bottom: 16px;">{{ error }}</div>
@@ -65,9 +80,7 @@
 
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 8px 12px;">
-          Creer mon compte
-        </button>
+        <button type="submit" class="btn btn-app">Creer mon compte</button>
 
       </form>
 
