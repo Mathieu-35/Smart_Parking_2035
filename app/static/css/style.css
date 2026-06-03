@@ -37,16 +37,16 @@ body {
   --green:         #216E4E;
   --green-bg:      #DCFCE7;
 
-  /* Jira sidebar */
-  --sidebar-bg:              #1D2125;
-  --sidebar-hover:           #282E33;
-  --sidebar-active-bg:       #282E33;
-  --sidebar-active-border:   #0052CC;
-  --sidebar-text:            #B6C2CF;
-  --sidebar-text-hover:      #C7D1DB;
-  --sidebar-text-active:     #FFFFFF;
-  --sidebar-label:           #738496;
-  --sidebar-sep:             #38414A;
+  /* Sidebar — degrade bleu de la marque (coherent avec l'accent #2c5be0) */
+  --sidebar-bg:              linear-gradient(180deg, #2c5be0 0%, #1e3a8a 100%);
+  --sidebar-hover:           rgba(255, 255, 255, 0.10);
+  --sidebar-active-bg:       rgba(255, 255, 255, 0.16);
+  --sidebar-active-border:   #ffffff;
+  --sidebar-text:            rgba(255, 255, 255, 0.80);
+  --sidebar-text-hover:      #ffffff;
+  --sidebar-text-active:     #ffffff;
+  --sidebar-label:           rgba(255, 255, 255, 0.60);
+  --sidebar-sep:             rgba(255, 255, 255, 0.16);
   --sidebar-width:           240px;
   --sidebar-min-width:       52px;
 
@@ -123,7 +123,7 @@ a { text-decoration: none; color: inherit; }
 .brand-icon {
   width: 26px;
   height: 26px;
-  background: var(--blue);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: var(--radius);
   display: flex;
   align-items: center;
