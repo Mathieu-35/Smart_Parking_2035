@@ -50,9 +50,53 @@
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
     }
     .auth-card .form-control { background: rgba(255, 255, 255, 0.85); }
+
+    /* ---- Ecran de demarrage (splash) sur mobile ---- */
+    .splash {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #2c5be0;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.4s ease;
+    }
+    .splash.cache { opacity: 0; pointer-events: none; }
+    .splash-logo {
+      width: 96px; height: 96px; border-radius: 24px;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 36px;
+      animation: splash-pop 0.6s ease;
+    }
+    @keyframes splash-pop {
+      0% { transform: scale(0.6); opacity: 0; }
+      60% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body class="auth-body">
+
+  <!-- Ecran de demarrage : logo SP, UNE fois par ouverture, en contexte mobile -->
+  <div class="splash" id="splash">
+    <div class="splash-logo">SP</div>
+  </div>
+  <script>
+    (function () {
+      var splash = document.getElementById("splash");
+      // "app installee" (standalone) ou petit ecran => contexte mobile.
+      var estApp = window.matchMedia("(display-mode: standalone)").matches
+                   || window.navigator.standalone === true;
+      var estMobile = estApp || window.innerWidth <= 700;
+      // Pas mobile, ou deja vu cette session : on n'affiche pas le splash.
+      if (!estMobile || sessionStorage.getItem("splash_vu")) {
+        splash.style.display = "none";
+        return;
+      }
+      sessionStorage.setItem("splash_vu", "1");
+      setTimeout(function () { splash.classList.add("cache"); }, 1100);
+      setTimeout(function () { splash.style.display = "none"; }, 1600);
+    })();
+  </script>
 
   <div class="auth-wrapper">
     <div class="auth-card">
