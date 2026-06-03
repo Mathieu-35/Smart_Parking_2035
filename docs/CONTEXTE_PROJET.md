@@ -73,6 +73,9 @@ glouton, table de hachage).
 - **Prix des parkings DÉJÀ créés** : encore en ancienne valeur (ex. 2.0) → à re-saisir en Ariary.
 - **Sprint 12 : README + réorg `/src`** — le prof a dit **non obligatoire** → en pause. (`/docs` et `/data` existent déjà.)
 - Formulaire **Parkings** à centrer (cohérence, optionnel).
+- **Pousser sur GitHub** : dépôt local prêt, `gh` (GitHub CLI) installé, `.env` retiré du
+  suivi. Reste à faire `gh auth login` (côté étudiant, via navigateur) puis
+  `gh repo create smart_parking_2035 --private --source=. --remote=origin --push`. PAS encore de remote.
 
 ### 0.7 Repères fichiers
 `app/main.py` (routes racine + PWA + API reco/carte), `app/routes/` (auth, utilisateur, parking,
