@@ -3,77 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Mon profil — Smart Parking 2035</title>
   <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="stylesheet" href="/static/css/mobile.css" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#2c5be0" />
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
 </head>
-<body class="auth-body">
+<body class="m-screen">
 
-  <div class="auth-wrapper" style="max-width: 480px;">
-    <div class="auth-card">
+  <!-- ===================== CONTENU ===================== -->
+  <main class="m-content">
 
-      <div class="auth-brand">
-        <div class="auth-brand-icon">SP</div>
-        <div>
-          <div class="auth-brand-name">Smart Parking</div>
-          <div class="auth-brand-year">2035</div>
-        </div>
+    <div class="m-intro">
+      <div class="m-intro-title">Mon profil</div>
+      <div class="m-intro-sub">
+        Le mot de passe actuel n'est demandé que si vous changez votre
+        email ou votre mot de passe.
       </div>
+    </div>
 
-      <div class="auth-title">Mon profil</div>
-      <div class="auth-subtitle">
-        Modifiez vos informations. Le mot de passe actuel n'est demandé
-        que si vous changez votre email ou votre mot de passe.
-      </div>
+    {% if msg %}
+    <div class="m-alert m-alert-success" style="margin-bottom: 12px;">{{ msg }}</div>
+    {% endif %}
+    {% if error %}
+    <div class="m-alert m-alert-error" style="margin-bottom: 12px;">{{ error }}</div>
+    {% endif %}
 
-      {% if msg %}
-      <div class="alert alert-success" style="margin-bottom: 12px;">{{ msg }}</div>
-      {% endif %}
-      {% if error %}
-      <div class="alert alert-danger" style="margin-bottom: 12px;">{{ error }}</div>
-      {% endif %}
-
+    <div class="m-card">
       <form method="POST" action="/auth/profil">
 
-        <label class="form-label" for="prenom">Prenom</label>
-        <input class="form-control" type="text" id="prenom" name="prenom"
-               value="{{ utilisateur.prenom }}" required style="margin-bottom: 10px;" />
+        <label class="m-label" for="prenom">Prenom</label>
+        <input class="m-field" type="text" id="prenom" name="prenom"
+               value="{{ utilisateur.prenom }}" required />
 
-        <label class="form-label" for="nom">Nom</label>
-        <input class="form-control" type="text" id="nom" name="nom"
-               value="{{ utilisateur.nom }}" required style="margin-bottom: 10px;" />
+        <label class="m-label" for="nom">Nom</label>
+        <input class="m-field" type="text" id="nom" name="nom"
+               value="{{ utilisateur.nom }}" required />
 
-        <label class="form-label" for="email">Adresse e-mail</label>
-        <input class="form-control" type="email" id="email" name="email"
-               value="{{ utilisateur.email }}" required style="margin-bottom: 10px;" />
+        <label class="m-label" for="email">Adresse e-mail</label>
+        <input class="m-field" type="email" id="email" name="email"
+               value="{{ utilisateur.email }}" required />
 
-        <label class="form-label" for="telephone">Telephone</label>
-        <input class="form-control" type="tel" id="telephone" name="telephone"
-               value="{{ utilisateur.telephone if utilisateur.telephone else '' }}"
-               style="margin-bottom: 10px;" />
+        <label class="m-label" for="telephone">Telephone</label>
+        <input class="m-field" type="tel" id="telephone" name="telephone"
+               value="{{ utilisateur.telephone if utilisateur.telephone else '' }}" />
 
-        <label class="form-label" for="nouveau_mot_passe">Nouveau mot de passe</label>
-        <input class="form-control" type="password" id="nouveau_mot_passe" name="nouveau_mot_passe"
-               placeholder="Laisser vide pour ne pas changer" style="margin-bottom: 10px;" />
+        <label class="m-label" for="nouveau_mot_passe">Nouveau mot de passe</label>
+        <input class="m-field" type="password" id="nouveau_mot_passe" name="nouveau_mot_passe"
+               placeholder="Laisser vide pour ne pas changer" />
 
-        <div class="divider" style="margin: 12px 0;"></div>
+        <div class="m-or">securite</div>
 
-        <label class="form-label" for="mot_passe_actuel">Mot de passe actuel</label>
-        <input class="form-control" type="password" id="mot_passe_actuel" name="mot_passe_actuel"
-               placeholder="Requis seulement pour changer l'email ou le mot de passe"
-               style="margin-bottom: 16px;" />
+        <label class="m-label" for="mot_passe_actuel">Mot de passe actuel</label>
+        <input class="m-field" type="password" id="mot_passe_actuel" name="mot_passe_actuel"
+               placeholder="Requis pour changer l'email ou le mot de passe" />
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+        <button type="submit" class="m-btn m-btn-primary" style="margin-top: 6px;">
           Enregistrer
         </button>
       </form>
-
-      <a href="/" class="btn btn-secondary"
-         style="width: 100%; justify-content: center; margin-top: 8px;">
-        Retour
-      </a>
-
     </div>
-  </div>
+
+  </main>
+
+  <!-- ===================== BARRE D'ONGLETS (bas) ===================== -->
+  <nav class="m-tabbar">
+    <a href="{{ home_url }}" class="m-tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10h14V10"/>
+      </svg>
+      Accueil
+    </a>
+    <a href="/auth/profil" class="m-tab actif">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      Profil
+    </a>
+    <a href="/auth/logout" class="m-tab deconnexion">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      Quitter
+    </a>
+  </nav>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+  </script>
 
 </body>
 </html>

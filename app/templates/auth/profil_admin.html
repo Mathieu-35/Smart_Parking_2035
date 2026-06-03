@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Mon profil — Smart Parking 2035{% endblock %}
+
+{% block breadcrumb %}
+  <span class="topbar-breadcrumb-current">Mon profil</span>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header" style="margin-bottom: 16px;">
+  <div>
+    <h1 class="page-title">Mon profil</h1>
+    <p class="page-meta">
+      Modifiez vos informations. Le mot de passe actuel n'est demandé que si
+      vous changez votre email ou votre mot de passe.
+    </p>
+  </div>
+</div>
+
+{% if msg %}
+<div class="alert alert-success">{{ msg }}</div>
+{% endif %}
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="card" style="max-width: 560px;">
+  <div class="card-body">
+    <form method="POST" action="/auth/profil">
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label class="form-label" for="prenom">Prenom</label>
+        <input class="form-control" type="text" id="prenom" name="prenom"
+               value="{{ utilisateur.prenom }}" required />
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label class="form-label" for="nom">Nom</label>
+        <input class="form-control" type="text" id="nom" name="nom"
+               value="{{ utilisateur.nom }}" required />
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label class="form-label" for="email">Adresse e-mail</label>
+        <input class="form-control" type="email" id="email" name="email"
+               value="{{ utilisateur.email }}" required />
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label class="form-label" for="telephone">Telephone</label>
+        <input class="form-control" type="tel" id="telephone" name="telephone"
+               value="{{ utilisateur.telephone if utilisateur.telephone else '' }}" />
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label class="form-label" for="nouveau_mot_passe">Nouveau mot de passe</label>
+        <input class="form-control" type="password" id="nouveau_mot_passe" name="nouveau_mot_passe"
+               placeholder="Laisser vide pour ne pas changer" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label class="form-label" for="mot_passe_actuel">Mot de passe actuel</label>
+        <input class="form-control" type="password" id="mot_passe_actuel" name="mot_passe_actuel"
+               placeholder="Requis seulement pour changer l'email ou le mot de passe" />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="/tableau-de-bord" class="btn btn-secondary">Retour</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

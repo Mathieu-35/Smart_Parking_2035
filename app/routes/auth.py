@@ -111,6 +111,25 @@ def logout(request: Request):
 #  On peut changer nom, prenom, email, telephone et mot de passe, MAIS
 #  PAS son role ni son statut. Pour confirmer l'identite, on demande le
 #  mot de passe actuel.
+def _rendu_profil(request, utilisateur, msg, error):
+    """Choisit le bon "decor" selon le role :
+    - administrateur -> page avec la sidebar (herite de base.html)
+    - gardien / conducteur -> page mobile avec la barre d'onglets.
+    """
+    role = request.session.get("user_role")
+    contexte = {
+        "request": request,
+        "utilisateur": utilisateur,
+        "error": error,
+        "msg": msg,
+    }
+    if role == "administrateur":
+        return templates.TemplateResponse("auth/profil_admin.html", contexte)
+    # Version mobile : on indique vers quelle page pointe l'onglet "Accueil".
+    contexte["home_url"] = "/gardien/" if role == "gardien" else "/conducteur/"
+    return templates.TemplateResponse("auth/profil.html", contexte)
+
+
 @router.get("/profil", response_class=HTMLResponse)
 def profil_form(
     request: Request,
@@ -121,12 +140,7 @@ def profil_form(
     utilisateur = utilisateur_controller.get_by_id(db, request.session.get("user_id"))
     # Message de succes affiche apres un enregistrement reussi.
     msg = "Vos informations ont été enregistrées avec succès." if enregistre else None
-    return templates.TemplateResponse("auth/profil.html", {
-        "request": request,
-        "utilisateur": utilisateur,
-        "error": None,
-        "msg": msg,
-    })
+    return _rendu_profil(request, utilisateur, msg, None)
 
 
 @router.post("/profil")
@@ -144,12 +158,7 @@ def profil_save(
     utilisateur = utilisateur_controller.get_by_id(db, request.session.get("user_id"))
 
     def reafficher(erreur):
-        return templates.TemplateResponse("auth/profil.html", {
-            "request": request,
-            "utilisateur": utilisateur,
-            "error": erreur,
-            "msg": None,
-        })
+        return _rendu_profil(request, utilisateur, None, erreur)
 
     # On ne demande le mot de passe actuel QUE pour les changements
     # sensibles : changer le mot de passe, ou changer l'email.
