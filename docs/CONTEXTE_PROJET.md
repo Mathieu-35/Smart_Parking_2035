@@ -1,15 +1,86 @@
 # Contexte du projet — Smart Parking 2035
 
-> Fichier mémoire : sert à retrouver tout le contexte du projet entre deux sessions.
-> Dernière mise à jour : 2026-06-02 (Sprints 5 à 11 terminés)
->
-> Sprint 11 = tableau de bord admin (BF13 stats + BF14 revenus) : `stats_controller.py`,
-> route `/tableau-de-bord` (admin), `dashboard.html`. L'admin y arrive après connexion.
-> Aussi faits hors-sprint : cloisonnement admin hors PWA, anti-zoom PWA, page « Mon profil »
-> (self-service). Logique rôles = modèle « admins égaux » : un admin peut créer/gérer des
-> gardiens ET d'autres admins (les conducteurs s'inscrivent seuls). Garde-fous : pas de
-> suppression/désactivation du dernier admin actif ni de soi-même ; un admin ne peut pas
-> changer l'email/mot de passe d'un autre admin (chacun via « Mon profil »).
+> Fichier mémoire : sert à retrouver tout le contexte du projet entre deux sessions
+> (et entre deux comptes Claude Code). **Si tu reprends le projet : lis la section 0.**
+> Dernière mise à jour : 2026-06-03.
+
+---
+
+## 0. À LIRE EN PREMIER — REPRISE RAPIDE (pour un nouveau compte/session)
+
+> Ce projet a déjà été développé en grande partie. Un nouvel assistant doit lire
+> CETTE section avant tout, puis le skill design `.claude/skills/ui-design/`.
+
+### 0.1 En une phrase
+Smart Parking 2035 : appli FastAPI + Jinja2 + PostgreSQL. **Admin = web** (gestion
+parkings/comptes/stats), **Conducteur + Gardien = mobile PWA** (recherche/itinéraire/
+réservation/QR). Algorithmes maison dans `app/graph/` (Dijkstra, Dijkstra+tas, A*,
+glouton, table de hachage).
+
+### 0.2 Comment lancer (Windows)
+- Python du venv : `venv\Scripts\python.exe` (contient fastapi, sqlalchemy, bcrypt, qrcode, PIL, pytest).
+- Lancer le serveur : `venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001`
+  (⚠️ lancer depuis la RACINE du projet ; PAS de `--reload` sous Windows, il rate des fichiers — relancer à la main après un changement Python ; les templates .html se rechargent seuls).
+- Créer un admin : `venv\Scripts\python.exe create_admin.py` (interactif). Admin existant : `admin@smartparking.mg` (mot de passe non stocké).
+- Tests : `venv\Scripts\python.exe -m pytest` (14 tests verts). Benchmarks : `benchmarks/bench_*.py`.
+- BD : PostgreSQL via `.env` (voir `.env.example`).
+
+### 0.3 Tester sur téléphone (HTTPS obligatoire pour la PWA)
+- **Tunnel FIXE ngrok** (domaine réservé, gratuit) : `https://acorn-popper-cavity.ngrok-free.dev`
+- Relancer le tunnel (le PC doit faire tourner le serveur 8001) :
+  `& "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\Ngrok.Ngrok_Microsoft.Winget.Source_8wekyb3d8bbwe\ngrok.exe" http --domain=acorn-popper-cavity.ngrok-free.dev 8001`
+  (ngrok gratuit affiche une page « Visit Site » au 1er accès → un clic, normal).
+- Après tout changement de CSS/JS mobile : **bumper `NOM_CACHE` dans `app/static/sw.js`** (vN → vN+1) sinon le téléphone garde l'ancien.
+
+### 0.4 RÈGLES À RESPECTER (consignes de l'étudiant, fermes)
+1. **L2 débutant** : pas de syntaxe avancée/compliquée ; **expliquer simplement AVANT de coder**.
+2. **Commits** : faire des **NOUVEAUX** commits, **jamais** `--amend`/écraser (pour voir les diffs).
+   Trailer utilisé : `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>`.
+   (Astuce : pour les messages multi-lignes, écrire un fichier puis `git commit -F fichier` ;
+   le here-string inline `@'...'@` casse souvent dans ce PowerShell.)
+3. **Périmètre VERROUILLÉ** : graphe = **52 nœuds / 128 arêtes orientées / 64 routes**, et les
+   **Tableaux 5/6** (benchmarks) doivent rester reproductibles. NE PAS changer le graphe, les
+   coordonnées, ni les modules d'algo. (Les distances/A* dépendent des coords.)
+4. **Mobile = VRAIE app** : la PWA (manifest + service worker + installable + hors-ligne + splash)
+   est OBLIGATOIRE (« juste responsive ne compte pas » — dit le prof).
+5. **Monnaie = Ariary (Ar)**, pas d'euro, sans centimes.
+6. **Design** : voir le skill `.claude/skills/ui-design/` (sobre, bleu `#2c5be0`, zéro emoji,
+   pas de dégradé criard, cartes arrondies « bento », mobile = barre d'onglets en bas + splash SP).
+
+### 0.5 CE QUI EST DÉJÀ FAIT (au 2026-06-03)
+- **Sprints 1→11** terminés (voir §6 et §10) : CRUD utilisateurs/parkings, algos + 3 structures,
+  benchmarks, ≥5 tests, QR entrée/sortie + montant, carte Leaflet, PWA, tableau de bord admin.
+- **Refonte design + features hors-sprint** (toutes commitées) :
+  - Mobile : design refait (barre d'onglets en bas, cartes arrondies), **splash SP** au lancement
+    (1×/ouverture, y compris sur login en contexte mobile), grande **carte d'itinéraire plein écran
+    + fiche du bas** (bottom sheet), couleur bleu `#2c5be0`.
+  - Login/Signup : épurés, **logo centré**, **fond photo parking + carte glassmorphism**.
+  - Admin web : **tableau de bord « bento »** + **donut taux d'occupation** (CSS pur), **sidebar
+    bleue dégradée**, **déconnexion + profil + user EN BAS de la sidebar**, cartes arrondies partout,
+    pages « Mon profil » et « formulaire utilisateur » **centrées**.
+  - Sécurité rôles : modèle **« admins égaux »** (un admin crée/gère gardiens ET admins ; garde-fous :
+    pas le dernier admin actif, pas soi-même ; email/mdp d'un autre admin non modifiables → via Mon profil).
+    Conducteurs s'inscrivent seuls.
+  - **Self-service « Mon profil »** (mdp actuel requis seulement si on change email/mdp).
+  - **Prix parkings éditables** (hybride semaine/week-end, déplié sur 7 jours) + horaires ; **devise Ariary**.
+  - **Pagination** « Précédent/Suivant » sur la liste Utilisateurs (10/page).
+  - **Confirmation avant déconnexion** (web + mobile).
+  - **Tableau de bord** : heures affichées à l'heure de **Madagascar (UTC+3)**.
+
+### 0.6 CE QUI RESTE (à décider avec l'étudiant — il diffère souvent « pour ce soir/plus tard »)
+- **Filtre multi-critères** côté conducteur (places min / prix max / ouvert maintenant / tri) — PROPOSÉ, pas fait.
+- **Login : deux designs distincts web vs mobile** (détection appareil) — à trancher.
+- **Prix des parkings DÉJÀ créés** : encore en ancienne valeur (ex. 2.0) → à re-saisir en Ariary.
+- **Sprint 12 : README + réorg `/src`** — le prof a dit **non obligatoire** → en pause. (`/docs` et `/data` existent déjà.)
+- Formulaire **Parkings** à centrer (cohérence, optionnel).
+
+### 0.7 Repères fichiers
+`app/main.py` (routes racine + PWA + API reco/carte), `app/routes/` (auth, utilisateur, parking,
+reservation, dashboard), `app/controllers/`, `app/graph/` (algos+structures), `app/templates/`
+(base.html=layout admin ; conducteur/ gardien/ = mobile ; auth/ ; parkings/ ; utilisateurs/ ;
+dashboard.html), `app/static/css/style.css` (admin) + `mobile.css` (mobile) + `sw.js` + `manifest.json`,
+`data/` (graphe), `benchmarks/`, `tests/`. ⚠️ Le rapport `.docx` et le cahier des charges sont
+**hors dépôt** (verrouillés, chez l'étudiant).
 
 ---
 
@@ -34,7 +105,7 @@ Le système recommande au conducteur le parking le plus optimal (proche + places
 - **Gardien** → interface **Mobile (PWA)** (scan QR, validation entrée/sortie, confirmation paiement espèce).
 - **Conducteur** → interface **Mobile (PWA)** (recherche parking, recommandation, itinéraire, réservation, QR).
 
-> Décision : Web pour l'admin, PWA mobile pour gardien + conducteur. La couche PWA (manifest + service worker + icônes) n'est PAS encore faite.
+> Décision : Web pour l'admin, PWA mobile pour gardien + conducteur. La couche PWA (manifest + service worker + icônes + splash) est FAITE (cf. §0.5).
 >
 > ⚠️ IMPORTANT (consigne prof) : un livrable « juste responsive » NE COMPTE PAS. La partie mobile
 > doit être une VRAIE app mobile. Choix retenu = PWA (alternative écartée = React Native).
@@ -148,4 +219,4 @@ Note : pseudo-code A* du rapport utilise NOUVEAU_TAS_BINAIRE (ouvert) + NOUVELLE
 → Implémenter une vraie table de hachage (avec gestion des collisions) et l'utiliser dans A* couvre #1 ET colle au pseudo-code.
 
 ## 11. Travail en cours (non commité)
-- `app/templates/conducteur/home.html` : interface recherche parking (GPS + positions test + appel /api/recommandation). JS pas terminé.
+- RIEN en cours : **tout est commité**. État d'avancement à jour en **§0.5 / §0.6**.
