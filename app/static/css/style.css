@@ -50,7 +50,7 @@ body {
   --sidebar-width:           240px;
   --sidebar-min-width:       52px;
 
-  --radius:    3px;
+  --radius:    10px;
   --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
@@ -200,6 +200,45 @@ a { text-decoration: none; color: inherit; }
 }
 .sidebar-footer-item:hover { background: var(--sidebar-hover); color: var(--sidebar-text-hover); }
 .sidebar-footer-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* ---- Bas de sidebar : utilisateur + profil + deconnexion ---- */
+.sidebar-footer {
+  margin-top: auto;                 /* colle le bloc tout en bas */
+  border-top: 1px solid var(--sidebar-sep);
+  padding: 10px;
+}
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 6px 10px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.sidebar-user .avatar { background: rgba(255, 255, 255, 0.2); color: #fff; }
+.sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.2; }
+.sidebar-user-role { font-size: 11px; color: var(--sidebar-label); text-transform: capitalize; }
+.sidebar-foot-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 8px;
+  border-radius: 8px;
+  color: var(--sidebar-text);
+  font-size: 13.5px;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background 0.1s, color 0.1s;
+}
+.sidebar-foot-link:hover { background: var(--sidebar-hover); color: #fff; }
+.sidebar-foot-link svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* Quand la sidebar est repliee : on ne garde que les icones, centrees. */
+.sidebar.collapsed .sidebar-user-info,
+.sidebar.collapsed .sidebar-foot-label { display: none; }
+.sidebar.collapsed .sidebar-user { justify-content: center; padding: 4px 0 10px 0; }
+.sidebar.collapsed .sidebar-foot-link { justify-content: center; padding: 10px 0; }
 
 /* Collapsed state — hide labels */
 .sidebar.collapsed .brand-text,
@@ -385,6 +424,8 @@ a { text-decoration: none; color: inherit; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+  overflow: hidden;
 }
 
 .card-header {
