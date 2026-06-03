@@ -324,3 +324,40 @@
   overflow: hidden;
   margin-bottom: 14px;
 }
+
+/* ----- Ecran de demarrage (splash) -----
+   Couvre tout l'ecran au lancement, montre le logo SP anime, puis
+   disparait. Ne s'affiche qu'UNE fois par ouverture de l'app. */
+.m-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--m-bleu);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease;
+}
+.m-splash.cache {            /* etat "en train de disparaitre" */
+  opacity: 0;
+  pointer-events: none;
+}
+.m-splash-logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  animation: m-splash-pop 0.6s ease;
+}
+@keyframes m-splash-pop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}

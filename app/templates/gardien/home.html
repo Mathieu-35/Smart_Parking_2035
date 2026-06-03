@@ -18,6 +18,24 @@
 </head>
 <body class="m-screen">
 
+  <!-- ===================== ECRAN DE DEMARRAGE (splash) ===================== -->
+  <div class="m-splash" id="splash">
+    <div class="m-splash-logo">SP</div>
+  </div>
+  <script>
+    // On montre le logo SP UNE fois par ouverture de l'app.
+    (function () {
+      var splash = document.getElementById("splash");
+      if (sessionStorage.getItem("splash_vu")) {
+        splash.style.display = "none";
+        return;
+      }
+      sessionStorage.setItem("splash_vu", "1");
+      setTimeout(function () { splash.classList.add("cache"); }, 1100);
+      setTimeout(function () { splash.style.display = "none"; }, 1600);
+    })();
+  </script>
+
   <!-- ===================== CONTENU ===================== -->
   <main class="m-content">
 
