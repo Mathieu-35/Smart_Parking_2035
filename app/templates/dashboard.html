@@ -45,12 +45,12 @@
 
   <div class="card"><div class="card-body">
     <div style="font-size: 13px; color: var(--text-subtle);">Revenus (aujourd'hui)</div>
-    <div style="font-size: 28px; font-weight: 700;">{{ stats.revenus_jour }}</div>
+    <div style="font-size: 28px; font-weight: 700;">{{ stats.revenus_jour }} <span style="font-size:14px; color:var(--text-subtle);">Ar</span></div>
   </div></div>
 
   <div class="card"><div class="card-body">
     <div style="font-size: 13px; color: var(--text-subtle);">Revenus (total)</div>
-    <div style="font-size: 28px; font-weight: 700;">{{ stats.revenus_total }}</div>
+    <div style="font-size: 28px; font-weight: 700;">{{ stats.revenus_total }} <span style="font-size:14px; color:var(--text-subtle);">Ar</span></div>
   </div></div>
 
 </div>
@@ -71,7 +71,7 @@
         <tr>
           <td>{{ p.nom }}</td>
           <td>{{ p.nb }}</td>
-          <td><strong>{{ p.revenu }}</strong></td>
+          <td><strong>{{ p.revenu }} Ar</strong></td>
         </tr>
         {% endfor %}
       </tbody>

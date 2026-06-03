@@ -4,15 +4,15 @@ from datetime import datetime
 from app.models import Parking, HistoriquePlaces
 from app.schemas.parking import ParkingCreate, ParkingUpdate
 
-# Valeurs par défaut
+# Valeurs par défaut (tarifs en ARIARY par heure)
 DEFAULT_TARIFICATION = {
-    "lundi": 2.0,
-    "mardi": 2.0,
-    "mercredi": 2.0,
-    "jeudi": 2.0,
-    "vendredi": 2.5,
-    "samedi": 3.0,
-    "dimanche": 1.5
+    "lundi": 2000,
+    "mardi": 2000,
+    "mercredi": 2000,
+    "jeudi": 2000,
+    "vendredi": 2500,
+    "samedi": 3000,
+    "dimanche": 1500
 }
 
 DEFAULT_HORAIRES = {

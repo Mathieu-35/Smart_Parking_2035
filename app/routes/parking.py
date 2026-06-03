@@ -49,9 +49,9 @@ def extraire_valeurs(parking) -> dict:
     """L'inverse : retrouve les 6 valeurs (semaine/week-end) pour pre-remplir
     le formulaire. On lit lundi pour la semaine et samedi pour le week-end."""
     if parking is None:
-        # Valeurs par defaut a la creation.
+        # Valeurs par defaut a la creation (tarifs en Ariary).
         return {
-            "prix_semaine": 2.0, "prix_weekend": 3.0,
+            "prix_semaine": 2000, "prix_weekend": 3000,
             "ouv_sem": "06:00", "ferm_sem": "23:00",
             "ouv_we": "08:00", "ferm_we": "22:00",
         }
@@ -60,8 +60,8 @@ def extraire_valeurs(parking) -> dict:
     h_semaine = horaires.get("lundi", {})
     h_weekend = horaires.get("samedi", {})
     return {
-        "prix_semaine": tarif.get("lundi", 2.0),
-        "prix_weekend": tarif.get("samedi", 3.0),
+        "prix_semaine": tarif.get("lundi", 2000),
+        "prix_weekend": tarif.get("samedi", 3000),
         "ouv_sem": h_semaine.get("ouverture", "06:00"),
         "ferm_sem": h_semaine.get("fermeture", "23:00"),
         "ouv_we": h_weekend.get("ouverture", "08:00"),

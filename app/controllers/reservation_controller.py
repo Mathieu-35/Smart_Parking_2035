@@ -161,12 +161,12 @@ class ReservationController:
         if heures_facturees < 1:
             heures_facturees = 1
 
-        # 2) Tarif du jour d'arrivee (ex : 2.0 le lundi).
+        # 2) Tarif du jour d'arrivee, en Ariary (ex : 2000 le lundi).
         nom_du_jour = JOURS[date_arrivee.weekday()]
-        tarif = parking.tarification_par_jour.get(nom_du_jour, 2.0)
+        tarif = parking.tarification_par_jour.get(nom_du_jour, 2000)
 
-        # 3) Montant total.
-        return round(heures_facturees * tarif, 2)
+        # 3) Montant total (Ariary, sans centimes).
+        return round(heures_facturees * tarif)
 
     # ---------------------------------------------------------
     #  SORTIE : le gardien valide le depart + calcule le montant

@@ -22,16 +22,16 @@ class Parking(Base):
     nombre_places_total = Column(Integer, nullable=False)
     places_disponibles = Column(Integer, nullable=False)
     
-    # Tarification variable (JSON pour flexibilité)
-    # Format: {"lundi": 2.5, "mardi": 2.5, ..., "dimanche": 1.5}
+    # Tarification variable (JSON pour flexibilité) — en ARIARY par heure
+    # Format: {"lundi": 2000, "mardi": 2000, ..., "dimanche": 1500}
     tarification_par_jour = Column(JSON, nullable=False, default={
-        "lundi": 2.0,
-        "mardi": 2.0,
-        "mercredi": 2.0,
-        "jeudi": 2.0,
-        "vendredi": 2.5,
-        "samedi": 3.0,
-        "dimanche": 1.5
+        "lundi": 2000,
+        "mardi": 2000,
+        "mercredi": 2000,
+        "jeudi": 2000,
+        "vendredi": 2500,
+        "samedi": 3000,
+        "dimanche": 1500
     })
     
     # Horaires d'ouverture (JSON)

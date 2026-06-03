@@ -172,7 +172,7 @@
           {% for jour, tarif in parking.tarification_par_jour.items() %}
           <div class="tarification-item">
             <span class="tarification-jour">{{ jour | capitalize }}</span>
-            <span class="tarification-prix">{{ "%.2f"|format(tarif) }} €/h</span>
+            <span class="tarification-prix">{{ "%.0f"|format(tarif) }} Ar/h</span>
           </div>
           {% endfor %}
         </div>
