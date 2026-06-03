@@ -12,10 +12,10 @@ body {
 
 /* ─── Variables ─────────────────────────────────────────── */
 :root {
-  --blue:          #0052CC;
-  --blue-hover:    #0065FF;
-  --blue-pressed:  #0747A6;
-  --blue-subtle:   #DEEBFF;
+  --blue:          #2F2FE4;   /* bleu electrique (accent) */
+  --blue-hover:    #4747e8;
+  --blue-pressed:  #162E93;
+  --blue-subtle:   #e6e6fc;
 
   --text:          #172B4D;
   --text-subtle:   #44546F;
@@ -37,8 +37,8 @@ body {
   --green:         #216E4E;
   --green-bg:      #DCFCE7;
 
-  /* Sidebar — degrade bleu de la marque (coherent avec l'accent #2c5be0) */
-  --sidebar-bg:              linear-gradient(180deg, #2c5be0 0%, #1e3a8a 100%);
+  /* Sidebar — navy plat (palette : aplat, pas de degrade) */
+  --sidebar-bg:              #1A1953;
   --sidebar-hover:           rgba(255, 255, 255, 0.10);
   --sidebar-active-bg:       rgba(255, 255, 255, 0.16);
   --sidebar-active-border:   #ffffff;
@@ -403,6 +403,54 @@ a { text-decoration: none; color: inherit; }
 .btn-sm { padding: 4px 8px; font-size: 12.5px; }
 .btn-sm svg { width: 12px; height: 12px; }
 
+/* ─── Bouton CTA (effet Uiverse : remplissage jaune au survol) ───
+   Reserve aux actions principales "Ajouter ...". Scope a .btn-cta
+   pour ne PAS toucher les autres boutons. */
+.btn-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius);
+  background: #1A1953;                 /* navy de la palette */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-cta::after {                       /* le voile jaune qui glisse */
+  content: " ";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0%;
+  height: 100%;
+  background: #ffd401;
+  transition: all 0.4s ease-in-out;
+}
+.btn-cta:hover::after { right: auto; left: 0; width: 100%; }
+.btn-cta span {
+  position: relative;                   /* reste au-dessus du voile */
+  z-index: 1;
+  padding: 9px 18px;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-family: var(--font);
+  transition: color 0.3s ease-in-out;
+}
+.btn-cta:hover span {
+  color: #1A1953;                       /* texte navy sur fond jaune */
+  animation: btn-cta-pop 0.3s ease-in-out;
+}
+@keyframes btn-cta-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
 /* Inline text action (Jira-style table links) */
 .action-link {
   font-size: 13px;
@@ -467,7 +515,7 @@ thead th {
   color: var(--text-subtlest);
   padding: 8px 12px;
   border-bottom: 2px solid var(--border);
-  background: var(--bg);
+  background: #eef0fa;   /* bleu tres clair (palette) */
   white-space: nowrap;
 }
 
@@ -543,7 +591,7 @@ tbody td { padding: 10px 12px; font-size: 13.5px; color: var(--text); vertical-a
 .form-control:focus {
   outline: none;
   border-color: var(--blue);
-  box-shadow: 0 0 0 2px rgba(76, 154, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(47, 47, 228, 0.25);
 }
 .form-control::placeholder { color: var(--text-subtlest); }
 select.form-control { cursor: pointer; }

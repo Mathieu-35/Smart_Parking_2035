@@ -34,15 +34,21 @@ Retours explicites donnés pendant le projet :
 - ✅ Sur mobile : **barre d'onglets en BAS** (tab bar, style app classique,
   icônes + petit label), décidé le 2026-06-02 d'après l'inspiration #1
   (remplace l'ancien rail d'icônes à gauche).
-- ✅ **Bleu royal vif `#2c5be0`** (décidé 2026-06-02, remplace le marine).
+- ✅ **Palette bleu/navy** (Color Hunt, décidée 2026-06-03, remplace le bleu
+  `#2c5be0` puis l'indigo `#4B5694`). Voir le tableau §3.
 - ✅ Pour l'itinéraire : **carte plein écran + fiche qui remonte du bas**
   (bottom sheet) — l'étudiant tient à une GRANDE carte pour voir le trajet.
 
-## 3. Palette (mobile)
+## 3. Palette (NOUVELLE — depuis 2026-06-03, bleu/navy choisi par l'étudiant)
+Aplats only (zéro dégradé). Le `#2F2FE4` est VIF : l'utiliser en accent (boutons,
+liens, onglet actif), PAS en aplat plein écran. Grandes zones sombres = navy `#1A1953`.
 | Rôle | Couleur |
 |---|---|
-| Bleu principal | `#1e3a8a` |
-| Bleu foncé (appui) | `#172e6e` |
+| Accent (boutons, liens, onglet actif, donut) | `#2F2FE4` |
+| Navy (sidebar web, splash, barre de statut, surfaces foncées) | `#1A1953` |
+| Bleu foncé (appui / pressé / survol) | `#162E93` |
+| Bleu très clair (puces, fonds doux) | `#e6e6fc` / `#eef0fb` |
+| Jaune CTA (voile au survol du `.btn-cta` « Ajouter ») | `#ffd401` |
 | Fond | `#f5f6f8` |
 | Surface (cartes) | `#ffffff` |
 | Texte | `#1f2533` |

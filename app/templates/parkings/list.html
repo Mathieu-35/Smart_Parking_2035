@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "components/boutons.html" import bouton_cta %}
 
 {% block title %}Parkings — Smart Parking 2035{% endblock %}
 {% block breadcrumb %}
@@ -13,7 +14,7 @@
     <h1 class="page-title">Parkings</h1>
     <p class="page-meta">{{ parkings | length }} parking{{ 's' if parkings | length != 1 }}</p>
   </div>
-  <a href="/parkings/creer" class="btn btn-primary">Ajouter un parking</a>
+  {{ bouton_cta("/parkings/creer", "Ajouter un parking") }}
 </div>
 
 {% if msg %}

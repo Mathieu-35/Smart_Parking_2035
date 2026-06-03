@@ -20,8 +20,12 @@ Algorithmes maison dans `app/graph/` (Dijkstra, Dijkstra+tas, A*, glouton, table
    (Tableaux 5/6) reproductibles. NE PAS toucher au graphe, aux coordonnées, ni aux modules d'algo.
 4. **Mobile = vraie PWA** (manifest + service worker + installable + hors-ligne + splash) : OBLIGATOIRE.
 5. **Monnaie = Ariary (Ar)**, sans centimes.
-6. **Design** : sobre, bleu `#2c5be0`, zéro emoji, cartes arrondies « bento », mobile = barre
-   d'onglets en bas + splash SP. Détails dans le skill `ui-design`.
+6. **Design** : sobre, **palette bleu/navy** (accent `#2F2FE4`, navy `#1A1953` pour
+   sidebar/splash/barre de statut, appui `#162E93`), zéro emoji, aplats (pas de dégradé),
+   cartes arrondies « bento », mobile = barre d'onglets en bas + splash SP. Bouton CTA
+   « Ajouter » = macro `components/boutons.html` (classe `.btn-cta`, voile jaune `#ffd401`
+   au survol). Détails : skill `ui-design`. (Anciennes couleurs `#2c5be0` puis indigo
+   `#4B5694` remplacées le 2026-06-03 ; le rapport écrit peut encore citer `#2c5be0`.)
 
 ## Lancer le projet (Windows)
 - Serveur : `venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001`

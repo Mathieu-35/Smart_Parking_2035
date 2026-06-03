@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "components/boutons.html" import bouton_cta %}
 
 {% block title %}Utilisateurs — Smart Parking 2035{% endblock %}
 {% block breadcrumb %}
@@ -17,7 +18,7 @@
       {% if total_pages > 1 %} — page {{ page }} / {{ total_pages }}{% endif %}
     </p>
   </div>
-  <a href="/utilisateurs/creer" class="btn btn-primary">Ajouter un utilisateur</a>
+  {{ bouton_cta("/utilisateurs/creer", "Ajouter un utilisateur") }}
 </div>
 
 <div class="card" style="margin-bottom: 16px;">
@@ -101,7 +102,7 @@
     <div class="empty-state">
       <div class="empty-state-title">Aucun utilisateur enregistre</div>
       <div class="empty-state-desc">Commencez par creer le premier compte utilisateur.</div>
-      <a href="/utilisateurs/creer" class="btn btn-primary">Ajouter un utilisateur</a>
+      {{ bouton_cta("/utilisateurs/creer", "Ajouter un utilisateur") }}
     </div>
     {% endif %}
   </div>

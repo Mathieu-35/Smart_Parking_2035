@@ -1,0 +1,13 @@
+{# =============================================================
+   Composants de boutons reutilisables.
+
+   Utilisation dans une page :
+     {% from "components/boutons.html" import bouton_cta %}
+     {{ bouton_cta("/parkings/creer", "Ajouter un parking") }}
+
+   Le style ".btn-cta" est defini dans app/static/css/style.css.
+   ============================================================= #}
+
+{% macro bouton_cta(lien, texte) %}
+<a href="{{ lien }}" class="btn-cta"><span>{{ texte }}</span></a>
+{% endmacro %}

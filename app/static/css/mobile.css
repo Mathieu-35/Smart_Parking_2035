@@ -5,8 +5,9 @@
    ============================================================= */
 
 :root {
-  --m-bleu:        #2c5be0;   /* bleu royal vif (inspiration #1) */
-  --m-bleu-fonce:  #1e44b0;
+  --m-bleu:        #2F2FE4;   /* bleu electrique (accent) */
+  --m-bleu-fonce:  #162E93;   /* bleu fonce (appui/etat presse) */
+  --m-navy:        #1A1953;   /* navy (splash + surfaces foncees) */
   --m-fond:        #f5f6f8;
   --m-surface:     #ffffff;
   --m-texte:       #1f2533;
@@ -121,7 +122,7 @@
   color: var(--m-bleu);
   border: 1px solid var(--m-bleu);
 }
-.m-btn-secondary:active { background: #eef2fb; }
+.m-btn-secondary:active { background: #eceef6; }
 
 .m-btn + .m-btn { margin-top: 10px; }
 
@@ -215,7 +216,7 @@
 .m-chip {
   padding: 5px 10px;
   border-radius: 6px;
-  background: #eef2fb;
+  background: #eceef6;
   color: var(--m-bleu);
   font-size: 12.5px;
   font-weight: 600;
@@ -225,7 +226,7 @@
 .m-route {
   font-size: 12.5px;
   color: var(--m-texte);
-  background: #f7f8fa;
+  background: #eef0fb;   /* bleu tres clair (palette) */
   border-radius: 8px;
   padding: 9px 11px;
   margin-bottom: 8px;
@@ -332,7 +333,7 @@
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: var(--m-bleu);
+  background: var(--m-navy);
   display: flex;
   align-items: center;
   justify-content: center;
