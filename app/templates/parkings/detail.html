@@ -2,7 +2,6 @@
 
 {% block title %}{{ parking.nom }} — Smart Parking 2035{% endblock %}
 {% block breadcrumb %}
-  <span class="topbar-sep">/</span>
   <a href="/parkings/" class="topbar-breadcrumb-link">Parkings</a>
   <span class="topbar-sep">/</span>
   <span class="topbar-breadcrumb-current">{{ parking.nom }}</span>
@@ -51,11 +50,11 @@
           </div>
           <div class="status-item">
             <span class="status-label">Créé le</span>
-            <span>{{ parking.date_creation.strftime('%d/%m/%Y %H:%M') }}</span>
+            <span>{{ parking.date_creation | heure_mada }}</span>
           </div>
           <div class="status-item">
             <span class="status-label">Modifié le</span>
-            <span>{{ parking.date_modification.strftime('%d/%m/%Y %H:%M') }}</span>
+            <span>{{ parking.date_modification | heure_mada }}</span>
           </div>
         </div>
         {% if parking.actif %}
@@ -147,7 +146,7 @@
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-content">
-              <div class="timeline-time">{{ h.date_enregistrement.strftime('%d/%m/%Y %H:%M') }}</div>
+              <div class="timeline-time">{{ h.date_enregistrement | heure_mada }}</div>
               <div class="timeline-text">
                 <strong>{{ h.places_disponibles }}/{{ h.places_disponibles + h.places_occupees }}</strong> places disponibles
                 {% if h.raison %}<span class="timeline-reason">({{ h.raison }})</span>{% endif %}

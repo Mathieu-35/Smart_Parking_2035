@@ -8,6 +8,7 @@ from app.database import get_db
 from app.controllers.parking_controller import ParkingController
 from app.schemas.parking import ParkingCreate, ParkingUpdate, ParkingRead, ParkingListItem
 from app.dependencies import require_admin
+from app.heure import heure_mada
 
 router = APIRouter(
     prefix="/parkings",
@@ -15,6 +16,8 @@ router = APIRouter(
     dependencies=[Depends(require_admin)],
 )
 templates = Jinja2Templates(directory="app/templates")
+# Filtre "heure_mada" : affiche les dates UTC a l'heure de Madagascar (+3h).
+templates.env.filters["heure_mada"] = heure_mada
 
 
 # ==================== TARIFICATION / HORAIRES (hybride) ====================
