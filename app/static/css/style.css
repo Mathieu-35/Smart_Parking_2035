@@ -426,7 +426,7 @@ a { text-decoration: none; color: inherit; }
   right: 0;
   width: 0%;
   height: 100%;
-  background: #ffd401;
+  background: #e6e6fc;
   transition: all 0.4s ease-in-out;
 }
 .btn-cta:hover::after { right: auto; left: 0; width: 100%; }
@@ -442,7 +442,7 @@ a { text-decoration: none; color: inherit; }
   transition: color 0.3s ease-in-out;
 }
 .btn-cta:hover span {
-  color: #1A1953;                       /* texte navy sur fond jaune */
+  color: #1A1953;                       /* texte navy sur fond bleu clair */
   animation: btn-cta-pop 0.3s ease-in-out;
 }
 @keyframes btn-cta-pop {
@@ -455,7 +455,7 @@ a { text-decoration: none; color: inherit; }
 .action-link {
   font-size: 13px;
   font-weight: 500;
-  color: var(--blue);
+  color: #162E93;
   background: none;
   border: none;
   cursor: pointer;
@@ -464,7 +464,7 @@ a { text-decoration: none; color: inherit; }
   text-decoration: none;
   transition: color 0.1s;
 }
-.action-link:hover { text-decoration: underline; }
+.action-link:hover { color: #1A1953; text-decoration: underline; }
 .action-link.danger { color: var(--red); }
 
 /* ─── Card ──────────────────────────────────────────────── */
