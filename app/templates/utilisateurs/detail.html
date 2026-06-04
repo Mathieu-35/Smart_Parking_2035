@@ -10,11 +10,7 @@
 
 {% block content %}
 
-<div class="breadcrumb">
-  <a href="/utilisateurs/">Utilisateurs</a>
-  <span class="breadcrumb-sep">/</span>
-  <span>{{ utilisateur.prenom }} {{ utilisateur.nom }}</span>
-</div>
+<div style="max-width: 740px; margin: 0 auto;">
 
 <div class="page-header" style="margin-bottom: 16px;">
   <div style="display: flex; align-items: center; gap: 12px;">
@@ -40,7 +36,7 @@
   </div>
 </div>
 
-<div class="card" style="max-width: 740px;">
+<div class="card">
   <div class="card-header">
     <div class="card-title">Informations du compte</div>
     <div style="display: flex; gap: 8px; align-items: center;">
@@ -90,5 +86,7 @@
     </div>
   </div>
 </div>
+
+</div>{# fin du centrage #}
 
 {% endblock %}
