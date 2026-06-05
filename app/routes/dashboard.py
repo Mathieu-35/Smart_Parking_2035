@@ -40,9 +40,17 @@ def revenus(
     request: Request,
     db: Session = Depends(get_db),
     filtre: str = "jour",
-    parking_id: Optional[int] = None,
+    parking_id: str = "",
 ):
     """Page de gestion des revenus : historique des paiements encaissés."""
+
+    # --- On transforme parking_id (texte) en nombre, ou None si vide ---
+    #  Le menu deroulant "Tous les parkings" envoie une valeur vide ("") :
+    #  dans ce cas, on ne filtre par aucun parking.
+    if parking_id and parking_id.isdigit():
+        parking_id = int(parking_id)
+    else:
+        parking_id = None
 
     # --- Calculer la date de debut selon le filtre choisi ---
     maintenant = datetime.utcnow()
