@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% from "components/boutons.html" import bouton_cta %}
+
+{% block title %}Revenus — Smart Parking 2035{% endblock %}
+{% block breadcrumb %}
+  <span class="topbar-breadcrumb-current">Revenus</span>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Revenus</h1>
+    <p class="page-meta">Paiements encaissés par les gardiens</p>
+  </div>
+</div>
+
+{# ─── Filtres ─────────────────────────────────────────────── #}
+<form method="GET" action="/revenus/" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; align-items:center;">
+
+  {# Filtre période #}
+  <div style="display:flex; gap:4px;">
+    <a href="/revenus/?filtre=jour{% if parking_id_actif %}&parking_id={{ parking_id_actif }}{% endif %}"
+       class="btn btn-sm {% if filtre == 'jour' %}btn-primary{% else %}btn-secondary{% endif %}">
+      Aujourd'hui
+    </a>
+    <a href="/revenus/?filtre=semaine{% if parking_id_actif %}&parking_id={{ parking_id_actif }}{% endif %}"
+       class="btn btn-sm {% if filtre == 'semaine' %}btn-primary{% else %}btn-secondary{% endif %}">
+      7 derniers jours
+    </a>
+    <a href="/revenus/?filtre=mois{% if parking_id_actif %}&parking_id={{ parking_id_actif }}{% endif %}"
+       class="btn btn-sm {% if filtre == 'mois' %}btn-primary{% else %}btn-secondary{% endif %}">
+      30 derniers jours
+    </a>
+  </div>
+
+  {# Filtre parking #}
+  <select name="parking_id" class="form-control" style="width:auto;"
+          onchange="this.form.submit()">
+    <option value="">Tous les parkings</option>
+    {% for p in parkings %}
+    <option value="{{ p.id }}" {% if parking_id_actif == p.id %}selected{% endif %}>
+      {{ p.nom }}
+    </option>
+    {% endfor %}
+  </select>
+  <input type="hidden" name="filtre" value="{{ filtre }}" />
+
+  {% if parking_id_actif %}
+  <a href="/revenus/?filtre={{ filtre }}" class="btn btn-ghost btn-sm">Reinitialiser</a>
+  {% endif %}
+</form>
+
+{# ─── Cartes KPI ──────────────────────────────────────────── #}
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:20px;">
+
+  <div class="card" style="padding:16px 20px;">
+    <div style="font-size:11px; font-weight:600; color:var(--text-subtle); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;">Total collecté</div>
+    <div style="font-size:26px; font-weight:800; color:var(--blue);">{{ "{:,.0f}".format(total_global).replace(",", " ") }} Ar</div>
+  </div>
+
+  <div class="card" style="padding:16px 20px;">
+    <div style="font-size:11px; font-weight:600; color:var(--text-subtle); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;">Paiements</div>
+    <div style="font-size:26px; font-weight:800; color:var(--text);">{{ nb_paiements }}</div>
+  </div>
+
+  {% if par_parking %}
+  {% for pid, info in par_parking.items() %}
+  <div class="card" style="padding:16px 20px;">
+    <div style="font-size:11px; font-weight:600; color:var(--text-subtle); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;">{{ info.nom }}</div>
+    <div style="font-size:20px; font-weight:700; color:var(--text);">{{ "{:,.0f}".format(info.total).replace(",", " ") }} Ar</div>
+    <div style="font-size:12px; color:var(--text-subtle); margin-top:2px;">{{ info.nb }} paiement{{ 's' if info.nb > 1 }}</div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+</div>
+
+{# ─── Tableau des transactions ─────────────────────────────── #}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Historique des paiements</div>
+  </div>
+  <div class="table-wrapper">
+    {% if reservations %}
+    <table>
+      <thead>
+        <tr>
+          <th>Parking</th>
+          <th>Plaque</th>
+          <th>Entree</th>
+          <th>Sortie</th>
+          <th>Duree</th>
+          <th style="text-align:right;">Montant</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+        {% set duree_min = ((r.date_depart - r.date_arrivee).total_seconds() / 60) | int %}
+        <tr>
+          <td><span class="lozenge lozenge-info">{{ r.parking.nom }}</span></td>
+          <td style="font-family:monospace; font-weight:600;">
+            {{ r.plaque_immatriculation if r.plaque_immatriculation else '—' }}
+          </td>
+          <td style="color:var(--text-subtle);">{{ r.date_arrivee | heure_mada }}</td>
+          <td style="color:var(--text-subtle);">{{ r.date_depart | heure_mada }}</td>
+          <td style="color:var(--text-subtle);">
+            {% if duree_min >= 60 %}
+              {{ (duree_min // 60) }}h{{ '%02d' % (duree_min % 60) }}
+            {% else %}
+              {{ duree_min }} min
+            {% endif %}
+          </td>
+          <td style="text-align:right; font-weight:700; color:var(--blue);">
+            {{ "{:,.0f}".format(r.cout_total).replace(",", " ") }} Ar
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr style="border-top: 2px solid var(--border);">
+          <td colspan="5" style="font-weight:700; padding:10px 12px;">TOTAL</td>
+          <td style="text-align:right; font-weight:800; font-size:15px; color:var(--blue); padding:10px 12px;">
+            {{ "{:,.0f}".format(total_global).replace(",", " ") }} Ar
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state-title">Aucun paiement sur cette période</div>
+      <div class="empty-state-desc">Les paiements apparaissent ici dès qu'un gardien valide une sortie.</div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

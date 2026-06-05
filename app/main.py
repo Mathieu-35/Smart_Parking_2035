@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from fastapi import FastAPI, Request, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -195,7 +197,49 @@ def conducteur_home(request: Request):
 
 @app.get("/gardien/", response_class=HTMLResponse)
 def gardien_home(request: Request):
-    """Page d'accueil temporaire du gardien (interface mobile a venir)."""
+    """Page d'accueil du gardien (scan QR entree/sortie)."""
     if request.session.get("user_role") != "gardien":
         return RedirectResponse(url="/")
     return templates.TemplateResponse("gardien/home.html", {"request": request})
+
+
+@app.get("/gardien/caisse", response_class=HTMLResponse)
+def gardien_caisse(
+    request: Request,
+    filtre: str = "jour",
+    db: Session = Depends(get_db),
+):
+    """Caisse du gardien : historique des paiements encaisses."""
+    if request.session.get("user_role") != "gardien":
+        return RedirectResponse(url="/")
+
+    # --- Periode selon le filtre ---
+    maintenant = datetime.utcnow()
+    if filtre == "semaine":
+        debut = maintenant - timedelta(days=7)
+    elif filtre == "mois":
+        debut = maintenant - timedelta(days=30)
+    else:  # "jour" par defaut
+        debut = maintenant.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # --- Paiements encaisses sur la periode ---
+    reservations = (
+        db.query(Reservation)
+        .filter(
+            Reservation.statut == "partie",
+            Reservation.cout_total != None,
+            Reservation.date_depart >= debut,
+        )
+        .order_by(Reservation.date_depart.desc())
+        .all()
+    )
+
+    total = sum(r.cout_total for r in reservations if r.cout_total)
+
+    return templates.TemplateResponse("gardien/caisse.html", {
+        "request": request,
+        "reservations": reservations,
+        "total": total,
+        "filtre": filtre,
+        "nb": len(reservations),
+    })
