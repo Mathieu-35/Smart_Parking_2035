@@ -1,6 +1,4 @@
-# =============================================================
 #  CLASSE Graph  -  Le plan des routes de la ville
-# =============================================================
 #
 #  L'idee est tres simple :
 #  Une ville = des carrefours relies par des routes.
@@ -10,8 +8,6 @@
 #
 #  Pour ranger tout ca, on utilise 2 dictionnaires Python (des { }).
 #  Un dictionnaire, c'est juste un carnet :  une cle  ->  une valeur.
-#
-# =============================================================
 
 
 class Graph:

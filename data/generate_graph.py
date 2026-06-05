@@ -1,6 +1,4 @@
-# =============================================================
 #  generate_graph.py  -  Fabrique le plan des routes (fichier JSON)
-# =============================================================
 #
 #  Ce script :
 #    1. liste des carrefours d'Antananarivo (avec leur position GPS)
@@ -21,15 +19,13 @@
 #  Cible : 52 noeuds (42 carrefours + 10 parkings) et 64 routes
 #          (soit 128 aretes orientees, car une route = 2 sens).
 #
-# =============================================================
 
 import json     # pour ecrire dans un fichier .json
 import math     # pour les calculs (racine carree, sinus, cosinus...)
 
 
-# -------------------------------------------------------------
 #  1) LES CARREFOURS  (42 noeuds)
-# -------------------------------------------------------------
+
 #  Chaque ligne =  (nom du carrefour, latitude, longitude)
 #
 CARREFOURS = [
@@ -77,10 +73,7 @@ CARREFOURS = [
     ("Ambohimanga",     -18.8780, 47.5360),
 ]
 
-
-# -------------------------------------------------------------
 #  2) LES PARKINGS  (10 noeuds)
-# -------------------------------------------------------------
 #  Ils sont aussi places sur la carte. Chacun sera relie au
 #  carrefour le plus proche (voir la liste des routes plus bas).
 #
@@ -98,7 +91,6 @@ PARKINGS = [
 ]
 
 
-# -------------------------------------------------------------
 #  3) LES ROUTES  (les aretes)  -  64 routes a double sens
 # -------------------------------------------------------------
 #  Chaque ligne =  (carrefour de depart, carrefour d'arrivee)
@@ -176,10 +168,7 @@ ROUTES = [
     ("Parking Andohalo", "Andohalo"),
 ]
 
-
-# -------------------------------------------------------------
 #  4) CALCULER LA DISTANCE ENTRE 2 POINTS GPS
-# -------------------------------------------------------------
 #  Formule connue ("haversine") : tu donnes 2 points GPS, elle
 #  renvoie le nombre de metres entre eux (la Terre est ronde).
 #
@@ -199,10 +188,8 @@ def distance_metres(lat1, lon1, lat2, lon2):
 
     return round(rayon_terre * c)
 
-
-# -------------------------------------------------------------
 #  5) CONSTRUIRE ET SAUVEGARDER LE FICHIER JSON
-# -------------------------------------------------------------
+
 def construire_graphe():
     graphe = {
         "noeuds": [],

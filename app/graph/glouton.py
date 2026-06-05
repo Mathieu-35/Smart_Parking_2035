@@ -1,6 +1,4 @@
-# =============================================================
 #  glouton.py  -  Algorithme glouton (le randonneur presse)
-# =============================================================
 #
 #  Idee : un randonneur PRESSE et un peu NAIF.
 #  A chaque carrefour, il regarde ses voisins et choisit
@@ -22,7 +20,7 @@
 #  DEJA VISITES. S'il tombe dans un cul-de-sac (tous les
 #  voisins deja visites), il s'arrete : pas de chemin.
 #
-# =============================================================
+
 
 from app.graph.distance import distance_metres
 

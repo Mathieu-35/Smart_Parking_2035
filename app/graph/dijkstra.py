@@ -1,6 +1,4 @@
-# =============================================================
 #  dijkstra.py  -  Trouver le plus court chemin (version simple)
-# =============================================================
 #
 #  But : partir d'un carrefour de DEPART et trouver le chemin
 #  le plus court (en metres) jusqu'a un carrefour d'ARRIVEE.
@@ -17,8 +15,6 @@
 #  Cette version est la plus SIMPLE : pour choisir le prochain
 #  carrefour a traiter, on parcourt tous les carrefours et on
 #  garde celui qui a la plus petite distance.
-#
-# =============================================================
 
 
 def plus_court_chemin(graphe, depart, arrivee):

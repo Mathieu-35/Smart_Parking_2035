@@ -1,6 +1,4 @@
-# =============================================================
 #  a_etoile.py  -  Algorithme A* (Dijkstra + une boussole)
-# =============================================================
 #
 #  C'est le MEME principe que dijkstra_tas.py, avec UNE idee en plus.
 #
@@ -21,8 +19,7 @@
 #  Dans le tas, chaque element est un couple :
 #       (priorite, nom_du_carrefour)
 #  ou  priorite = distance_parcourue + estimation_du_reste
-#
-# =============================================================
+
 
 from app.graph.tas_min import TasMin
 from app.graph.table_hachage import TableHachage

@@ -1,7 +1,5 @@
-# =============================================================
 #  dijkstra_tas.py  -  Dijkstra ameliore avec un tas binaire
-# =============================================================
-#
+
 #  C'est le MEME algorithme que dijkstra.py, avec une seule
 #  difference : pour trouver le carrefour le plus proche pas
 #  encore traite, on ne reparcourt plus toute la liste.
@@ -12,8 +10,7 @@
 #       (distance_depuis_le_depart, nom_du_carrefour)
 #  La distance etant en premier, le tas garde toujours en haut
 #  le carrefour le plus proche.
-#
-# =============================================================
+
 
 from app.graph.tas_min import TasMin
 from app.graph.table_hachage import TableHachage
