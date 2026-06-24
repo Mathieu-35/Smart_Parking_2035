@@ -62,6 +62,7 @@ def create(
     role_id: int,
     telephone: Optional[str] = None,
     actif: bool = True,
+    parking_id: Optional[int] = None,
 ):
     utilisateur = Utilisateur(
         nom=nom,
@@ -71,6 +72,7 @@ def create(
         telephone=telephone,
         role_id=role_id,
         actif=actif,
+        parking_id=parking_id,
     )
     db.add(utilisateur)
     db.commit()
@@ -88,6 +90,7 @@ def update(
     telephone: Optional[str] = None,
     actif: bool = True,
     mot_passe: Optional[str] = None,
+    parking_id: Optional[int] = "__inchange__",
 ):
     utilisateur = get_by_id(db, utilisateur_id)
     if not utilisateur:
@@ -100,6 +103,10 @@ def update(
     utilisateur.actif = actif
     if mot_passe:
         utilisateur.mot_passe = _hash(mot_passe)
+    # parking_id : on ne le touche QUE si on nous donne une vraie valeur
+    # (la valeur sentinelle "__inchange__" veut dire "ne pas modifier").
+    if parking_id != "__inchange__":
+        utilisateur.parking_id = parking_id
     db.commit()
     db.refresh(utilisateur)
     return utilisateur

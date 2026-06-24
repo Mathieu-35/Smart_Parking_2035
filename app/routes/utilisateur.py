@@ -1,4 +1,6 @@
 from typing import Optional
+from datetime import datetime, timedelta
+
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -7,6 +9,8 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.controllers import role_controller, utilisateur_controller
 from app.dependencies import require_admin
+from app.models import Parking, Reservation
+from app.heure import heure_mada
 
 router = APIRouter(
     prefix="/utilisateurs",
@@ -14,6 +18,19 @@ router = APIRouter(
     dependencies=[Depends(require_admin)],
 )
 templates = Jinja2Templates(directory="app/templates")
+templates.env.filters["heure_mada"] = heure_mada
+
+
+def _liste_parkings(db: Session):
+    """Les parkings actifs (pour le menu 'Parking gere' du gardien)."""
+    return db.query(Parking).filter(Parking.supprime == False).all()  # noqa: E712
+
+
+def _convertir_parking_id(valeur):
+    """Transforme la valeur du menu (texte) en nombre, ou None si vide."""
+    if valeur and str(valeur).isdigit():
+        return int(valeur)
+    return None
 
 
 #  Nombre d'utilisateurs affiches par page (pagination).
@@ -75,12 +92,15 @@ def create_form(request: Request, db: Session = Depends(get_db)):
     # Un admin peut creer un compte gardien OU un autre administrateur
     # (modele "admins egaux"). Les conducteurs s'inscrivent eux-memes :
     # ils ne sont donc pas proposes ici.
+    gardien = role_controller.get_by_nom(db, "gardien")
     return templates.TemplateResponse("utilisateurs/form.html", {
         "request": request,
         "roles": _roles_creables(db),
         "utilisateur": None,
         "action": "creer",
         "error": None,
+        "parkings": _liste_parkings(db),
+        "gardien_role_id": gardien.id if gardien else None,
     })
 
 
@@ -94,6 +114,7 @@ def create_utilisateur(
     telephone: Optional[str] = Form(None),
     role_id: int = Form(...),
     actif: Optional[str] = Form(None),
+    parking_id: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
     # SECURITE : le role choisi doit faire partie des roles autorises
@@ -105,6 +126,12 @@ def create_utilisateur(
         gardien = role_controller.get_by_nom(db, "gardien")
         role_id = gardien.id if gardien else role_id
 
+    # Le parking gere ne concerne QUE les gardiens. Pour un admin, on
+    # ignore ce champ (parking_id reste None).
+    gardien = role_controller.get_by_nom(db, "gardien")
+    est_gardien = gardien is not None and role_id == gardien.id
+    parking_choisi = _convertir_parking_id(parking_id) if est_gardien else None
+
     try:
         utilisateur_controller.create(
             db=db,
@@ -115,6 +142,7 @@ def create_utilisateur(
             telephone=telephone or None,
             role_id=role_id,
             actif=actif == "on",
+            parking_id=parking_choisi,
         )
         return RedirectResponse(url="/utilisateurs/?msg=Compte créé avec succès", status_code=303)
     except Exception as e:
@@ -124,17 +152,60 @@ def create_utilisateur(
             "utilisateur": None,
             "action": "creer",
             "error": "Cet email est déjà utilisé ou les données sont invalides.",
+            "parkings": _liste_parkings(db),
+            "gardien_role_id": gardien.id if gardien else None,
         })
 
 
 @router.get("/{utilisateur_id}", response_class=HTMLResponse)
-def detail_utilisateur(utilisateur_id: int, request: Request, db: Session = Depends(get_db)):
+def detail_utilisateur(
+    utilisateur_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    filtre: str = "jour",
+):
     utilisateur = utilisateur_controller.get_by_id(db, utilisateur_id)
     if not utilisateur:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+
+    # --- Si c'est un GARDIEN avec un parking : on calcule ses revenus ---
+    #  (l'argent encaisse au parking dont il est responsable, filtre par
+    #  periode). Pour les autres roles, on n'affiche pas cette section.
+    revenus = None
+    if utilisateur.role.nom == "gardien" and utilisateur.parking_id:
+
+        maintenant = datetime.utcnow()
+        if filtre == "semaine":
+            debut = maintenant - timedelta(days=7)
+        elif filtre == "mois":
+            debut = maintenant - timedelta(days=30)
+        else:  # "jour"
+            debut = maintenant.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        reservations = (
+            db.query(Reservation)
+            .filter(
+                Reservation.parking_id == utilisateur.parking_id,
+                Reservation.statut == "partie",
+                Reservation.cout_total != None,  # noqa: E711
+                Reservation.date_depart >= debut,
+            )
+            .order_by(Reservation.date_depart.desc())
+            .all()
+        )
+
+        total = sum(r.cout_total for r in reservations if r.cout_total)
+        revenus = {
+            "reservations": reservations,
+            "total": total,
+            "nb": len(reservations),
+            "filtre": filtre,
+        }
+
     return templates.TemplateResponse("utilisateurs/detail.html", {
         "request": request,
         "utilisateur": utilisateur,
+        "revenus": revenus,
     })
 
 
@@ -162,6 +233,7 @@ def edit_form(utilisateur_id: int, request: Request, db: Session = Depends(get_d
         "action": "modifier",
         "error": None,
         "verrou_admin": utilisateur.role.nom == "administrateur",
+        "parkings": _liste_parkings(db),
     })
 
 
@@ -176,6 +248,7 @@ def update_utilisateur(
     telephone: Optional[str] = Form(None),
     role_id: int = Form(...),
     actif: Optional[str] = Form(None),
+    parking_id: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
     cible = utilisateur_controller.get_by_id(db, utilisateur_id)
@@ -214,6 +287,13 @@ def update_utilisateur(
                 status_code=303,
             )
 
+    # Le parking gere ne concerne QUE les gardiens. Pour un admin, on
+    # ne touche pas a ce champ (valeur sentinelle "__inchange__").
+    if cible.role.nom == "gardien":
+        parking_choisi = _convertir_parking_id(parking_id)
+    else:
+        parking_choisi = "__inchange__"
+
     try:
         utilisateur_controller.update(
             db=db,
@@ -225,6 +305,7 @@ def update_utilisateur(
             role_id=role_id,
             actif=nouveau_actif,
             mot_passe=mot_passe or None,
+            parking_id=parking_choisi,
         )
         return RedirectResponse(url="/utilisateurs/?msg=Utilisateur mis à jour", status_code=303)
     except Exception as e:
@@ -237,6 +318,7 @@ def update_utilisateur(
             "action": "modifier",
             "error": "Cet email est déjà utilisé ou les données sont invalides.",
             "verrou_admin": cible_est_admin,
+            "parkings": _liste_parkings(db),
         })
 
 

@@ -15,4 +15,9 @@ class Utilisateur(Base):
     role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
     actif = Column(Boolean, default=True)
 
+    # Le parking dont ce gardien est responsable (vide pour les autres roles).
+    # Plusieurs gardiens peuvent pointer vers le meme parking (equipes/rotations).
+    parking_id = Column(Integer, ForeignKey("parking.id"), nullable=True)
+
     role = relationship("Role", backref="utilisateurs")
+    parking = relationship("Parking", backref="gardiens")

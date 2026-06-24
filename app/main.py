@@ -209,9 +209,25 @@ def gardien_caisse(
     filtre: str = "jour",
     db: Session = Depends(get_db),
 ):
-    """Caisse du gardien : historique des paiements encaisses."""
+    """Caisse du gardien : paiements encaisses A SON parking uniquement."""
     if request.session.get("user_role") != "gardien":
         return RedirectResponse(url="/")
+
+    # --- On retrouve le gardien connecte et SON parking ---
+    user_id = request.session.get("user_id")
+    gardien = db.query(Utilisateur).filter(Utilisateur.id == user_id).first()
+
+    # Si le gardien n'a pas encore de parking assigne, on n'affiche rien
+    # (et on le previent dans la page).
+    if gardien is None or gardien.parking_id is None:
+        return templates.TemplateResponse("gardien/caisse.html", {
+            "request": request,
+            "reservations": [],
+            "total": 0,
+            "filtre": filtre,
+            "nb": 0,
+            "parking_nom": None,
+        })
 
     # --- Periode selon le filtre ---
     maintenant = datetime.utcnow()
@@ -222,12 +238,13 @@ def gardien_caisse(
     else:  # "jour" par defaut
         debut = maintenant.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    # --- Paiements encaisses sur la periode ---
+    # --- Paiements encaisses sur la periode, A SON parking seulement ---
     reservations = (
         db.query(Reservation)
         .filter(
+            Reservation.parking_id == gardien.parking_id,
             Reservation.statut == "partie",
-            Reservation.cout_total != None,
+            Reservation.cout_total != None,  # noqa: E711
             Reservation.date_depart >= debut,
         )
         .order_by(Reservation.date_depart.desc())
@@ -242,4 +259,5 @@ def gardien_caisse(
         "total": total,
         "filtre": filtre,
         "nb": len(reservations),
+        "parking_nom": gardien.parking.nom if gardien.parking else None,
     })

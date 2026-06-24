@@ -110,6 +110,35 @@
           {% endif %}
         </div>
 
+        {# ─── Parking géré (gardiens uniquement) ─── #}
+        {% if action == 'creer' %}
+          {# A la creation : champ cache par defaut, affiche en JS si role = gardien. #}
+          <div class="form-group form-grid-full" id="champ-parking" style="display:none;">
+            <label class="form-label" for="parking_id">Parking géré</label>
+            <select class="form-control" id="parking_id" name="parking_id">
+              <option value="">— Aucun parking pour l'instant —</option>
+              {% for p in parkings %}
+              <option value="{{ p.id }}">{{ p.nom }}</option>
+              {% endfor %}
+            </select>
+            <div class="form-hint">Le parking dont ce gardien sera responsable.</div>
+          </div>
+        {% elif utilisateur and utilisateur.role.nom == 'gardien' %}
+          {# A la modification d'un gardien : champ toujours visible. #}
+          <div class="form-group form-grid-full">
+            <label class="form-label" for="parking_id">Parking géré</label>
+            <select class="form-control" id="parking_id" name="parking_id">
+              <option value="">— Aucun parking —</option>
+              {% for p in parkings %}
+              <option value="{{ p.id }}" {% if utilisateur.parking_id == p.id %}selected{% endif %}>
+                {{ p.nom }}
+              </option>
+              {% endfor %}
+            </select>
+            <div class="form-hint">Le parking dont ce gardien est responsable.</div>
+          </div>
+        {% endif %}
+
         <div class="form-group" style="justify-content: flex-end;">
           <label class="form-label">Statut</label>
           <label class="form-check">
@@ -135,5 +164,28 @@
 </div>
 
 </div>
+
+{% if action == 'creer' %}
+<script>
+  // A la creation : on affiche le menu "Parking gere" UNIQUEMENT
+  // quand le role choisi est "Gardien".
+  (function () {
+    var idGardien = "{{ gardien_role_id }}";
+    var selectRole = document.getElementById("role_id");
+    var champParking = document.getElementById("champ-parking");
+
+    function majAffichage() {
+      if (selectRole.value === idGardien) {
+        champParking.style.display = "";
+      } else {
+        champParking.style.display = "none";
+      }
+    }
+
+    selectRole.addEventListener("change", majAffichage);
+    majAffichage();  // au chargement de la page
+  })();
+</script>
+{% endif %}
 
 {% endblock %}

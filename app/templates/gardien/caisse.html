@@ -34,8 +34,21 @@
 
     <div class="m-intro">
       <div class="m-intro-title">Ma caisse</div>
-      <div class="m-intro-sub">Paiements encaisses — {{ request.session.get("user_nom", "") }}</div>
+      <div class="m-intro-sub">
+        {% if parking_nom %}
+          Parking {{ parking_nom }}
+        {% else %}
+          Aucun parking assigné
+        {% endif %}
+      </div>
     </div>
+
+    {% if not parking_nom %}
+    <div class="m-card" style="text-align:center; padding:28px 16px; color:#687087;">
+      Vous n'êtes responsable d'aucun parking pour l'instant.<br>
+      Contactez un administrateur.
+    </div>
+    {% else %}
 
     {# ── Filtres période ── #}
     <div style="display:flex; gap:8px; margin-bottom:16px;">
@@ -111,6 +124,8 @@
         Aucun paiement sur cette période.
       </div>
     {% endif %}
+
+    {% endif %}{# fin du bloc "a un parking" #}
 
   </main>
 
