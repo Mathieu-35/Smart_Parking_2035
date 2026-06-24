@@ -31,6 +31,17 @@ class ParkingController:
     @staticmethod
     def creer_parking(db: Session, parking_data: ParkingCreate) -> Parking:
         """Créer un nouveau parking"""
+
+        # Les horaires : Pydantic a transforme chaque horaire en OBJET
+        # HoraireSchema. La base stocke du JSON (texte), donc on reconvertit
+        # ces objets en simples dictionnaires avant de les enregistrer.
+        horaires = parking_data.horaires or DEFAULT_HORAIRES
+        if horaires:
+            horaires = {
+                jour: (valeur.model_dump() if hasattr(valeur, "model_dump") else valeur)
+                for jour, valeur in horaires.items()
+            }
+
         parking = Parking(
             nom=parking_data.nom,
             adresse=parking_data.adresse,
@@ -40,7 +51,7 @@ class ParkingController:
             nombre_places_total=parking_data.nombre_places_total,
             places_disponibles=parking_data.places_disponibles,
             tarification_par_jour=parking_data.tarification_par_jour or DEFAULT_TARIFICATION,
-            horaires=parking_data.horaires or DEFAULT_HORAIRES
+            horaires=horaires
         )
         db.add(parking)
         db.commit()
