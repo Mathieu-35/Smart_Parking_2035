@@ -30,3 +30,14 @@ Thumbs.db
 *.db
 *.sqlite
 *.sqlite3
+
+# Cache des tests
+.pytest_cache/
+
+# Réglages locaux de Claude Code
+.claude/settings.local.json
+
+.claude/
+
+# Fichier de contexte Claude Code
+CLAUDE.md
